@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>豆豆助手 · 品牌介绍</title>
+<style>
+  :root{
+    --cream:#FFF6EC;
+    --card:#FFFFFF;
+    --ink:#22303A;
+    --ink-2:#5C6B72;
+    --line:#EADFD1;
+    --brand:#F2722F;         /* 品牌橙 · 形象与色块，不承载小字 */
+    --brand-d:#B04A14;       /* 品牌橙 · 深阶，承载文字 */
+    --leaf:#4C8C5A;
+    --f-sans:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",Helvetica,Arial,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    background:var(--cream);color:var(--ink);
+    font-family:var(--f-sans);
+    display:flex;flex-direction:column;
+  }
+  .pad{padding:0 56px}
+
+  /* ---------- 顶栏 ---------- */
+  header{
+    display:flex;justify-content:space-between;align-items:center;
+    height:72px;padding:0 56px;border-bottom:1px solid var(--line);
+  }
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo .wm{font-size:20px;font-weight:700;letter-spacing:.01em}
+  .logo .wm i{font-style:normal;font-size:12px;color:var(--ink-2);letter-spacing:.2em;margin-left:8px;font-weight:400}
+  nav{display:flex;gap:32px}
+  nav a{font-size:14px;color:var(--ink-2);text-decoration:none;letter-spacing:.05em}
+  nav a.on{color:var(--ink);font-weight:700}
+  .btn{
+    font-family:var(--f-sans);font-size:14px;font-weight:700;letter-spacing:.06em;
+    background:var(--brand-d);color:#FFF6EC;border:0;padding:11px 20px;
+  }
+
+  main{flex:1;padding-top:28px;display:flex;flex-direction:column}
+
+  /* ---------- 角色介绍 ---------- */
+  .hero{display:grid;grid-template-columns:1fr 400px;gap:48px;align-items:center}
+  .eyebrow{font-size:12px;letter-spacing:.2em;color:var(--ink-2)}
+  .eyebrow b{color:var(--brand-d);font-weight:700}
+  h1{font-size:46px;font-weight:700;letter-spacing:-.02em;line-height:1.24;margin-top:14px}
+  .lede{font-size:15px;line-height:1.95;color:var(--ink-2);margin-top:16px;max-width:640px}
+  .facts{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:22px;padding-top:16px;border-top:1px solid var(--line)}
+  .facts div{padding-right:18px}
+  .facts dt{font-size:11px;color:var(--ink-2);letter-spacing:.12em}
+  .facts dd{font-size:19px;font-weight:700;margin-top:7px;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+  .facts dd em{font-style:normal;font-size:12px;font-weight:400;color:var(--ink-2);margin-left:3px}
+
+  .stage{
+    position:relative;background:var(--card);border:1px solid var(--line);
+    height:328px;display:flex;align-items:flex-end;justify-content:center;
+  }
+  .stage .halo{position:absolute;width:250px;height:250px;border-radius:50%;background:#FDEBD8;top:26px;left:50%;margin-left:-125px}
+  .stage svg{position:relative;width:270px;height:270px}
+  .stage .tag{
+    position:absolute;left:16px;top:16px;font-size:11px;letter-spacing:.16em;
+    color:var(--ink-2);background:var(--cream);padding:5px 10px;
+  }
+
+  /* ---------- 四种状态 ---------- */
+  .states{margin-top:26px}
+  .s-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+  .s-h h2{font-size:14px;letter-spacing:.2em;font-weight:700}
+  .s-h span{font-size:12px;color:var(--ink-2);letter-spacing:.04em}
+  .srow{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .st{background:var(--card);border:1px solid var(--line);padding:16px 18px 18px;display:flex;gap:14px}
+  .st .art{width:92px;height:92px;flex:none;background:#FDF2E4;display:flex;align-items:center;justify-content:center}
+  .st .art svg{width:82px;height:82px}
+  .st .nm{font-size:15px;font-weight:700;letter-spacing:.02em}
+  .st .nm span{font-size:11px;color:var(--brand-d);font-weight:700;margin-left:7px;letter-spacing:.1em}
+  .st .ds{font-size:12px;line-height:1.75;color:var(--ink-2);margin-top:6px}
+  .st .nx{font-size:12px;color:var(--ink);margin-top:8px;letter-spacing:.02em}
+  .st .nx b{color:var(--brand-d);font-weight:700}
+
+  /* ---------- 品牌规范 ---------- */
+  .spec{margin-top:24px;background:var(--card);border:1px solid var(--line);
+    display:grid;grid-template-columns:300px 1fr 1fr 1fr;gap:0}
+  .spec .cell{padding:16px 22px;border-right:1px solid var(--line)}
+  .spec .cell:last-child{border-right:0}
+  .spec .lb{font-size:11px;letter-spacing:.18em;color:var(--ink-2)}
+  .spec .vl{font-size:13px;line-height:1.85;margin-top:9px;letter-spacing:.02em}
+  .chips{display:flex;gap:8px;margin-top:10px}
+  .chips i{width:34px;height:34px;display:block;border:1px solid rgba(34,48,58,.1)}
+
+  /* ---------- 页脚 ---------- */
+  footer{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 56px;margin-top:auto;border-top:1px solid var(--line);
+  }
+  footer p{font-size:12px;color:var(--ink-2);letter-spacing:.04em;line-height:1.8}
+  footer .r{display:flex;align-items:center;gap:24px}
+  footer .lk{font-size:13px;color:var(--brand-d);font-weight:700;letter-spacing:.06em}
+</style>
+</head>
+<body>
+
+<!-- 共享 SVG 定义：豆豆本体 + 体积光影，供全页复用，保持角色一致性 -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <radialGradient id="bodyGrad" cx="34%" cy="24%" r="82%">
+      <stop offset="0" stop-color="#FFC884"/>
+      <stop offset=".42" stop-color="#F4863F"/>
+      <stop offset="1" stop-color="#C2541C"/>
+    </radialGradient>
+    <linearGradient id="leafGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#79B984"/>
+      <stop offset="1" stop-color="#3F7A4C"/>
+    </linearGradient>
+    <filter id="bl10" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <filter id="bl5" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+    <clipPath id="bodyClip">
+      <path d="M120 40 C180 40 218 92 216 156 C214 216 172 252 118 252 C62 252 26 214 28 156 C30 92 62 40 120 40 Z"/>
+    </clipPath>
+
+    <!-- 豆豆本体：不含五官，五官由各状态自行拼装 -->
+    <g id="doudou">
+      <ellipse cx="120" cy="262" rx="76" ry="12" fill="#22303A" opacity=".13" filter="url(#bl5)"/>
+      <path d="M120 40 C180 40 218 92 216 156 C214 216 172 252 118 252 C62 252 26 214 28 156 C30 92 62 40 120 40 Z"
+            fill="url(#bodyGrad)"/>
+      <g clip-path="url(#bodyClip)">
+        <ellipse cx="92" cy="246" rx="78" ry="28" fill="#9C3F10" opacity=".30" filter="url(#bl10)"/>
+        <ellipse cx="74" cy="76" rx="40" ry="24" fill="#FFF1DA" opacity=".55" filter="url(#bl10)"/>
+      </g>
+      <path d="M52 104 C62 70 88 52 118 50" fill="none" stroke="#FFE7C6" stroke-width="6"
+            stroke-linecap="round" opacity=".45" filter="url(#bl5)"/>
+      <!-- 嫩芽：品牌的识别锚点 -->
+      <path d="M120 44 C120 34 120 28 121 21" stroke="#3F7A4C" stroke-width="5" stroke-linecap="round" fill="none"/>
+      <path d="M121 24 C104 6 84 3 73 10 C82 26 104 30 121 24 Z" fill="url(#leafGrad)"/>
+      <path d="M121 24 C138 6 158 3 169 10 C160 26 138 30 121 24 Z" fill="url(#leafGrad)"/>
+    </g>
+
+    <!-- 五官零件 -->
+    <g id="eye"><ellipse cx="0" cy="0" rx="11" ry="13" fill="#2A2622"/>
+       <circle cx="-3.5" cy="-4.5" r="3.4" fill="#FFF6EC"/></g>
+    <g id="eyeSoft"><path d="M-11 2 Q0 -10 11 2" fill="none" stroke="#2A2622" stroke-width="4.6" stroke-linecap="round"/></g>
+    <g id="blush"><ellipse cx="0" cy="0" rx="14" ry="8" fill="#E8603A" opacity=".28"/></g>
+  </defs>
+</svg>
+
+<header>
+  <div class="logo">
+    <svg viewBox="60 0 130 130" style="width:34px;height:34px">
+      <use href="#doudou"/>
+    </svg>
+    <div class="wm">豆豆助手<i>DOUDOU</i></div>
+  </div>
+  <nav>
+    <a href="#" class="on">角色设定</a>
+    <a href="#">品牌规范</a>
+    <a href="#">应用场景</a>
+    <a href="#">媒体资源</a>
+    <a href="#">商务合作</a>
+  </nav>
+  <button class="btn">在手机端试用</button>
+</header>
+
+<main>
+  <section class="hero pad">
+    <div>
+      <div class="eyebrow"><b>角色 001</b> · 豆豆 DOUDOU · 自 2024 年 3 月起</div>
+      <h1>豆豆是家里那张<br>会说话的待办清单</h1>
+      <p class="lede">
+        它不催你健身，也不推送促销。它只做一件事：把「该交电费了」这句话，
+        在合适的时间，用合适的语气说给正确的人听。
+        语气由你设定——你可以让它说话像管家，也可以像室友，甚至像一只打哈欠的猫。
+      </p>
+      <dl class="facts">
+        <div><dt>上线时间</dt><dd>2024.03</dd></div>
+        <div><dt>服务家庭</dt><dd>12,600<em>户</em></dd></div>
+        <div><dt>日均提醒</dt><dd>240<em>万条</em></dd></div>
+        <div><dt>覆盖平台</dt><dd>6<em>个</em></dd></div>
+      </dl>
+    </div>
+
+    <div class="stage">
+      <div class="halo"></div>
+      <div class="tag">标准形象 · 主色 #F2722F</div>
+      <svg viewBox="0 0 240 280" aria-label="豆豆助手标准形象">
+        <use href="#doudou"/>
+        <use href="#eye" x="95" y="140"/>
+        <use href="#eye" x="147" y="140"/>
+        <use href="#blush" x="72" y="170"/>
+        <use href="#blush" x="170" y="170"/>
+        <path d="M104 176 Q120 190 136 176" fill="none" stroke="#2A2622" stroke-width="4.6" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </section>
+
+  <section class="states pad">
+    <div class="s-h">
+      <h2>同 一 张 脸 · 四 种 状 态</h2>
+      <span>四态共用同一套体积光影，只更换五官与配件</span>
+    </div>
+    <div class="srow">
+
+      <div class="st">
+        <div class="art">
+          <svg viewBox="0 0 240 280">
+            <use href="#doudou"/>
+            <use href="#eye" x="95" y="140"/>
+            <use href="#eye" x="147" y="140"/>
+            <path d="M104 176 Q120 190 136 176" fill="none" stroke="#2A2622" stroke-width="4.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="nm">首次开启<span>引导</span></div>
+          <div class="ds">张开眼睛、微微前倾，等你把第一件待办交给他。</div>
+          <div class="nx">动作：<b>写下第一件</b></div>
+        </div>
+      </div>
+
+      <div class="st">
+        <div class="art">
+          <svg viewBox="0 0 240 280">
+            <use href="#doudou"/>
+            <use href="#eyeSoft" x="95" y="142"/>
+            <use href="#eyeSoft" x="147" y="142"/>
+            <ellipse cx="120" cy="180" rx="9" ry="8" fill="#2A2622"/>
+            <g fill="#C2541A">
+              <circle cx="196" cy="86" r="6"/><circle cx="214" cy="70" r="4.5"/><circle cx="206" cy="56" r="3"/>
+            </g>
+          </svg>
+        </div>
+        <div>
+          <div class="nm">正在同步<span>加载</span></div>
+          <div class="ds">眼睛眯成一条线，头顶三颗豆子转圈——最慢不超过 1.2 秒。</div>
+          <div class="nx">动作：<b>可随时离开</b></div>
+        </div>
+      </div>
+
+      <div class="st">
+        <div class="art">
+          <svg viewBox="0 0 240 280">
+            <use href="#doudou"/>
+            <use href="#eyeSoft" x="95" y="146"/>
+            <use href="#eyeSoft" x="147" y="146"/>
+            <path d="M100 168 Q120 194 140 168 Z" fill="#2A2622"/>
+            <use href="#blush" x="72" y="172"/>
+            <use href="#blush" x="170" y="172"/>
+            <path d="M206 46 L214 62 L231 63 L218 74 L222 91 L206 82 L190 91 L194 74 L181 63 L198 62 Z" fill="#F2B441"/>
+          </svg>
+        </div>
+        <div>
+          <div class="nm">今日清空<span>完成</span></div>
+          <div class="ds">弯眼大笑，冒一颗小星星。只在真的全部完成时出现。</div>
+          <div class="nx">动作：<b>查看本周回顾</b></div>
+        </div>
+      </div>
+
+      <div class="st">
+        <div class="art">
+          <svg viewBox="0 0 240 280">
+            <use href="#doudou"/>
+            <use href="#eye" x="94" y="140"/>
+            <g transform="translate(150,140) scale(.72)"><use href="#eye"/></g>
+            <path d="M96 124 L114 118" stroke="#2A2622" stroke-width="4" stroke-linecap="round"/>
+            <path d="M144 118 L162 126" stroke="#2A2622" stroke-width="4" stroke-linecap="round"/>
+            <path d="M104 184 Q120 172 136 184" fill="none" stroke="#2A2622" stroke-width="4.6" stroke-linecap="round"/>
+            <path d="M190 104 C204 118 204 134 192 136 C180 134 179 118 190 104 Z" fill="#8FB6C6" opacity=".9"/>
+          </svg>
+        </div>
+        <div>
+          <div class="nm">没同步上<span>失败</span></div>
+          <div class="ds">一高一低的眼睛、垂下来的嘴角和一滴汗。不笑，也不用红色。</div>
+          <div class="nx">动作：<b>重试并查看原因</b></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="spec pad" style="border:1px solid var(--line);background:var(--card)">
+    <div class="cell">
+      <div class="lb">品 牌 色</div>
+      <div class="chips">
+        <i style="background:#F2722F"></i><i style="background:#FFF6EC"></i>
+        <i style="background:#22303A"></i><i style="background:#4C8C5A"></i>
+      </div>
+      <div class="vl">形象只用品牌橙打体积光影，其余三色用于界面。</div>
+    </div>
+    <div class="cell">
+      <div class="lb">最 小 尺 度</div>
+      <div class="vl">24 px 起；小于 24 px 只保留轮廓与嫩芽，五官不再绘制。</div>
+    </div>
+    <div class="cell">
+      <div class="lb">禁 用</div>
+      <div class="vl">不做夸张表情 · 不给报错弹窗当主视觉 · 不加描边与霓虹滤镜</div>
+    </div>
+    <div class="cell">
+      <div class="lb">静 态 降 级</div>
+      <div class="vl">低端设备自动切换 PNG 序列，状态文案与动作保持不变。</div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>
+    北京市朝阳区酒仙桥路 4 号 798 艺术区 D 座 3F · 媒体资源包含 SVG / PNG / 表情序列<br>
+    商务合作 brand@doudou.app · 形象规范 v3.2 · 更新于 2026 年 8 月
+  </p>
+  <div class="r">
+    <span class="lk">下载媒体资源包 →</span>
+    <button class="btn">联系品牌团队</button>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>简记 · 团队任务看板</title>
+<style>
+  :root{
+    --page:#F7F8FA;         /* 页面底 */
+    --lane:#E6EAF0;         /* 看板列底：与卡片白底灰度差 ≈10%，肉眼可见 */
+    --card:#FFFFFF;         /* 卡片底 */
+    --border:#E5E7EB;       /* 装饰性分隔（1.24:1，仅作弱分组） */
+    --control:#8A8F98;      /* 可交互控件轮廓 3.25:1 */
+    --ink:#111827;          /* 17.7:1 */
+    --ink-2:#4B5563;        /* 7.6:1 */
+    --ink-3:#6B7280;        /* 4.8:1 */
+    --primary:#2563EB;      /* 5.17:1（白字 / 白底双向达标） */
+    --ok:#047857;
+    --warn:#B45309;
+    --danger:#B91C1C;
+    --sans:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",Helvetica,Arial,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    background:var(--page);color:var(--ink);
+    font-family:var(--sans);font-size:14px;
+    display:flex;flex-direction:column;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- 顶栏 ---------- */
+  header{
+    flex:none;height:56px;display:flex;align-items:center;gap:16px;
+    padding:0 24px;background:var(--card);border-bottom:1px solid var(--border);
+  }
+  .logo{display:flex;align-items:center;gap:9px}
+  .logo .mk{width:24px;height:24px;background:var(--primary);display:flex;align-items:center;justify-content:center}
+  .logo .mk b{color:#fff;font-size:14px;font-weight:700}
+  .logo .nm{font-size:16px;font-weight:700;letter-spacing:.04em}
+  /* 输入框：1px 边框，聚焦转主色，不用高亮光晕 */
+  .search{
+    margin-left:8px;width:236px;height:32px;border:1px solid var(--control);
+    display:flex;align-items:center;gap:8px;padding:0 10px;background:var(--card);
+  }
+  .search input{border:0;outline:0;font-family:var(--sans);font-size:13px;width:100%;color:var(--ink);background:transparent}
+  .search input::placeholder{color:var(--ink-3)}
+  .search .gl{color:var(--ink-3);font-size:12px;flex:none}
+  .top-r{margin-left:auto;display:flex;align-items:center;gap:16px}
+  .faces{display:flex}
+  .faces i{
+    width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;
+    font-style:normal;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;
+    border:2px solid var(--card);
+  }
+  .faces i + i{margin-left:-7px}
+  .btn{
+    height:34px;padding:0 16px;font-family:var(--sans);font-size:14px;font-weight:700;
+    letter-spacing:.04em;border:1px solid var(--control);background:var(--card);
+    color:var(--ink-2);display:inline-flex;align-items:center;gap:7px;cursor:pointer;
+  }
+  .btn.pri{background:var(--primary);border-color:var(--primary);color:#fff}
+
+  /* ---------- 主体 ---------- */
+  .body{flex:1;display:grid;grid-template-columns:216px 1fr;min-height:0}
+  aside{background:var(--card);border-right:1px solid var(--border);padding:16px 0}
+  aside .grp{font-size:11px;letter-spacing:.14em;color:var(--ink-3);padding:14px 20px 8px}
+  aside a{
+    display:flex;align-items:center;justify-content:space-between;
+    height:34px;padding:0 20px;font-size:14px;color:var(--ink-2);text-decoration:none;
+  }
+  aside a.on{background:var(--lane);color:var(--ink);font-weight:700}
+  aside a .n{font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  aside a.on .n{color:var(--primary)}
+  .prog{padding:8px 20px 4px}
+  .prog .t{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-2);margin-bottom:7px}
+  .prog .bar{height:6px;background:var(--lane)}
+  .prog .bar i{display:block;height:6px;width:75%;background:var(--primary)}
+
+  main{display:flex;flex-direction:column;min-width:0}
+  .mhead{
+    flex:none;display:flex;align-items:center;gap:14px;
+    padding:18px 24px 14px;
+  }
+  .mhead h1{font-size:19px;font-weight:700;letter-spacing:.02em}
+  .mhead .sub{font-size:12px;color:var(--ink-3);letter-spacing:.04em}
+  .mhead .sp{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .chips{display:flex;gap:8px}
+  .chip{
+    height:30px;padding:0 12px;border:1px solid var(--control);background:var(--card);
+    font-size:13px;color:var(--ink-2);display:inline-flex;align-items:center;cursor:pointer;
+  }
+  .chip.on{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:700}
+
+  /* ---------- 看板：列底靠明度差建立层级 ---------- */
+  .board{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:0 24px 20px;min-height:0}
+  .col{background:var(--lane);padding:12px;display:flex;flex-direction:column;min-height:0}
+  .chead{display:flex;align-items:center;gap:8px;padding:2px 2px 12px}
+  .chead .dot{width:8px;height:8px;flex:none}
+  .chead .t{font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.04em}
+  .chead .n{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+  .chead .add{margin-left:auto;font-size:13px;color:var(--ink-2)}
+
+  /* 卡片：纯白 + 1px 边框，无阴影无渐变 */
+  .card{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:12px 12px 10px;margin-bottom:10px}
+  .card:last-child{margin-bottom:0}
+  .meta{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .pr{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink-2);letter-spacing:.02em}
+  .pr i{width:6px;height:6px;flex:none}
+  .proj{margin-left:auto;font-size:11px;color:var(--ink-3)}
+  .card h3{font-size:14px;font-weight:700;line-height:1.5;color:var(--ink)}
+  .card .desc{font-size:12px;line-height:1.6;color:var(--ink-2);margin-top:5px}
+  .foot{display:flex;align-items:center;gap:8px;margin-top:11px;padding-top:9px;border-top:1px solid var(--border)}
+  .av{width:22px;height:22px;border-radius:50%;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+  .who{font-size:12px;color:var(--ink-2)}
+  .due{font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums;margin-left:auto}
+  .due.soon{color:var(--warn);font-weight:700}
+  .due.late{color:var(--danger);font-weight:700}
+  .cmt{font-size:11px;color:var(--ink-3);display:flex;align-items:center;gap:3px;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><span class="mk"><b>简</b></span><span class="nm">简记</span></div>
+  <div class="search">
+    <span class="gl">⌕</span>
+    <input type="text" placeholder="搜索任务、成员或项目" aria-label="搜索任务">
+  </div>
+  <div class="top-r">
+    <div class="faces"><i>周</i><i>张</i><i>岑</i><i>何</i></div>
+    <span class="btn">导入</span>
+    <span class="btn pri">新建任务</span>
+  </div>
+</header>
+
+<div class="body">
+  <aside>
+    <div class="grp">我 的</div>
+    <a href="#" class="on"><span>我的任务</span><span class="n">7</span></a>
+    <a href="#"><span>今日待办</span><span class="n">3</span></a>
+    <a href="#"><span>本周逾期</span><span class="n">2</span></a>
+    <div class="prog">
+      <div class="t"><span>本周完成率</span><span>18 / 24</span></div>
+      <div class="bar"><i></i></div>
+    </div>
+
+    <div class="grp">项 目</div>
+    <a href="#"><span>商城 2.0</span><span class="n">31</span></a>
+    <a href="#"><span>官网改版 V3</span><span class="n">12</span></a>
+    <a href="#"><span>内部工具</span><span class="n">5</span></a>
+    <a href="#"><span>已归档</span><span class="n">96</span></a>
+  </aside>
+
+  <main>
+    <div class="mhead">
+      <h1>商城 2.0 · 迭代看板</h1>
+      <span class="sub">2026-10-12 — 10-25 · 双周迭代</span>
+      <div class="sp">
+        <div class="chips">
+          <span class="chip on">全部</span>
+          <span class="chip">只看我的</span>
+          <span class="chip">按截止日</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="board">
+      <!-- 待启动 -->
+      <section class="col">
+        <div class="chead"><span class="dot" style="background:#8A8F98"></span><span class="t">待启动</span><span class="n">3</span><span class="add">＋</span></div>
+        <article class="card">
+          <div class="meta"><span class="pr"><i style="background:var(--danger)"></i>紧急</span><span class="proj">商城 2.0</span></div>
+          <h3>订单列表虚拟滚动上线前压测</h3>
+          <p class="desc">单列表 2,000 行，滚动帧率需稳定在 55fps 以上</p>
+          <div class="foot"><span class="av" style="background:var(--primary)">周</span><span class="who">周叙</span><span class="due late">已逾期 2 天</span></div>
+        </article>
+        <article class="card">
+          <div class="meta"><span class="pr"><i style="background:var(--warn)"></i>高</span><span class="proj">商城 2.0</span></div>
+          <h3>优惠券核销接口联调</h3>
+          <p class="desc">与支付网关对齐退款回滚的核销时序</p>
+          <div class="foot"><span class="av" style="background:var(--warn)">廖</span><span class="who">廖平</span><span class="cmt">5 条</span><span class="due">10-21</span></div>
+        </article>
+        <article class="card">
+          <div class="meta"><span class="pr"><i style="background:#9CA3AF"></i>常规</span><span class="proj">官网改版 V3</span></div>
+          <h3>结算页空状态插画补齐</h3>
+          <p class="desc">共 6 个空状态，缺 2 个（购物车为空、地址为空）</p>
+          <div class="foot"><span class="av" style="background:var(--ok)">张</span><span class="who">张桦</span><span class="cmt">3 条</span><span class="due">10-19</span></div>
+        </article>
+      </section>
+
+      <!-- 进行中 -->
+      <section class="col">
+        <div class="chead"><span class="dot" style="background:var(--primary)"></span><span class="t">进行中</span><span class="n">3</span><span class="add">＋</span></div>
+        <article class="card">
+          <div class="meta"><span class="pr"><i style="background:var(--warn)"></i>高</span><span class="proj">商城 2.0</span></div>
+          <h3>会员中心信息架构改版</h3>
+          <p class="desc">把订单、权益、地址收进二级导航，减少一层跳转</p>
+          <div class="foot"><span class="av" style="background:var(--ok)">张</span><span class="who">张桦</span><span class="cmt">12 条</span><span class="due soon">明天到期</span></div>
+        </article>
+        <article class="card">
+          <div class="meta"><span class="pr"><i style="background:var(--danger)"></i>紧急</span><span class="proj">商城 2.0</span></div>
+          <h3>支付回调重试用例补充</h3>
+          <p class="desc">覆盖超时、乱序、重复回调三类异常路径</p>
+          <div class="foot"><span class="av" style="background:var(--primary)">何</span><span class="who">何靖</span><span class="cmt">4 条</span><span class="due late">已逾期 1 天</span></div>
+        </article>
+        <article class="card">
+          <div class="meta"><span class="pr"><i style="background:var(--warn)"></i>高</span><span class="proj">商城 2.0</span></div>
+          <h3>购物车批量删除接口</h3>
+          <p class="desc">单次最多 50 条，超出走异步队列</p>
+          <div class="foot"><span class="av" style="background:var(--warn)">廖</span><span class="who">廖平</span><span class="cmt">7 条</span><span class="due">10-22</span></div>
+        </article>
+      </section>
+
+      <!-- 待验收 -->
+      <section class="col">
+        <div class="chead"><span class="dot" style="background:var(--warn)"></span><span class="t">待验收</span><span class="n">2</span><span class="add">＋</span></div>
+        <article class="card">
+          <div class="meta"><span class="pr"><i style="background:#9CA3AF"></i>常规</span><span class="proj">官网改版 V3</span></div>
+          <h3>首页 Banner 第三版定稿</h3>
+          <p class="desc">已替换全部 5 张主视觉，等设计负责人签字</p>
+          <div class="foot"><span class="av" style="background:var(--warn)">岑</span><span class="who">岑远</span><span class="cmt">6 条</span><span class="due soon">今天 18:00</span></div>
+        </article>
+        <article class="card">
+          <div class="meta"><span class="pr"><i style="background:#9CA3AF"></i>常规</span><span class="proj">商城 2.0</span></div>
+          <h3>会员积分接口联调完成</h3>
+          <p class="desc">积分抵扣、退回、过期三条链路已跑通</p>
+          <div class="foot"><span class="av" style="background:var(--warn)">廖</span><span class="who">廖平</span><span class="cmt">2 条</span><span class="due">10-19</span></div>
+        </article>
+      </section>
+
+      <!-- 已完成 -->
+      <section class="col">
+        <div class="chead"><span class="dot" style="background:var(--ok)"></span><span class="t">已完成</span><span class="n">2</span><span class="add">＋</span></div>
+        <article class="card">
+          <div class="meta"><span class="pr"><i style="background:#9CA3AF"></i>常规</span><span class="proj">商城 2.0</span></div>
+          <h3>登录页验证码倒计时</h3>
+          <div class="foot"><span class="av" style="background:var(--primary)">周</span><span class="who">周叙</span><span class="cmt">2 条</span><span class="due">10-15</span></div>
+        </article>
+        <article class="card">
+          <div class="meta"><span class="pr"><i style="background:#9CA3AF"></i>常规</span><span class="proj">商城 2.0</span></div>
+          <h3>订单状态图标规范统一</h3>
+          <div class="foot"><span class="av" style="background:var(--warn)">岑</span><span class="who">岑远</span><span class="cmt">1 条</span><span class="due">10-16</span></div>
+        </article>
+      </section>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

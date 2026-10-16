@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>棱镜 X 智能眼镜 发布页</title>
+<style>
+  :root{
+    --ink:#FFFFFF;
+    --ink-2:#DCE9FF;
+    /* 玻璃上文字必须有独立底色：统一深色玻璃板 */
+    --lg-1:rgba(255,255,255,.16);
+    --lg-text:rgba(12,20,52,.62);
+    --lg-line:1px solid rgba(255,255,255,.34);
+    --blur:blur(26px) saturate(190%);
+    --f:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",sans-serif;
+    --f-mono:"Cascadia Code",Consolas,"SF Mono","Courier New",monospace;
+    --pad:56px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    font-family:var(--f);color:var(--ink);
+    background:#0C1230;
+    display:flex;flex-direction:column;position:relative;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- 流动渐变底 ---------- */
+  .bg{position:absolute;inset:0;overflow:hidden;z-index:0}
+  .flow{position:absolute;border-radius:50%;filter:blur(88px)}
+  .f1{width:760px;height:640px;left:-160px;top:-200px;background:#3E74E8}
+  .f2{width:660px;height:560px;right:-120px;top:-160px;background:#8A4CE0}
+  .f3{width:820px;height:620px;left:180px;bottom:-320px;background:#1A93CC}
+  .f4{width:520px;height:480px;right:240px;bottom:-180px;background:#28BFB4}
+  /* 折射光环：液态玻璃的色散感来源 */
+  .halo{
+    position:absolute;left:50%;top:-190px;transform:translateX(-50%);
+    width:940px;height:940px;border-radius:50%;
+    background:conic-gradient(from 0deg,
+      rgba(94,220,255,.30), rgba(160,120,255,.22) 22%, rgba(255,120,190,.24) 46%,
+      rgba(255,200,120,.20) 68%, rgba(90,220,255,.28) 88%, rgba(94,220,255,.30));
+    filter:blur(56px);
+  }
+  .vig{position:absolute;inset:0;background:radial-gradient(126% 96% at 50% 34%,transparent 30%,rgba(4,7,22,.42) 100%)}
+
+  /* ---------- 液态玻璃材质 ---------- */
+  .lg{
+    position:relative;isolation:isolate;
+    background:var(--lg-text);
+    border:var(--lg-line);
+    -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
+    box-shadow:
+      0 26px 64px rgba(3,6,24,.50),
+      inset 0 2px 1px rgba(255,255,255,.30),
+      inset 0 -18px 34px rgba(255,255,255,.07),
+      inset 0 0 0 1px rgba(120,200,255,.10);
+  }
+  /* 镜面高光：跟随左上光源 */
+  .lg::before{
+    content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
+    background:linear-gradient(146deg,rgba(255,255,255,.26) 0%,rgba(255,255,255,.05) 26%,transparent 48%);
+  }
+  .lg-pill{
+    background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.30);
+    -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
+    box-shadow:0 10px 28px rgba(3,6,24,.34), inset 0 1px 0 rgba(255,255,255,.32);
+  }
+
+  header{
+    position:relative;z-index:2;height:78px;flex:none;
+    display:flex;align-items:center;gap:30px;padding:0 var(--pad)
+  }
+  .logo{display:flex;align-items:center;gap:11px}
+  .logo .m{
+    width:38px;height:38px;border-radius:13px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(140deg,rgba(120,220,255,.34),rgba(190,130,255,.30));
+    border:1px solid rgba(255,255,255,.40);
+    -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
+    box-shadow:0 8px 22px rgba(3,6,24,.36), inset 0 1px 0 rgba(255,255,255,.5)
+  }
+  .logo b{font-size:20px;font-weight:700;letter-spacing:.2em}
+  nav{display:flex;gap:9px;margin-left:14px}
+  nav a{
+    font-size:13px;color:var(--ink-2);text-decoration:none;letter-spacing:.06em;
+    padding:9px 16px;border-radius:999px;background:rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.20);
+    -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)
+  }
+  nav a.on{background:rgba(255,255,255,.20);color:#FFFFFF;font-weight:600}
+  .price-tag{
+    margin-left:auto;display:flex;align-items:baseline;gap:10px;
+    padding:10px 20px;border-radius:999px;font-size:13px;color:var(--ink-2);letter-spacing:.05em
+  }
+  .price-tag b{font-size:18px;font-weight:700;color:#FFFFFF;letter-spacing:.01em}
+
+  main{position:relative;z-index:2;flex:1;padding:4px var(--pad) 0;display:flex;flex-direction:column}
+
+  /* ---------- 主视觉 ---------- */
+  .hero{display:flex;gap:34px;align-items:stretch;padding-top:14px}
+  .hero-l{flex:1;padding:30px 36px 26px;
+    border-radius:46px 76px 52px 84px}
+  .kicker{
+    display:inline-flex;align-items:center;gap:9px;font-size:11.5px;letter-spacing:.18em;
+    padding:8px 17px;border-radius:999px;color:#FFFFFF;
+    background:rgba(120,220,255,.16);border:1px solid rgba(140,225,255,.44)
+  }
+  .kicker i{width:7px;height:7px;border-radius:50%;background:#7FE3FF;display:block;
+    box-shadow:0 0 10px rgba(127,227,255,.95)}
+  h1{font-size:44px;font-weight:800;line-height:1.16;letter-spacing:-.015em;margin-top:16px}
+  h1 em{
+    font-style:normal;
+    background:linear-gradient(96deg,#8FE6FF 0%,#C7A4FF 46%,#FFB0D8 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent
+  }
+  .lede{font-size:13.5px;line-height:1.9;color:var(--ink-2);max-width:640px;margin-top:12px}
+  .cta-row{display:flex;gap:14px;align-items:center;margin-top:20px}
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;border:none;cursor:pointer;
+    font-family:var(--f);font-size:14px;font-weight:600;letter-spacing:.04em;padding:13px 24px;
+  }
+  .btn-main{
+    color:#061024;border-radius:999px;
+    background:linear-gradient(120deg,#A8ECFF 0%,#CBB2FF 100%);
+    box-shadow:0 14px 30px rgba(70,140,255,.34), inset 0 1px 0 rgba(255,255,255,.8)
+  }
+  .btn-ghost{
+    color:#FFFFFF;border-radius:999px;background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.34);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.34)
+  }
+  .ship{margin-top:16px;display:flex;align-items:center;gap:26px;font-size:12px;color:var(--ink-2);letter-spacing:.05em}
+  .ship span{display:flex;align-items:center;gap:7px}
+  .ship i{width:6px;height:6px;border-radius:50%;background:#9BE7FF;display:block}
+
+  /* 形变玻璃块：右侧视觉主体 */
+  .hero-r{
+    width:432px;flex:none;position:relative;
+    border-radius:88px 48px 92px 56px;overflow:hidden;
+  }
+  .lens{position:absolute;border-radius:50%}
+  .l1{width:250px;height:250px;right:52px;top:52px;
+    background:radial-gradient(circle at 34% 30%,rgba(255,255,255,.52),rgba(150,210,255,.16) 46%,rgba(90,120,255,.10) 74%);
+    border:1px solid rgba(255,255,255,.42);
+    -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
+    box-shadow:0 24px 54px rgba(4,8,28,.44), inset 0 3px 2px rgba(255,255,255,.5),
+               inset 0 -22px 40px rgba(120,190,255,.18)}
+  .l1::after{
+    content:"";position:absolute;left:16%;top:12%;width:42%;height:26%;border-radius:50%;
+    background:linear-gradient(150deg,rgba(255,255,255,.62),rgba(255,255,255,0));filter:blur(5px)
+  }
+  .l2{width:132px;height:132px;right:180px;bottom:48px;
+    background:radial-gradient(circle at 38% 32%,rgba(255,255,255,.44),rgba(200,170,255,.16) 52%,rgba(150,90,255,.10) 80%);
+    border:1px solid rgba(255,255,255,.34);
+    -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
+    box-shadow:0 18px 38px rgba(4,8,28,.40), inset 0 2px 2px rgba(255,255,255,.44)}
+  .l3{width:78px;height:78px;right:24px;bottom:86px;border-radius:42% 58% 46% 54%/54% 44% 56% 46%;
+    background:radial-gradient(circle at 36% 32%,rgba(255,255,255,.40),rgba(120,230,255,.18) 56%,rgba(60,160,255,.10) 84%);
+    border:1px solid rgba(255,255,255,.30);
+    -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
+  .specbox{position:absolute;left:26px;top:26px;padding:13px 17px;border-radius:20px 26px 20px 28px}
+  .specbox span{display:block;font-size:10px;color:var(--ink-2);letter-spacing:.18em}
+  .specbox b{display:block;font-size:15px;font-weight:700;margin-top:5px;letter-spacing:.02em}
+  .calib{
+    position:absolute;left:26px;bottom:26px;right:26px;display:flex;align-items:center;gap:10px;
+    padding:11px 16px;border-radius:16px;font-size:11.5px;color:var(--ink-2);letter-spacing:.04em
+  }
+  .calib b{color:#FFFFFF;font-weight:600;font-family:var(--f-mono)}
+
+  /* ---------- 规格条 ---------- */
+  .chips{display:flex;gap:13px;margin-top:16px}
+  .chip{
+    flex:1;padding:12px 16px;border-radius:18px 24px 18px 26px;
+    display:flex;flex-direction:column;gap:5px
+  }
+  .chip span{font-size:10.5px;color:var(--ink-2);letter-spacing:.16em}
+  .chip b{font-size:17px;font-weight:700;letter-spacing:.01em}
+  .chip b em{font-style:normal;font-size:11px;font-weight:400;color:var(--ink-2);margin-left:4px}
+
+  /* ---------- 光学参数 ---------- */
+  .bottom{display:flex;gap:22px;flex:1;margin-top:16px;min-height:0;overflow:hidden}
+  .feats{flex:1;display:flex;flex-direction:column;gap:11px;padding:18px 24px 16px;
+    border-radius:34px 50px 36px 56px}
+  .feats-head{display:flex;align-items:baseline;justify-content:space-between;padding-bottom:10px}
+  .feats-head h2{font-size:13px;font-weight:600;letter-spacing:.2em}
+  .feats-head span{font-size:11px;color:var(--ink-2);letter-spacing:.06em}
+  .feat{display:flex;gap:15px;align-items:flex-start}
+  .feat .ic{
+    width:34px;height:34px;flex:none;border-radius:13px;display:flex;align-items:center;justify-content:center;
+    background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.28);
+    -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)
+  }
+  .feat b{font-size:14.5px;font-weight:600;letter-spacing:.02em}
+  .feat p{font-size:12px;color:var(--ink-2);line-height:1.7;margin-top:4px;letter-spacing:.02em}
+
+  .table{width:428px;flex:none;padding:18px 24px 14px;border-radius:44px 60px 46px 66px;
+    display:flex;flex-direction:column}
+  .table h2{font-size:13px;font-weight:600;letter-spacing:.2em;padding-bottom:10px}
+  .row{
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding:7px 0;border-top:1px solid rgba(255,255,255,.14)
+  }
+  .row span{font-size:12.5px;color:var(--ink-2);letter-spacing:.04em}
+  .row b{font-family:var(--f-mono);font-size:13px;font-weight:500;letter-spacing:.01em}
+
+  footer{
+    position:relative;z-index:2;flex:none;height:62px;
+    display:flex;align-items:center;gap:24px;padding:0 var(--pad)
+  }
+  footer p{font-size:11.5px;color:var(--ink-2);letter-spacing:.05em}
+  footer .r{margin-left:auto;font-size:11.5px;color:var(--ink-2);letter-spacing:.05em}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="halo"></div>
+  <div class="flow f1"></div>
+  <div class="flow f2"></div>
+  <div class="flow f3"></div>
+  <div class="flow f4"></div>
+  <div class="vig"></div>
+</div>
+
+<header>
+  <div class="logo">
+    <div class="m">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.9" stroke-linejoin="round">
+        <path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M12 7.6 16.4 12 12 16.4 7.6 12z"/>
+      </svg>
+    </div>
+    <b>PRISM</b>
+  </div>
+  <nav>
+    <a href="#" class="on">棱镜 X</a>
+    <a href="#">光学方案</a>
+    <a href="#">开发者</a>
+    <a href="#">线下体验</a>
+  </nav>
+  <div class="price-tag lg-pill"><span>首发价</span><b>¥4,299 起</b></div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-l lg">
+      <div class="kicker"><i></i>2026 年 10 月 15 日 正式发布</div>
+      <h1>把 130 英寸的屏幕<br>折进 <em>46 克</em>镜框。</h1>
+      <p class="lede">
+        棱镜 X 采用单光引擎 + 衍射光波导，双眼 480p Micro-OLED，
+        前端双鱼眼相机做 6DoF 跟踪。整机 46 克，连续播放 8.2 小时——
+        这是我们交付的第一副可以全天佩戴的显示设备。
+      </p>
+      <div class="cta-row">
+        <button class="btn btn-main">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#061024" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6.5h14v13H5z"/><path d="M5 10.5h14M9 3v3.5M15 3v3.5"/></svg>
+          预约首发 · 10 月 22 日开抢
+        </button>
+        <button class="btn btn-ghost">预约线下体验</button>
+      </div>
+      <div class="ship">
+        <span><i></i>首发 5,000 台</span>
+        <span><i></i>顺丰包邮 · 30 天无理由</span>
+        <span><i></i>深圳 · 上海 · 成都 体验店可试戴</span>
+      </div>
+    </div>
+
+    <div class="hero-r lg">
+      <div class="specbox lg-pill">
+        <span>眼 动 追 踪</span>
+        <b>±1.5° · 120 Hz</b>
+      </div>
+      <div class="lens l1"></div>
+      <div class="lens l2"></div>
+      <div class="lens l3"></div>
+      <div class="calib lg-pill">视场角 <b>52°</b> · 焦距 <b>27 mm</b> · 瞳距 <b>64 mm</b></div>
+    </div>
+  </section>
+
+  <section class="chips">
+    <div class="chip lg"><span>双 1.3″ Micro-OLED</span><b>480p<em>/ 眼 · 1,000 nit</em></b></div>
+    <div class="chip lg"><span>整 机 重 量</span><b>46 g<em>含镜框</em></b></div>
+    <div class="chip lg"><span>连 续 播 放</span><b>8.2 h<em>亮度 200 nit</em></b></div>
+    <div class="chip lg"><span>端 到 端 延 迟</span><b>&lt; 20 ms<em>MVP 模式</em></b></div>
+    <div class="chip lg"><span>麦 克 风</span><b>4 麦<em>骨传导双耳</em></b></div>
+  </section>
+
+  <section class="bottom">
+    <div class="feats lg">
+      <div class="feats-head"><h2>三 件 我 们 花 最 多 时 间 的 事</h2><span>PRISM X · 2026</span></div>
+      <div class="feat">
+        <div class="ic">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.2 5.2l1.9 1.9M16.9 16.9l1.9 1.9M18.8 5.2l-1.9 1.9M7.1 16.9l-1.9 1.9"/></svg>
+        </div>
+        <div>
+          <b>全天候光感调光</b>
+          <p>前向光感 + 环境色温采样，每 500 ms 重算一次透光率。室外 80,000 lux 下自动切到 1,000 nit 峰值，逆光看字幕不糊。</p>
+        </div>
+      </div>
+      <div class="feat">
+        <div class="ic">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-2.5a8 8 0 0 1 16 0V14"/><rect x="2.5" y="13.5" width="4.5" height="6.5" rx="2"/><rect x="17" y="13.5" width="4.5" height="6.5" rx="2"/></svg>
+        </div>
+        <div>
+          <b>骨传导双耳音频</b>
+          <p>镜腿内侧两枚振子，不入耳、不漏音。地铁场景实测 78 dB 环境下对方仍听不清你在听什么。</p>
+        </div>
+      </div>
+      <div class="feat">
+        <div class="ic">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="16" height="10" rx="2.4"/><path d="M21.5 10.5v3"/><path d="M6 12h5.5"/></svg>
+        </div>
+        <div>
+          <b>40 分钟快充 · 8.2 小时续航</b>
+          <p>120 mAh 镁铝合金电池，磁吸两触点。用标配 30 W 适配器，午休 40 分钟够用一整个下午。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="table lg">
+      <h2>光 学 参 数</h2>
+      <div class="row"><span>显示方式</span><b>衍射光波导 · 单目单色</b></div>
+      <div class="row"><span>单眼分辨率</span><b>1920 × 1080 / 480p</b></div>
+      <div class="row"><span>峰值亮度</span><b>1,000 nit @ 10%</b></div>
+      <div class="row"><span>视场角 / 焦距</span><b>52° / 27 mm</b></div>
+      <div class="row"><span>刷新率</span><b>60 / 90 / 120 Hz</b></div>
+      <div class="row"><span>整机重量</span><b>46 g · 含镜框</b></div>
+      <div class="row"><span>操作系统</span><b>PrismOS 2.0</b></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>深圳市南山区科苑南路 3099 号 中国创新大厦 18 层 · 开发者文档 prx.dev/sdk</p>
+  <div class="r">© 2026 棱镜科技 · 医疗器械注册证编号 国械注准 2026 定制 — 预售阶段不作医疗器械宣称</div>
+</footer>
+
+</body>
+</html>

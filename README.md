@@ -141,15 +141,38 @@ node scripts/catalog.js verify                           # 校验全部 56 组�
 
 ---
 
+## 设计 Demo
+
+**8 族 25 式，每式一个真实场景的完整页面。** 打开 [`gallery.html`](gallery.html) 看完整画廊。
+
+| 族 | demo |
+|---|---|
+| 1 秩序理性 | ![瑞士极简](assets/previews/01-swiss-minimal.png) |
+| 7 文化地域 | ![新中式](assets/previews/20-new-chinese.png) |
+
+这些 demo 同时是 skill 的**实战验证**：每个页面都是单文件自包含 HTML，
+用该风格自己 `references/style-XX-*.md` 里定义的 token 落地，
+正文对比度经 `contrast.js` 实测达标——**不是套模板换颜色**。
+
+```bash
+node scripts/shoot.js          # 用系统 Edge 全量重出图，零依赖
+```
+
+---
+
 ## 目录结构
 
 ```
 design-iron-rules/
 ├── SKILL.md                      # 主入口
+├── gallery.html                  # 25 式风格画廊（浏览器直接打开）
 ├── data/                         # 4 份数据目录（可被脚本检索）
+├── demos/                        # 25 式设计 demo 源码，单文件自包含 HTML
+├── assets/previews/              # demo 截图，1440×900 @2x
 ├── scripts/
 │   ├── contrast.js               # 对比度校验（单条 / 批量）
-│   └── catalog.js                # 风格/配色/动效/UX 规则检索
+│   ├── catalog.js                # 风格/配色/动效/UX 规则检索
+│   └── shoot.js                  # 批量渲染 demo 截图（调用系统 Edge）
 └── references/                   # 21 份按需加载的参考文档
     ├── iron-rules-core.md        # L0 铁律 10 条 + L1 定律数值表
     ├── style-taxonomy.md         # 8 族谱系 + 口语映射词典 + 决策树

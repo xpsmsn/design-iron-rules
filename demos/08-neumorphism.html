@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Lumo 智能家居 控制面板</title>
+<style>
+  :root{
+    /* 底色只能是中间调，元素与背景完全同色，靠阴影区分 */
+    --bg:#E0E5EC;
+    --ink-1:#1A1A1A;
+    --ink-2:#4A5568;
+    --ink-3:#5D6B7E;
+    --accent:#4C6EF5;      /* 仅用于焦点描边与状态点等非文本元素 */
+    /* 阴影全局统一：光源固定左上 45° */
+    --up:-6px -6px 12px #FFFFFF, 6px 6px 12px #C3CBD9;
+    --up-sm:-3px -3px 6px #FFFFFF, 3px 3px 6px #C3CBD9;
+    --up-lg:-10px -10px 22px #FFFFFF, 10px 10px 22px #C3CBD9;
+    --in:inset -4px -4px 8px #FFFFFF, inset 4px 4px 8px #C3CBD9;
+    --in-sm:inset -2px -2px 5px #FFFFFF, inset 2px 2px 5px #C3CBD9;
+    --f:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    background:var(--bg);color:var(--ink-1);
+    font-family:var(--f);
+    -webkit-font-smoothing:antialiased;
+    display:flex;
+  }
+
+  /* ---------- 左侧房间栏 ---------- */
+  aside{
+    width:292px;flex:none;padding:44px 26px 0 40px;
+    display:flex;flex-direction:column;
+  }
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo .mark{
+    width:40px;height:40px;border-radius:13px;background:var(--bg);
+    box-shadow:var(--up-sm);display:flex;align-items:center;justify-content:center;
+  }
+  .logo b{font-size:21px;font-weight:600;letter-spacing:.04em}
+  .logo span{display:block;font-size:11px;color:var(--ink-3);letter-spacing:.22em;margin-top:3px}
+
+  .nav-h{font-size:11px;color:var(--ink-3);letter-spacing:.2em;margin:38px 0 14px}
+  .room{
+    display:flex;align-items:center;gap:14px;
+    padding:12px 14px;border-radius:16px;margin-bottom:6px;
+  }
+  .room .ico{width:20px;height:20px;flex:none;opacity:.75}
+  .room .nm{font-size:15px;flex:1}
+  .room .ct{font-size:13px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .room.on{box-shadow:var(--in-sm)}
+  .room.on .nm{font-weight:600}
+  .room.on .ico{opacity:1}
+  .room.on .ct{color:var(--ink-2);font-weight:700}
+
+  .sum{
+    margin-top:auto;margin-bottom:34px;padding:18px 18px 17px;
+    border-radius:20px;box-shadow:var(--in);
+  }
+  .sum dt{font-size:11px;color:var(--ink-3);letter-spacing:.16em}
+  .sum dd{font-size:28px;font-weight:600;margin-top:8px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .sum dd em{font-style:normal;font-size:13px;font-weight:400;color:var(--ink-3);margin-left:6px}
+  .sum .bar{height:6px;border-radius:99px;box-shadow:var(--in-sm);margin-top:14px;overflow:hidden}
+  .sum .bar i{display:block;height:100%;width:68%;background:var(--ink-2);border-radius:99px}
+  .sum .cap{font-size:12px;color:var(--ink-3);margin-top:9px;letter-spacing:.04em}
+
+  /* ---------- 右侧主区 ---------- */
+  main{flex:1;padding:40px 48px 0 52px;display:flex;flex-direction:column}
+  .topbar{display:flex;justify-content:space-between;align-items:flex-end}
+  .topbar h1{font-size:27px;font-weight:600;letter-spacing:.01em}
+  .topbar .sub{font-size:13px;color:var(--ink-2);margin-top:7px;letter-spacing:.02em}
+  .who{display:flex;align-items:center;gap:14px}
+  .who .av{display:flex}
+  .who .av i{
+    width:32px;height:32px;border-radius:50%;box-shadow:var(--up-sm);
+    display:flex;align-items:center;justify-content:center;
+    font-style:normal;font-size:12px;font-weight:600;color:var(--ink-2);
+    margin-right:-9px;
+  }
+  .who .t{font-size:13px;color:var(--ink-2);letter-spacing:.02em}
+  .live{display:flex;align-items:center;gap:7px;margin-left:16px}
+  .live i{width:7px;height:7px;border-radius:50%;background:var(--accent);display:block}
+
+  /* 温控盘 + 指标 */
+  .hero{display:flex;gap:28px;margin-top:26px}
+  .dial{
+    width:212px;height:212px;flex:none;border-radius:50%;
+    box-shadow:var(--up-lg);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+  }
+  .dial .ring{
+    width:158px;height:158px;border-radius:50%;box-shadow:var(--in);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+  }
+  .dial .lab{font-size:11px;color:var(--ink-3);letter-spacing:.22em}
+  .dial .val{font-size:46px;font-weight:600;letter-spacing:-.03em;margin:6px 0 0;font-variant-numeric:tabular-nums}
+  .dial .val i{font-style:normal;font-size:18px;font-weight:400;color:var(--ink-2);margin-left:3px}
+  .dial .mode{
+    margin-top:10px;font-size:11px;font-weight:600;letter-spacing:.08em;
+    padding:5px 12px;border-radius:99px;box-shadow:var(--up-sm);
+  }
+
+  .meters{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .meter{
+    border-radius:22px;padding:20px 22px;
+    display:flex;flex-direction:column;justify-content:center;
+  }
+  .meter.on{box-shadow:var(--up);background:var(--bg)}
+  .meter .k{font-size:12px;color:var(--ink-3);letter-spacing:.14em}
+  .meter .v{font-size:30px;font-weight:600;margin-top:9px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .meter .v em{font-style:normal;font-size:13px;font-weight:400;color:var(--ink-3);margin-left:5px}
+  .meter .d{font-size:12px;color:var(--ink-2);margin-top:9px;letter-spacing:.02em}
+  .meter .pill{
+    align-self:flex-start;margin-top:12px;font-size:11px;font-weight:600;
+    letter-spacing:.1em;padding:5px 12px;border-radius:99px;box-shadow:var(--in-sm);
+  }
+
+  /* 场景 */
+  .sec-h{
+    display:flex;justify-content:space-between;align-items:baseline;
+    margin:24px 0 13px;
+  }
+  .sec-h h2{font-size:13px;font-weight:600;letter-spacing:.18em;color:var(--ink-2)}
+  .sec-h span{font-size:12px;color:var(--ink-3);letter-spacing:.06em}
+  .scenes{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+  .scene{
+    border-radius:18px;padding:14px 18px;display:flex;align-items:center;gap:13px;
+    box-shadow:var(--up);
+  }
+  .scene .ic{width:36px;height:36px;flex:none;border-radius:12px;box-shadow:var(--up-sm);
+    display:flex;align-items:center;justify-content:center}
+  .scene .nm{font-size:15px;font-weight:500}
+  .scene .sm{font-size:11px;color:var(--ink-3);margin-top:3px;letter-spacing:.04em}
+  /* 按下态 = 凹陷，这是新拟态唯一的交互语言 */
+  .scene.on{box-shadow:var(--in)}
+  .scene.on .ic{box-shadow:var(--in-sm)}
+  .scene.on .nm{font-weight:600}
+
+  /* 设备 */
+  .devices{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .dev{
+    border-radius:22px;padding:17px 20px 18px;box-shadow:var(--up);
+    display:flex;flex-direction:column;
+  }
+  .dev .row1{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+  .dev .nm{font-size:15px;font-weight:500}
+  .dev .st{font-size:11px;color:var(--ink-3);margin-top:5px;letter-spacing:.04em}
+  .dev .val{font-size:20px;font-weight:600;margin-top:11px;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+  .dev .val em{font-style:normal;font-size:12px;font-weight:400;color:var(--ink-3);margin-left:5px}
+
+  .sw{
+    width:52px;height:30px;border-radius:99px;box-shadow:var(--up-sm);
+    position:relative;flex:none;
+  }
+  .sw i{
+    position:absolute;top:5px;left:5px;width:20px;height:20px;border-radius:50%;
+    background:var(--bg);box-shadow:var(--up-sm);display:block;
+  }
+  .sw.on{box-shadow:var(--in-sm)}
+  .sw.on i{left:27px;background:var(--ink-2)}
+
+  .slider{height:8px;border-radius:99px;box-shadow:var(--in-sm);margin-top:12px;position:relative}
+  .slider i{position:absolute;top:0;left:0;height:100%;border-radius:99px;background:var(--ink-3);display:block}
+  .slider b{
+    position:absolute;top:50%;width:16px;height:16px;border-radius:50%;
+    background:var(--bg);box-shadow:var(--up-sm);transform:translate(-50%,-50%);
+  }
+
+  footer{
+    margin-top:auto;height:62px;display:flex;align-items:center;justify-content:space-between;
+  }
+  footer .n{font-size:13px;color:var(--ink-2);letter-spacing:.02em}
+  footer .n em{font-style:normal;font-weight:600;color:var(--ink-1)}
+  .cta{
+    display:flex;align-items:center;gap:11px;font-size:14px;font-weight:500;
+    padding:12px 22px;border-radius:14px;box-shadow:var(--up);letter-spacing:.03em;
+  }
+  .cta:hover{box-shadow:var(--up-sm)}
+</style>
+</head>
+<body>
+
+<aside>
+  <div class="logo">
+    <div class="mark">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9.2 17.4a6 6 0 1 1 5.6 0"/>
+        <path d="M9.6 17.4h4.8"/>
+        <path d="M10.2 20.4h3.6"/>
+        <path d="M12 3.4v1.6"/>
+      </svg>
+    </div>
+    <div>
+      <b>Lumo</b>
+      <span>智 能 家 居</span>
+    </div>
+  </div>
+
+  <div class="nav-h">房 间</div>
+
+  <div class="room on">
+    <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V9.5L12 3l9 6.5V20"/><path d="M3 20h18"/><path d="M9.5 20v-6h5v6"/></svg>
+    <div class="nm">客厅</div><div class="ct">12</div>
+  </div>
+  <div class="room">
+    <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#4A5568" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18V7"/><path d="M3 12h18v6"/><path d="M21 18v2"/><path d="M3 20h18"/><path d="M8 12V9.5a2 2 0 0 1 4 0V12"/></svg>
+    <div class="nm">主卧</div><div class="ct">8</div>
+  </div>
+  <div class="room">
+    <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#4A5568" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5l3 2"/></svg>
+    <div class="nm">次卧</div><div class="ct">6</div>
+  </div>
+  <div class="room">
+    <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#4A5568" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h7v13H4z"/><path d="M13.5 8.5H20v10h-6.5z"/></svg>
+    <div class="nm">书房</div><div class="ct">4</div>
+  </div>
+  <div class="room">
+    <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#4A5568" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4.5" width="16" height="15" rx="2"/><path d="M4 9.5h16"/><path d="M9 9.5v10"/></svg>
+    <div class="nm">厨房</div><div class="ct">3</div>
+  </div>
+  <div class="room">
+    <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#4A5568" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M7 20v-6.5a3 3 0 0 1 6 0V20"/><path d="M16.5 20V9l-1.8-1.8"/></svg>
+    <div class="nm">阳台</div><div class="ct">1</div>
+  </div>
+
+  <dl class="sum">
+    <dt>本月用电</dt>
+    <dd>42.6<em>kWh</em></dd>
+    <div class="bar"><i></i></div>
+    <div class="cap">较上月下降 8.3%</div>
+  </dl>
+</aside>
+
+<main>
+  <div class="topbar">
+    <div>
+      <h1>客厅</h1>
+      <div class="sub">2026 年 10 月 16 日 · 周五 19:26 · 室外 14℃ 阴</div>
+    </div>
+    <div class="who">
+      <div class="av"><i>陈</i><i>李</i><i>周</i></div>
+      <div class="t">3 位家庭成员在线</div>
+      <div class="live"><i></i><span style="font-size:13px;color:var(--ink-2)">34 个设备在线</span></div>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="dial">
+      <div class="ring">
+        <div class="lab">当 前 温 度</div>
+        <div class="val">23.5<i>℃</i></div>
+        <div class="mode">制冷 · 设定 24℃</div>
+      </div>
+    </div>
+
+    <div class="meters">
+      <div class="meter on">
+        <div class="k">相 对 湿 度</div>
+        <div class="v">48<em>%</em></div>
+        <div class="d">舒适区间 45 – 60%</div>
+        <div class="pill">加湿器 2 档</div>
+      </div>
+      <div class="meter on">
+        <div class="k">室 内 空 气</div>
+        <div class="v">良</div>
+        <div class="d">PM2.5&nbsp;12 μg/m³ · CO₂ 640 ppm</div>
+        <div class="pill">净化器自动</div>
+      </div>
+      <div class="meter on">
+        <div class="k">窗 户 状 态</div>
+        <div class="v">关闭</div>
+        <div class="d">客厅落地窗与纱帘</div>
+        <div class="pill">纱帘半开</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sec-h">
+    <h2>场 景</h2>
+    <span>已启用「观影模式」· 灯光亮度降至 18%</span>
+  </div>
+  <section class="scenes">
+    <div class="scene">
+      <div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#4A5568" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3.5H7.5A4.5 4.5 0 0 0 3 8v11"/><path d="M10 12l4.2-2.6v7.2L10 14z"/><path d="M17 8.5a5 5 0 0 1 0 7"/></svg></div>
+      <div><div class="nm">回家</div><div class="sm">6 个设备</div></div>
+    </div>
+    <div class="scene on">
+      <div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="13" rx="2"/><path d="M7 21h10"/></svg></div>
+      <div><div class="nm">观影</div><div class="sm">运行中 · 9 个设备</div></div>
+    </div>
+    <div class="scene">
+      <div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#4A5568" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13.5A8 8 0 1 1 10.5 4a6.3 6.3 0 0 0 9.5 9.5z"/></svg></div>
+      <div><div class="nm">睡眠</div><div class="sm">22:30 触发</div></div>
+    </div>
+    <div class="scene">
+      <div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#4A5568" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4.5h3.5a2 2 0 0 1 2 2v11h-9.5"/><path d="M6.5 8.5H14v6.5H6.5a1.75 1.75 0 0 1 0-3.5"/></svg></div>
+      <div><div class="nm">离家</div><div class="sm">门磁联动</div></div>
+    </div>
+  </section>
+
+  <div class="sec-h">
+    <h2>设 备</h2>
+    <span>客厅 12 个设备中 9 个运行中</span>
+  </div>
+  <section class="devices">
+    <div class="dev">
+      <div class="row1">
+        <div>
+          <div class="nm">客厅主灯</div>
+          <div class="st">Yeelight Pro · 已连接</div>
+        </div>
+        <div class="sw on"><i></i></div>
+      </div>
+      <div class="val">18<em>%</em></div>
+      <div class="slider"><i style="width:18%"></i><b style="left:18%"></b></div>
+    </div>
+    <div class="dev">
+      <div class="row1">
+        <div>
+          <div class="nm">变频空调</div>
+          <div class="st">Midea 美的 · 客厅机</div>
+        </div>
+        <div class="sw on"><i></i></div>
+      </div>
+      <div class="val">23.5<em>℃ 制冷</em></div>
+      <div class="slider"><i style="width:46%"></i><b style="left:46%"></b></div>
+    </div>
+    <div class="dev">
+      <div class="row1">
+        <div>
+          <div class="nm">电动窗帘</div>
+          <div class="st">Aqara 电机 · 轨道 1</div>
+        </div>
+        <div class="sw on"><i></i></div>
+      </div>
+      <div class="val">开合 30<em>%</em></div>
+      <div class="slider"><i style="width:30%"></i><b style="left:30%"></b></div>
+    </div>
+    <div class="dev">
+      <div class="row1">
+        <div>
+          <div class="nm">超声波加湿器</div>
+          <div class="st">4 L 水箱 · 剩余 68%</div>
+        </div>
+        <div class="sw on"><i></i></div>
+      </div>
+      <div class="val">2<em>档出雾</em></div>
+      <div class="slider"><i style="width:62%"></i><b style="left:62%"></b></div>
+    </div>
+    <div class="dev">
+      <div class="row1">
+        <div>
+          <div class="nm">空气净化器</div>
+          <div class="st">滤芯剩余 71 天</div>
+        </div>
+        <div class="sw on"><i></i></div>
+      </div>
+      <div class="val">自动</div>
+      <div class="slider"><i style="width:44%"></i><b style="left:44%"></b></div>
+    </div>
+    <div class="dev">
+      <div class="row1">
+        <div>
+          <div class="nm">扫地机器人</div>
+          <div class="st">已回充 · 电量 100%</div>
+        </div>
+        <div class="sw"><i></i></div>
+      </div>
+      <div class="val">待机</div>
+      <div class="slider"><i style="width:12%"></i><b style="left:12%"></b></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="n">客厅当前功耗 <em>612 W</em> · 今日用电 <em>3.2 kWh</em> · 本月 <em>42.6 kWh</em> · 较同户型均值低 11%</div>
+    <div class="cta">
+      <span>新建一个场景</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13"/><path d="M12.5 6l6 6-6 6"/></svg>
+    </div>
+  </footer>
+</main>
+
+</body>
+</html>

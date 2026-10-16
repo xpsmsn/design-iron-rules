@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>纸上市集 · 独立刊物</title>
+<style>
+  :root{
+    --paper:#EFE6D4;            /* 纸 */
+    --ink:#1B1B19;              /* 黑版 */
+    --blue:#2C4C93;             /* 蓝版 */
+    --red:#D8452F;              /* 红版 */
+    --mis:3px;                  /* 套印错位量 · 全局唯一值 */
+    --f-sans:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",Helvetica,Arial,sans-serif;
+    --f-serif:Georgia,"Songti SC","SimSun","Times New Roman",serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    background:var(--paper);color:var(--ink);
+    font-family:var(--f-sans);
+    display:flex;flex-direction:column;
+  }
+  /* 纸纹：4% 网点叠层，仅在纸面，不压在正文上 */
+  body::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background-image:radial-gradient(#1B1B19 .7px,transparent .8px);
+    background-size:5px 5px;opacity:.04;
+  }
+  .pad{padding:0 64px}
+
+  /* ---------- 报头 ---------- */
+  header{padding-top:32px}
+  .topline{
+    display:flex;justify-content:space-between;align-items:baseline;
+    font-size:11px;letter-spacing:.14em;
+  }
+  .topline .l b{color:var(--red);font-weight:700}
+  .mast{display:flex;justify-content:space-between;align-items:flex-end;margin-top:16px}
+  .mast-t{
+    font-size:84px;font-weight:900;letter-spacing:-.02em;line-height:.98;
+    text-shadow:var(--mis) var(--mis) 0 var(--red);
+  }
+  .mast-en{
+    font-family:var(--f-serif);font-size:12px;letter-spacing:.42em;
+    margin-top:12px;color:var(--ink);
+  }
+  .issue{text-align:right}
+  .issue-no{
+    font-family:var(--f-serif);font-size:52px;font-weight:700;line-height:1;
+    letter-spacing:.01em;
+    background-image:radial-gradient(var(--red) 1.7px,transparent 1.8px);
+    background-size:5px 5px;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .issue-meta{font-size:12px;line-height:1.8;margin-top:8px;letter-spacing:.1em}
+  .nav{display:flex;justify-content:space-between;align-items:flex-end;margin-top:20px;padding-bottom:10px}
+  .nav-l{display:flex;gap:30px}
+  .nav-l a{
+    font-size:14px;color:var(--ink);text-decoration:none;letter-spacing:.1em;
+    padding-bottom:2px;border-bottom:2px solid transparent;
+  }
+  .nav-l a.on{border-bottom-color:var(--blue);color:var(--blue);font-weight:700}
+  .nav-r{font-size:11px;letter-spacing:.12em;color:var(--ink)}
+  .rule-thick{height:4px;background:var(--ink)}
+  .rule-thin{height:1px;background:var(--ink);opacity:.35}
+
+  /* ---------- 封面故事 ---------- */
+  main{flex:1;padding-top:26px}
+  .feature{display:grid;grid-template-columns:1fr 452px;gap:56px}
+  .chip{
+    display:inline-block;background:var(--blue);color:var(--paper);
+    font-size:12px;letter-spacing:.2em;padding:6px 12px 5px;
+  }
+  h1{
+    font-size:50px;font-weight:900;line-height:1.24;letter-spacing:-.01em;
+    margin-top:16px;
+  }
+  h1 .hl{text-shadow:var(--mis) var(--mis) 0 var(--red)}
+  .lede{font-size:15px;line-height:1.95;margin-top:16px;max-width:660px}
+  .byline{
+    display:flex;gap:22px;font-size:12px;letter-spacing:.08em;
+    margin-top:14px;padding-top:12px;border-top:1px solid rgba(27,27,25,.3);
+  }
+  .byline b{font-weight:700}
+
+  /* 插图：双色套印 + 网点 */
+  .plate{position:relative;background:#fff;padding:18px 20px 14px;border:2px solid var(--ink)}
+  .plate .cap{
+    display:flex;justify-content:space-between;
+    font-size:11px;letter-spacing:.12em;margin-top:10px;padding-top:8px;
+    border-top:1px solid var(--ink);
+  }
+  .plate .cap i{font-style:normal;color:var(--blue)}
+
+  /* ---------- 摊位导览 ---------- */
+  .guide{margin-top:24px}
+  .guide-h{
+    display:flex;justify-content:space-between;align-items:baseline;
+    border-bottom:2px solid var(--ink);padding-bottom:8px;
+  }
+  .guide-h h2{font-size:17px;font-weight:900;letter-spacing:.24em}
+  .guide-h span{font-size:11px;letter-spacing:.1em}
+  table{width:100%;border-collapse:collapse}
+  th{
+    font-size:11px;letter-spacing:.18em;font-weight:700;text-align:left;
+    padding:8px 12px 8px 0;color:var(--ink);border-bottom:1px solid var(--ink);
+  }
+  td{
+    font-size:13px;padding:9px 12px 9px 0;border-bottom:1px solid rgba(27,27,25,.28);
+    letter-spacing:.04em;
+  }
+  td.no{font-family:var(--f-serif);font-weight:700;width:64px}
+  td.name{font-weight:700;font-size:15px;width:190px}
+  td.own{width:150px}
+  td.kind{color:#3A3A36;width:250px}
+  td.lim{width:190px;font-family:var(--f-serif)}
+  tr:nth-child(even) td{background:rgba(44,76,147,.06)}
+
+  /* ---------- 页脚 ---------- */
+  footer{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    padding:14px 64px 18px;
+  }
+  footer p{font-size:11px;line-height:1.9;letter-spacing:.08em}
+  .cta{
+    font-size:14px;font-weight:700;letter-spacing:.1em;
+    color:var(--paper);background:var(--ink);padding:11px 20px;
+  }
+</style>
+</head>
+<body>
+
+<header class="pad">
+  <div class="topline">
+    <div class="l"><b>独立刊物</b> · 一年两期 · 手工套色印刷</div>
+    <div class="r">毛麻仓库 二号仓 · 2026.04.11 — 04.12</div>
+  </div>
+
+  <div class="mast">
+    <div>
+      <h1 class="mast-t">纸上市集</h1>
+      <div class="mast-en">PAPER MARKET QUARTERLY</div>
+    </div>
+    <div class="issue">
+      <div class="issue-no">No.12</div>
+      <div class="issue-meta">2026 春季号<br>印量 300 册 · 定价 ¥68</div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <div class="nav-l">
+      <a href="#" class="on">本期专题</a>
+      <a href="#">摊位导览</a>
+      <a href="#">摊主名录</a>
+      <a href="#">印刷说明</a>
+      <a href="#">往年存档</a>
+    </div>
+    <div class="nav-r">双色套印 · 套印误差 0.3mm · 90g 再生胶版纸</div>
+  </div>
+</header>
+
+<div class="rule-thick"></div>
+
+<main class="pad">
+  <section class="feature">
+    <div>
+      <span class="chip">封 面 故 事</span>
+      <h1>128 张摊桌，<br>在一夜之间<span class="hl">长出来</span>。</h1>
+      <p class="lede">
+        布展从 4 月 10 日下午两点开始。先到的十二个摊主把折叠桌摆成两排，
+        铺开粗棉布，用图钉别住四角；到夜里十点，二号仓的地面再没有一条缝。
+        我们问过三位摊主同一个问题：为什么愿意自己搬箱子。他们都说到那句——
+        「摆摊的时候，摊子才像我的。」
+      </p>
+      <div class="byline">
+        <span><b>撰文</b> 陆云</span>
+        <span><b>摄影</b> 周牧</span>
+        <span><b>完成</b> 2026.03.28</span>
+        <span><b>全文约</b> 3,400 字</span>
+      </div>
+    </div>
+
+    <div class="plate">
+      <svg viewBox="0 0 412 216" style="display:block;width:100%;height:216px">
+        <defs>
+          <pattern id="dots" width="5" height="5" patternUnits="userSpaceOnUse">
+            <circle cx="2.5" cy="2.5" r="1.5" fill="#D8452F"/>
+          </pattern>
+          <g id="scene" fill="none" stroke="currentColor" stroke-width="2.4"
+             stroke-linecap="round" stroke-linejoin="round">
+            <!-- 四顶摊位棚 -->
+            <path d="M26 118 L62 62 L98 118 Z"/>
+            <path d="M120 118 L156 56 L192 118 Z"/>
+            <path d="M214 118 L250 66 L286 118 Z"/>
+            <path d="M308 118 L344 58 L380 118 Z"/>
+            <path d="M14 118 H398"/>
+            <path d="M34 118 V176 H90 V118"/>
+            <path d="M128 118 V184 H184 V118"/>
+            <path d="M222 118 V170 H278 V118"/>
+            <path d="M316 118 V180 H372 V118"/>
+            <!-- 旗绳 -->
+            <path d="M14 44 Q206 80 398 38"/>
+            <path d="M100 58 L108 74 L116 60"/>
+            <path d="M204 64 L212 80 L220 66"/>
+            <path d="M300 62 L308 78 L316 64"/>
+          </g>
+        </defs>
+        <rect x="0" y="0" width="412" height="216" fill="url(#dots)" opacity=".22"/>
+        <use href="#scene" style="color:#D8452F" transform="translate(3,3)" opacity=".62"/>
+        <use href="#scene" style="color:#2C4C93"/>
+      </svg>
+      <div class="cap"><span>图 1 · 二号仓 A 通道，4 月 10 日 21:40</span><i>蓝版 / 红版 双套</i></div>
+    </div>
+  </section>
+
+  <section class="guide">
+    <div class="guide-h">
+      <h2>摊 位 导 览</h2>
+      <span>全场 128 个展位 · 96 位摊主 · 以下为 A — E 区精选 5 组</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>展位</th><th>摊位</th><th>摊主</th><th>品类</th><th>首印时间</th><th>限量</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="no">A-03</td><td class="name">三号信箱</td><td class="own">陈允之</td>
+          <td class="kind">独立出版物 · 手工装订</td><td class="own">10:00</td><td class="lim">每种 50 本</td>
+        </tr>
+        <tr>
+          <td class="no">B-11</td><td class="name">盐渍果实</td><td class="own">何桑</td>
+          <td class="kind">植物拓印 · 手账内页</td><td class="own">09:30</td><td class="lim">每批 30 页</td>
+        </tr>
+        <tr>
+          <td class="no">C-02</td><td class="name">铁皮牛奶箱</td><td class="own">罗棠</td>
+          <td class="kind">搪瓷旧物改造 · 收纳</td><td class="own">11:00</td><td class="lim">限 18 件</td>
+        </tr>
+        <tr>
+          <td class="no">D-07</td><td class="name">南墙书店</td><td class="own">沈砚</td>
+          <td class="kind">独立诗集 · 布面精装</td><td class="own">13:30</td><td class="lim">每种 25 本</td>
+        </tr>
+        <tr>
+          <td class="no">E-01</td><td class="name">阿吉布铺</td><td class="own">吉布</td>
+          <td class="kind">老布手织 · 挎包</td><td class="own">10:30</td><td class="lim">限 22 只</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</main>
+
+<div class="rule-thick"></div>
+
+<footer>
+  <p>
+    主办 纸上市集编辑部 · 上海市杨浦区毛麻仓库 二号仓<br>
+    开放 2026 年 4 月 11 — 12 日 10:00–19:00 · 布展 4 月 10 日 14:00 起
+  </p>
+  <div class="cta">提交摊位申请 →</div>
+</footer>
+
+</body>
+</html>

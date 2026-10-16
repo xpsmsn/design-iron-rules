@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>风格画廊 · design-iron-rules</title>
+<style>
+  :root{
+    --bg:#FAFAF9;
+    --surface:#FFFFFF;
+    --ink:#1A1A1A;
+    --ink-2:#55534E;
+    --ink-3:#86837C;
+    --line:#E6E4DF;
+    --f:"Microsoft YaHei","PingFang SC","Hiragino Sans GB",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--f);-webkit-font-smoothing:antialiased}
+
+  .wrap{max-width:1280px;margin:0 auto;padding:0 32px 96px}
+  .head .wrap{padding-bottom:0}
+
+  /* 页眉 */
+  .head{padding:72px 0 40px;border-bottom:1px solid var(--line)}
+  .head .eyebrow{font-size:12px;letter-spacing:.2em;color:var(--ink-3);margin-bottom:16px}
+  .head h1{font-size:40px;font-weight:500;letter-spacing:-.01em}
+  .head p{margin-top:14px;font-size:15px;line-height:1.8;color:var(--ink-2);max-width:660px}
+  .stats{display:flex;gap:36px;margin-top:26px;font-size:13px;color:var(--ink-3)}
+  .stats b{color:var(--ink);font-weight:600;font-size:15px;font-variant-numeric:tabular-nums}
+
+  /* 家族锚点 */
+  .nav{
+    position:sticky;top:0;z-index:10;background:rgba(250,250,249,.92);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line);
+    padding:14px 0;margin-bottom:8px;
+  }
+  .nav-inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;gap:8px;flex-wrap:wrap}
+  .nav a{
+    font-size:13px;color:var(--ink-2);text-decoration:none;
+    padding:6px 12px;border-radius:4px;transition:.15s;
+  }
+  .nav a:hover{background:var(--surface);color:var(--ink)}
+  .nav a i{font-style:normal;color:var(--ink-3);font-variant-numeric:tabular-nums;margin-right:5px}
+
+  /* 家族区块 */
+  section{padding-top:56px}
+  .fam-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+  .fam-head h2{font-size:24px;font-weight:500}
+  .fam-head .logic{font-size:13px;color:var(--ink-3)}
+  .fam-head .count{margin-left:auto;font-size:12px;color:var(--ink-3);letter-spacing:.1em}
+
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:28px;margin-top:22px}
+
+  .card{
+    background:var(--surface);border:1px solid var(--line);border-radius:8px;
+    overflow:hidden;display:block;text-decoration:none;color:inherit;
+    transition:.18s;
+  }
+  .card:hover{border-color:#C9C6BF;transform:translateY(-2px)}
+  .thumb{aspect-ratio:1440/900;background:var(--bg);overflow:hidden;position:relative}
+  .thumb img{
+    width:100%;height:100%;object-fit:cover;object-position:top center;display:block;
+  }
+  .meta{padding:16px 18px 18px}
+  .meta .row1{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+  .meta .no{font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums;letter-spacing:.08em}
+  .meta h3{font-size:17px;font-weight:500;letter-spacing:.01em}
+  .meta .theme{margin-top:7px;font-size:13px;color:var(--ink-2)}
+  .meta .theme em{font-style:normal;color:var(--ink-3)}
+
+  .foot{margin-top:72px;padding-top:24px;border-top:1px solid var(--line);
+        display:flex;justify-content:space-between;align-items:center}
+  .foot p{font-size:13px;color:var(--ink-3);line-height:1.8}
+  .foot a{font-size:13px;color:var(--ink-2)}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <div class="wrap">
+    <div class="eyebrow">DESIGN IRON RULES · 风格画廊</div>
+    <h1>8 族 25 式 · 设计 Demo</h1>
+    <p>
+      每个页面都是单文件 HTML，用对应风格自己 <code>references/style-XX-*.md</code>
+      里定义的 token 落地，不是套模板换颜色。点击卡片可打开原始 demo 页面，
+      直接在浏览器里运行。
+    </p>
+    <div class="stats">
+      <span><b>25</b> 式风格</span>
+      <span><b>8</b> 族渲染逻辑</span>
+      <span><b>1440×900</b> @2x</span>
+      <span><b>0</b> 外部依赖</span>
+    </div>
+  </div>
+</div>
+
+<div class="nav"><div class="nav-inner" id="nav"></div></div>
+
+<div class="wrap" id="body"></div>
+
+<div class="wrap">
+  <div class="foot">
+    <p>demo 源码在 <code>demos/</code>，截图在 <code>assets/previews/</code><br>
+       全量重出图：<code>node scripts/shoot.js</code></p>
+    <a href="https://github.com/xpsmsn/design-iron-rules">← 返回仓库</a>
+  </div>
+</div>
+
+<script>
+const DATA = [
+  { f:'1', fam:'秩序理性', logic:'网格与排版驱动一切', items:[
+    ['01','swiss-minimal','瑞士极简','青野建筑事务所 官网首页'],
+    ['02','editorial-magazine','编辑杂志','《食光志》秋季专题：大山里的发酵'],
+    ['03','dark-first','暗黑优先','夜航 Studio 音乐人主页'],
+    ['04','pro-density','专业高密度','磐石 量化交易终端'],
+  ]},
+  { f:'2', fam:'扁平几何', logic:'纯色块与几何形状', items:[
+    ['05','classic-flat','经典扁平','简记 团队任务看板'],
+    ['06','material-you','Material You','知芽 中学生错题本 App'],
+    ['07','memphis','孟菲斯撞色','跳跳岛 少儿体能馆报名页'],
+  ]},
+  { f:'3', fam:'触感拟物', logic:'阴影模拟真实体积', items:[
+    ['08','neumorphism','新拟态','Lumo 智能家居 控制面板'],
+    ['09','clay','黏土风','小象巴士 少儿英语启蒙'],
+    ['10','skeuomorphic','写实拟物','Aurora 专业音频工作站'],
+    ['11','organic-natural','有机自然','青禾 有机农产品商城'],
+  ]},
+  { f:'4', fam:'光学透明', logic:'模糊与透光', items:[
+    ['12','glassmorphism','玻璃拟态','潮汐 音乐 App 播放页'],
+    ['13','liquid-glass','液态玻璃','棱镜 X 智能眼镜 发布页'],
+    ['14','aurora-gradient','极光渐变','Nova AI 模型发布页'],
+  ]},
+  { f:'5', fam:'未来复古', logic:'时代符号叠加', items:[
+    ['15','cyberpunk','赛博朋克','霓虹纪元 游戏赛季活动页'],
+    ['16','terminal-tui','终端 TUI','nimbus 分布式存储 CLI'],
+    ['17','y2k','Y2K 千禧','Y2K LAB 潮牌商城'],
+  ]},
+  { f:'6', fam:'粗野原始', logic:'暴露结构本身', items:[
+    ['18','brutalism','粗野主义','混凝土 设计工作室作品集'],
+    ['19','anti-design','反设计 / 故障','噪音 独立音乐节海报墙'],
+  ]},
+  { f:'7', fam:'文化地域', logic:'传统材质与纹样', items:[
+    ['20','new-chinese','新中式 / 东方极简','云隐茶事 品牌主页'],
+    ['21','retro-print','复古印刷','纸上市集 独立刊物'],
+    ['22','paper-craft','纸感手作','手作日记 手账社区'],
+  ]},
+  { f:'8', fam:'品牌驱动', logic:'品牌符号优先', items:[
+    ['23','bold-type','大字排版','疾风 跑鞋品牌首页'],
+    ['24','mascot-3d','3D 插画吉祥物','豆豆助手 品牌介绍页'],
+    ['25','brand-motion','品牌动效','Flux Web3 协议官网'],
+  ]},
+];
+
+document.getElementById('nav').innerHTML = DATA.map(d =>
+  `<a href="#fam${d.f}"><i>${d.f}</i>${d.fam}</a>`).join('');
+
+document.getElementById('body').innerHTML = DATA.map(d => `
+  <section id="fam${d.f}">
+    <div class="fam-head">
+      <h2>族 ${d.f} · ${d.fam}</h2>
+      <span class="logic">${d.logic}</span>
+      <span class="count">${d.items.length} 式</span>
+    </div>
+    <div class="grid">
+      ${d.items.map(([no,slug,name,theme]) => `
+        <a class="card" href="demos/${no}-${slug}.html">
+          <div class="thumb">
+            <img src="assets/previews/${no}-${slug}.png"
+                 alt="${name}" loading="lazy" width="1440" height="900">
+          </div>
+          <div class="meta">
+            <div class="row1">
+              <h3>${name}</h3>
+              <span class="no">${no}</span>
+            </div>
+            <div class="theme">${theme} <em>· ${slug}</em></div>
+          </div>
+        </a>`).join('')}
+    </div>
+  </section>`).join('');
+</script>
+
+</body>
+</html>

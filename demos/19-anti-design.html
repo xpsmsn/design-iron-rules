@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>噪音 NOISE — 独立音乐节 · 海报墙</title>
+<style>
+  :root{
+    --bg:#0E0E0E;
+    --ink-1:#F2F2F2;
+    --ink-2:#A8A8A8;
+    --ink-3:#858585;
+    --acid:#D9FF00;
+    --magenta:#FF2E63;
+    --cyan:#00E5FF;
+    --f-sans:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",Helvetica,Arial,sans-serif;
+    --f-mono:"Cascadia Code",Consolas,"SF Mono","Courier New","Microsoft YaHei",monospace;
+    --pad:56px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    background:var(--bg);color:var(--ink-1);
+    font-family:var(--f-sans);
+    display:flex;flex-direction:column;
+    position:relative;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- 噪点 / 扫描线装饰层（不影响信息层） ---------- */
+  .grain{
+    position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.5;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='0.30'/></svg>");
+    mix-blend-mode:screen;
+  }
+  .scan{
+    position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.06;
+    background:repeating-linear-gradient(0deg,#fff 0 1px,transparent 1px 3px);
+  }
+
+  /* ---------- 页眉 ---------- */
+  header{
+    position:relative;z-index:3;
+    display:flex;justify-content:space-between;align-items:flex-start;
+    padding:26px var(--pad) 0;
+  }
+  .brand{display:flex;align-items:flex-start;gap:14px}
+  .brand .n{
+    font-size:46px;font-weight:900;line-height:.86;letter-spacing:-.06em;
+    position:relative;color:var(--ink-1);
+    text-shadow:3px 0 var(--magenta),-3px 0 var(--cyan);
+  }
+  .brand .sub{
+    font-family:var(--f-mono);font-size:11px;letter-spacing:.24em;color:var(--ink-2);
+    margin-top:7px;line-height:1.7;
+  }
+  .brand .sub b{color:var(--acid);font-weight:400}
+  .hnav{display:flex;gap:20px;align-items:center;padding-top:6px}
+  .hnav a{
+    font-size:13px;color:var(--ink-2);text-decoration:none;letter-spacing:.14em;
+    padding:7px 14px;border:1px solid transparent;
+  }
+  .hnav a.on{color:var(--acid);border-color:var(--acid)}
+  .hnav a.cta{
+    color:var(--bg);background:var(--acid);font-weight:700;letter-spacing:.08em;border-color:var(--acid);
+    padding:10px 20px;
+  }
+
+  main{position:relative;z-index:3;flex:1;padding:0 var(--pad);display:flex;flex-direction:column}
+
+  /* ---------- 标题区（装饰层：允许故障） ---------- */
+  .masthead{
+    display:grid;grid-template-columns:1fr 300px;gap:40px;align-items:end;
+    padding-top:18px;
+  }
+  .mdate{
+    font-family:var(--f-mono);font-size:12px;letter-spacing:.26em;color:var(--acid);margin-bottom:10px;
+  }
+  h1{
+    font-size:92px;font-weight:900;line-height:.84;letter-spacing:-.05em;
+    color:var(--ink-1);
+    text-shadow:4px 0 var(--magenta),-4px 0 var(--cyan),0 3px 0 rgba(0,0,0,.5);
+  }
+  h1 .v{color:var(--acid);display:inline-block;transform:skewX(-8deg)}
+  .mlede{
+    font-size:15.5px;line-height:1.75;color:var(--ink-1);max-width:600px;margin-top:16px;
+  }
+  .mlede b{color:var(--acid);font-weight:700}
+  /* 竖排反排版：装饰层元素 */
+  .vertical{
+    writing-mode:vertical-rl;
+    font-size:17px;font-weight:700;letter-spacing:.34em;color:var(--ink-2);
+    border-left:3px solid var(--magenta);padding-left:18px;height:186px;
+    justify-self:end;align-self:center;text-align:left;
+  }
+  .vertical em{font-style:normal;color:var(--magenta)}
+
+  /* ---------- 海报墙 ---------- */
+  .wall{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:24px}
+  .poster{
+    position:relative;border:2px solid var(--ink-1);padding:16px 16px 14px;
+    display:flex;flex-direction:column;min-height:214px;
+  }
+  /* 错位：1–4° 小角度 + 逐张偏移 */
+  .p1{background:var(--acid);color:var(--bg);transform:rotate(-2.2deg) translateY(4px)}
+  .p2{background:#171717;transform:rotate(1.4deg) translateY(-3px)}
+  .p3{background:var(--magenta);color:var(--bg);transform:rotate(-1.1deg) translateY(6px)}
+  .p4{background:#171717;transform:rotate(2.6deg) translateY(-2px)}
+  .poster .ptag{
+    font-family:var(--f-mono);font-size:10px;letter-spacing:.2em;
+    border:1px solid currentColor;padding:3px 8px;align-self:flex-start;
+  }
+  .poster h3{
+    font-size:29px;font-weight:900;letter-spacing:-.03em;line-height:.98;margin-top:13px;
+  }
+  /* RGB 分离：仅用于标题 */
+  .p2 h3,.p4 h3{text-shadow:2.5px 0 var(--magenta),-2.5px 0 var(--cyan)}
+  .p3 h3,.p1 h3{text-shadow:2.5px 0 #000,-2.5px 0 #fff}
+  .poster .pbody{font-size:13.5px;line-height:1.75;margin-top:12px;opacity:.95}
+  .poster .pfoot{
+    margin-top:auto;padding-top:14px;
+    display:flex;justify-content:space-between;align-items:baseline;
+    font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;
+    border-top:1px solid currentColor;opacity:.9;
+  }
+  .poster .cut{
+    position:absolute;top:-2px;right:-2px;width:26px;height:26px;
+    background:var(--bg);
+    clip-path:polygon(100% 0,0 0,100% 100%);
+  }
+
+  /* ---------- 信息层：保持中性、可读、不做故障 ---------- */
+  .lineup{
+    margin-top:26px;border-top:1px solid #3A3A3A;padding-top:18px;
+    display:grid;grid-template-columns:1fr 1fr 356px;gap:40px;align-items:start;
+  }
+  .lineup h2{
+    font-size:13px;font-weight:700;letter-spacing:.26em;color:var(--ink-2);
+    margin-bottom:16px;
+  }
+  .slot{display:flex;align-items:baseline;gap:14px;padding:9px 0;border-bottom:1px solid #262626}
+  .slot .st{font-family:var(--f-mono);font-size:13px;color:var(--acid);width:52px;flex:none;font-variant-numeric:tabular-nums}
+  .slot .sn{font-size:16px;font-weight:700;letter-spacing:.01em}
+  .slot .ss{font-size:12px;color:var(--ink-2);margin-left:auto;text-align:right}
+  .info{background:#171717;border:1px solid #2E2E2E;padding:20px 22px}
+  .info .row{display:flex;justify-content:space-between;gap:14px;padding:8px 0;font-size:14px;border-bottom:1px solid #262626}
+  .info .row:last-of-type{border-bottom:none}
+  .info .row span{color:var(--ink-2)}
+  .info .row b{font-weight:700;font-variant-numeric:tabular-nums}
+  .info .tickets{display:flex;gap:10px;margin-top:16px}
+  .info .tickets a{
+    flex:1;text-align:center;font-size:13px;font-weight:700;letter-spacing:.06em;
+    padding:12px 0;text-decoration:none;
+  }
+  .info .tickets .sold{background:#2E2E2E;color:var(--ink-2);border:1px solid #3A3A3A}
+  .info .tickets .live{background:var(--acid);color:var(--bg)}
+
+  /* ---------- 页脚 ---------- */
+  footer{
+    position:relative;z-index:3;
+    margin:0 var(--pad);padding:12px 0 16px;
+    display:flex;justify-content:space-between;align-items:center;
+    border-top:1px solid #262626;margin-top:14px;
+  }
+  footer p{font-size:12px;color:var(--ink-3);line-height:1.8;letter-spacing:.04em}
+  footer .r{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);letter-spacing:.12em}
+  footer .r b{color:var(--magenta);font-weight:400}
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="scan"></div>
+
+<header>
+  <div class="brand">
+    <div class="n">噪音</div>
+    <div class="sub">
+      N O I S E &nbsp; I N D E P E N D E N T<br>
+      <b>第十届 · 2026</b>
+    </div>
+  </div>
+  <div class="hnav">
+    <a href="#">阵容</a>
+    <a href="#">场地</a>
+    <a href="#">海报</a>
+    <a href="#" class="on">票务</a>
+    <a href="#" class="cta">购票</a>
+  </div>
+</header>
+
+<main>
+  <section class="masthead">
+    <div>
+      <div class="mdate">2026.10.31 SAT · 14:00 — 23:30 · 上海 西岸油罐艺术中心</div>
+      <h1>噪音<span class="v">第</span>十<span class="v">届</span></h1>
+      <p class="mlede">
+        三个舞台，<b>41 组</b>演出，两天通票 480 元。今年首次增设「地下层」舞台，
+        全部为噪音工业与实验电子演出，现场限流 1,800 人，售罄后不再补票。
+      </p>
+    </div>
+    <div class="vertical">NOISE <em>10</em> / 2016 — 2026 / 第 <em>10</em> 届</div>
+  </section>
+
+  <section class="wall">
+    <div class="poster p1">
+      <div class="cut"></div>
+      <div class="ptag">DAY 1 / 主舞台</div>
+      <h3>回授<br>电压</h3>
+      <div class="pbody">噪音工业 · 现场接麦 · 21:40 开场</div>
+      <div class="pfoot"><span>10.31</span><span>B1 主舞台</span></div>
+    </div>
+
+    <div class="poster p2">
+      <div class="cut"></div>
+      <div class="ptag">DAY 1 / 地下层</div>
+      <h3>混凝土<br>动物园</h3>
+      <div class="pbody">实验电子 4 人编制 · 磁带噪音墙</div>
+      <div class="pfoot"><span>10.31</span><span>B2 地下层</span></div>
+    </div>
+
+    <div class="poster p3">
+      <div class="cut"></div>
+      <div class="ptag">DAY 2 / 副舞台</div>
+      <h3>铁皮<br>屋顶</h3>
+      <div class="pbody">车库噪音 · 1998 年建队 · 19:20 开场</div>
+      <div class="pfoot"><span>11.01</span><span>B1 副舞台</span></div>
+    </div>
+
+    <div class="poster p4">
+      <div class="cut"></div>
+      <div class="ptag">DAY 2 / 全部场地</div>
+      <h3>41 组<br>乐队</h3>
+      <div class="pbody">完整名单 10 月 20 日 20:00 公布</div>
+      <div class="pfoot"><span>11.01</span><span>3 个舞台</span></div>
+    </div>
+  </section>
+
+  <section class="lineup">
+    <div>
+      <h2>已 确 认 阵 容</h2>
+      <div class="slot"><div class="st">21:40</div><div class="sn">回授电压</div><div class="ss">噪音工业</div></div>
+      <div class="slot"><div class="st">20:10</div><div class="sn">废土兄弟会</div><div class="ss">后朋克</div></div>
+      <div class="slot"><div class="st">18:40</div><div class="sn">混凝土动物园</div><div class="ss">实验电子</div></div>
+    </div>
+
+    <div>
+      <h2>票 务 与 场 地</h2>
+      <div class="slot"><div class="st">480</div><div class="sn">两天通票</div><div class="ss">含全部 3 个舞台</div></div>
+      <div class="slot"><div class="st">260</div><div class="sn">单日票</div><div class="ss">10.31 / 11.01 各一张</div></div>
+      <div class="slot"><div class="st">1800</div><div class="sn">现场限流</div><div class="ss">售罄不补票</div></div>
+    </div>
+
+    <div class="info">
+      <div class="row"><span>地点</span><b>西岸油罐艺术中心</b></div>
+      <div class="row"><span>地址</span><b>徐汇区龙腾大道 2555 号</b></div>
+      <div class="row"><span>入场</span><b>每人一证，现场刷脸</b></div>
+      <div class="tickets">
+        <a href="#" class="sold">两天票 已售罄</a>
+        <a href="#" class="live">11.01 单日票 →</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>噪音音乐节由 西岸声音 主办 · 协办 油罐艺术中心<br>咨询电话 021-6427 8800（13:00 – 18:00）· 不设退票</p>
+  <div class="r"><b>///</b> SIGNAL LOST · 2026 · NOISE 10</div>
+</footer>
+
+</body>
+</html>

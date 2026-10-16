@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>磐石 量化交易终端</title>
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --panel:#FAFAFA;        /* 侧栏底 */
+    --ink:#111111;          /* 一级 */
+    --ink-2:#555555;        /* 二级 */
+    --ink-3:#767676;        /* 三级 4.54:1 */
+    --hair:#E8E8E8;         /* 表格内装饰性细线 */
+    --line:#E3E3E3;
+    --control:#8A8F98;      /* 控件轮廓 3.25:1 */
+    --accent:#1A4B8C;       /* 单一强调色 */
+    --up:#C0362C;           /* 涨 */
+    --down:#1A7F4B;         /* 跌 */
+    --warn:#B45309;
+    --sans:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",Helvetica,Arial,sans-serif;
+    --mono:"Cascadia Code",Consolas,"SF Mono","Courier New",monospace;
+    /* 紧凑间距序列：只用 4 / 6 / 8 / 12 / 16 */
+    --s1:4px; --s2:6px; --s3:8px; --s4:12px; --s5:16px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    background:var(--bg);color:var(--ink);
+    font-family:var(--sans);font-size:13px;line-height:1.45;
+    display:flex;flex-direction:column;
+    font-variant-numeric:tabular-nums;
+    -webkit-font-smoothing:antialiased;
+  }
+  .num{font-variant-numeric:tabular-nums;text-align:right}
+
+  /* ---------- 顶栏 ---------- */
+  header{
+    flex:none;height:44px;display:flex;align-items:center;gap:var(--s5);
+    padding:0 var(--s4);border-bottom:1px solid var(--line);
+  }
+  .logo{display:flex;align-items:baseline;gap:var(--s2)}
+  .logo b{font-size:15px;font-weight:700;letter-spacing:.08em}
+  .logo span{font-size:10px;letter-spacing:.2em;color:var(--ink-3)}
+  .seg{display:flex;border:1px solid var(--control)}
+  .seg button{
+    font-family:var(--sans);font-size:11px;letter-spacing:.06em;
+    padding:0 var(--s4);height:24px;border:0;background:var(--bg);color:var(--ink-2);cursor:pointer;
+  }
+  .seg button + button{border-left:1px solid var(--control)}
+  .seg button.on{background:var(--accent);color:#fff}
+  .acct{font-size:12px;color:var(--ink-2);letter-spacing:.04em}
+  .acct b{color:var(--ink);font-weight:700}
+  .clock{margin-left:auto;display:flex;align-items:center;gap:var(--s4);font-size:12px;color:var(--ink-2)}
+  .clock .live{display:flex;align-items:center;gap:var(--s2);color:var(--up);font-weight:700}
+  .clock .live i{width:5px;height:5px;background:var(--up);display:block}
+
+  /* ---------- 主体三栏 ---------- */
+  .body{flex:1;display:grid;grid-template-columns:168px 1fr 296px;min-height:0}
+
+  nav{border-right:1px solid var(--line);background:var(--panel);padding:var(--s4) 0}
+  nav .grp{font-size:10px;letter-spacing:.2em;color:var(--ink-3);padding:var(--s3) var(--s4) var(--s2)}
+  nav a{
+    display:flex;justify-content:space-between;align-items:center;
+    height:30px;padding:0 var(--s4);text-decoration:none;
+    font-size:13px;color:var(--ink-2);border-left:3px solid transparent;
+  }
+  nav a.on{background:var(--bg);color:var(--ink);font-weight:700;border-left-color:var(--accent)}
+  nav a .n{font-size:11px;color:var(--ink-3)}
+  nav a.on .n{color:var(--accent)}
+
+  .main{min-width:0;display:flex;flex-direction:column}
+
+  /* 工具条：批量操作 + 选中计数 */
+  .toolbar{
+    flex:none;display:flex;align-items:center;gap:var(--s3);
+    padding:var(--s3) var(--s4);border-bottom:1px solid var(--line);
+  }
+  .toolbar h1{font-size:15px;font-weight:700;letter-spacing:.04em}
+  .toolbar .cnt{font-size:11px;color:var(--accent);letter-spacing:.04em}
+  .btn{
+    height:26px;padding:0 var(--s3);font-size:12px;letter-spacing:.04em;
+    border:1px solid var(--control);background:var(--bg);color:var(--ink-2);
+    display:inline-flex;align-items:center;cursor:pointer;
+  }
+  .btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn[disabled]{color:var(--ink-3);border-color:var(--hair);cursor:default}
+  .toolbar .sp{margin-left:auto;display:flex;align-items:center;gap:var(--s3)}
+
+  /* ---------- 核心组件：表格 ---------- */
+  table{width:100%;border-collapse:collapse;table-layout:fixed}
+  thead th{
+    font-size:11px;font-weight:400;letter-spacing:.06em;color:var(--ink-2);
+    text-align:right;padding:var(--s2) var(--s3);
+    border-bottom:1px solid var(--line);background:var(--panel);white-space:nowrap;
+  }
+  thead th.l{text-align:left}
+  thead th.c{text-align:center}
+  thead th.sortable{cursor:pointer;color:var(--ink);user-select:none}
+  thead th .arrow{font-size:8px;margin-left:var(--s1);color:var(--accent)}
+  thead th .arrow.off{color:#B8B8B8}
+  tbody td{padding:var(--s2) var(--s3);font-size:13px;text-align:right;border-bottom:1px solid var(--hair);white-space:nowrap}
+  tbody td.l{text-align:left}
+  tbody td.c{text-align:center}
+  tbody tr.on td{background:#F4F7FB}
+  tbody td.code{font-family:var(--mono);font-size:12px;text-align:left;letter-spacing:.02em}
+  .pos{color:var(--up)}
+  .neg{color:var(--down)}
+  .tag{font-size:11px;letter-spacing:.04em}
+
+  /* 状态：3px 左侧细色条，不用彩色背景块 */
+  td.state{padding-left:var(--s4);position:relative}
+  td.state::before{content:"";position:absolute;left:0;top:4px;bottom:4px;width:3px;background:var(--control)}
+  tr[data-st="new"]  td.state::before{background:var(--accent)}
+  tr[data-st="warn"] td.state::before{background:var(--warn)}
+  tr[data-st="flat"] td.state::before{background:var(--ink-3)}
+
+  /* 热区 24×24，相邻间距 ≥ 8px */
+  .ops{display:flex;gap:var(--s3);justify-content:flex-end}
+  .ops a{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;font-size:12px;color:var(--accent);text-decoration:none}
+  .ops a.warn{color:var(--up)}
+  tfoot td{padding:var(--s3);font-size:13px;font-weight:700;text-align:right;border-top:1px solid var(--line);background:var(--panel)}
+  tfoot td.l{text-align:left}
+
+  /* ---------- 今日盈亏分布 ---------- */
+  .dist{flex:none;padding:var(--s3) var(--s4) var(--s4);border-top:1px solid var(--line)}
+  .dist .dh{
+    display:flex;justify-content:space-between;align-items:baseline;
+    font-size:10px;letter-spacing:.2em;color:var(--ink-3);padding-bottom:var(--s2);
+  }
+  .dist .dh span{letter-spacing:.04em;font-variant-numeric:tabular-nums}
+  .drow{display:flex;align-items:center;gap:var(--s3);height:22px}
+  .drow .lb{width:52px;font-size:11px;color:var(--ink-2);letter-spacing:.04em;text-align:right}
+  .dtrack{flex:1;position:relative;height:10px;background:var(--panel)}
+  .dtrack::before{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--control)}
+  .dbar{position:absolute;top:0;height:10px}
+  .dbar.p{left:50%;background:var(--up)}
+  .dbar.n{right:50%;background:var(--down)}
+  .drow .vl{width:96px;font-size:11px;font-variant-numeric:tabular-nums;text-align:right}
+
+  /* ---------- 右侧属性面板 ---------- */
+  aside{border-left:1px solid var(--line);background:var(--panel);overflow:hidden}
+  aside .ahd{padding:var(--s3) var(--s4);border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:var(--s2)}
+  aside .ahd b{font-size:14px;font-weight:700;letter-spacing:.04em}
+  aside .ahd span{font-size:11px;color:var(--ink-3);font-family:var(--mono)}
+  .kv{display:flex;justify-content:space-between;padding:var(--s1) var(--s4);font-size:12px}
+  .kv dt{color:var(--ink-3);letter-spacing:.04em}
+  .kv dd{color:var(--ink);font-variant-numeric:tabular-nums}
+  .sechd{font-size:10px;letter-spacing:.2em;color:var(--ink-3);padding:var(--s4) var(--s4) var(--s2);border-top:1px solid var(--line);margin-top:var(--s3)}
+  .risk{padding:var(--s2) var(--s4) 0}
+  .risk .bar{display:flex;height:8px;margin-top:var(--s2)}
+  .risk .bar i{flex:1}
+  .risk .bar i + i{border-left:1px solid var(--panel)}
+  .risk .scale{display:flex;justify-content:space-between;font-size:10px;color:var(--ink-3);margin-top:var(--s1)}
+  .note{margin:var(--s3) var(--s4) 0;padding:var(--s3);border-left:3px solid var(--accent);background:var(--bg);font-size:11px;line-height:1.6;color:var(--ink-2)}
+
+  /* ---------- 底部状态栏：分页优先于无限滚动 ---------- */
+  footer{
+    flex:none;height:32px;display:flex;align-items:center;gap:var(--s4);
+    padding:0 var(--s4);border-top:1px solid var(--line);background:var(--panel);
+    font-size:11px;color:var(--ink-2);letter-spacing:.04em;
+  }
+  .pg{display:flex;align-items:center;gap:var(--s1)}
+  .pg a,.pg span{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:24px;height:24px;border:1px solid var(--hair);background:var(--bg);
+    color:var(--ink-2);text-decoration:none;font-size:11px;
+  }
+  .pg .on{background:var(--accent);border-color:var(--accent);color:#fff}
+  footer .sp{margin-left:auto;display:flex;gap:var(--s4)}
+  footer .wrn{color:var(--warn)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><b>磐石</b><span>PANSHI QUANT</span></div>
+  <div class="seg" title="密度切换：紧凑 / 标准"><button class="on">紧凑</button><button>标准</button></div>
+  <div class="acct">账户 <b>QH-8842</b> · 权益 <b>1,286.40</b> 万元</div>
+  <div class="clock">
+    <span class="live"><i></i>日盘交易中</span>
+    <span>2026-10-16 周五 14:26:07</span>
+  </div>
+</header>
+
+<div class="body">
+  <nav>
+    <div class="grp">交 易</div>
+    <a href="#" class="on"><span>持仓</span><span class="n">14</span></a>
+    <a href="#"><span>委托队列</span><span class="n">12</span></a>
+    <a href="#"><span>今日成交</span><span class="n">37</span></a>
+    <a href="#"><span>条件单</span><span class="n">3</span></a>
+    <div class="grp">策 略</div>
+    <a href="#"><span>因子监控</span></a>
+    <a href="#"><span>回测任务</span></a>
+    <a href="#"><span>参数配置</span></a>
+    <div class="grp">风 控</div>
+    <a href="#"><span>保证金</span></a>
+    <a href="#"><span>风险度量</span><span class="n">2</span></a>
+  </nav>
+
+  <div class="main">
+    <div class="toolbar">
+      <h1>持仓明细</h1>
+      <span class="cnt">已选 2 项</span>
+      <span class="btn pri">批量平仓</span>
+      <span class="btn">移出关注</span>
+      <span class="btn" disabled>撤单</span>
+      <div class="sp"><span class="btn">导出 CSV</span><span class="btn">列设置</span></div>
+    </div>
+
+    <table>
+      <colgroup>
+        <col style="width:34px"><col style="width:72px"><col style="width:84px">
+        <col style="width:54px"><col style="width:58px"><col style="width:64px">
+        <col style="width:60px"><col style="width:62px"><col style="width:78px">
+        <col style="width:88px"><col style="width:60px"><col style="width:84px">
+        <col style="width:112px">
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="l"><input type="checkbox" aria-label="全选" style="width:12px;height:12px;vertical-align:-1px"></th>
+          <th class="l sortable">合约 <span class="arrow off">▼</span></th>
+          <th class="l">名称</th>
+          <th class="c">方向</th>
+          <th>数量</th><th>昨结</th><th>现价</th><th>涨跌</th><th>涨跌幅</th>
+          <th class="sortable">浮动盈亏 <span class="arrow">▼</span></th>
+          <th>保证金</th>
+          <th class="l">状态</th>
+          <th class="c">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-st="new" class="on">
+          <td class="l"><input type="checkbox" checked style="width:12px;height:12px;vertical-align:-1px"></td>
+          <td class="code">IF2612</td><td class="l">沪深300</td><td class="c tag pos">多头</td>
+          <td class="num">24</td><td class="num">4,128.6</td><td class="num">4,146.2</td>
+          <td class="num pos">+17.6</td><td class="num pos">+0.43%</td>
+          <td class="num pos">+126,720.00</td><td class="num">358.23</td>
+          <td class="l state tag">今日新开</td>
+          <td class="c"><div class="ops"><a href="#">平仓</a><a href="#">改单</a><a class="warn" href="#">反手</a></div></td>
+        </tr>
+        <tr data-st="new" class="on">
+          <td class="l"><input type="checkbox" checked style="width:12px;height:12px;vertical-align:-1px"></td>
+          <td class="code">IM2612</td><td class="l">中证1000</td><td class="c tag pos">多头</td>
+          <td class="num">8</td><td class="num">6,820.5</td><td class="num">6,876.0</td>
+          <td class="num pos">+55.5</td><td class="num pos">+0.81%</td>
+          <td class="num pos">+88,800.00</td><td class="num">132.02</td>
+          <td class="l state tag">今日新开</td>
+          <td class="c"><div class="ops"><a href="#">平仓</a><a href="#">改单</a><a class="warn" href="#">反手</a></div></td>
+        </tr>
+        <tr>
+          <td class="l"><input type="checkbox" style="width:12px;height:12px;vertical-align:-1px"></td>
+          <td class="code">IH2612</td><td class="l">上证50</td><td class="c tag pos">多头</td>
+          <td class="num">12</td><td class="num">2,864.8</td><td class="num">2,871.5</td>
+          <td class="num pos">+6.7</td><td class="num pos">+0.23%</td>
+          <td class="num pos">+24,120.00</td><td class="num">124.05</td>
+          <td class="l state tag">持有</td>
+          <td class="c"><div class="ops"><a href="#">平仓</a><a href="#">改单</a><a class="warn" href="#">反手</a></div></td>
+        </tr>
+        <tr>
+          <td class="l"><input type="checkbox" style="width:12px;height:12px;vertical-align:-1px"></td>
+          <td class="code">IC2612</td><td class="l">中证500</td><td class="c tag neg">空头</td>
+          <td class="num">16</td><td class="num">6,412.4</td><td class="num">6,388.0</td>
+          <td class="num neg">-24.4</td><td class="num neg">-0.38%</td>
+          <td class="num neg">-78,080.00</td><td class="num">245.30</td>
+          <td class="l state tag">持有</td>
+          <td class="c"><div class="ops"><a href="#">平仓</a><a href="#">改单</a><a class="warn" href="#">反手</a></div></td>
+        </tr>
+        <tr>
+          <td class="l"><input type="checkbox" style="width:12px;height:12px;vertical-align:-1px"></td>
+          <td class="code">CU2612</td><td class="l">沪铜</td><td class="c tag pos">多头</td>
+          <td class="num">6</td><td class="num">78,240</td><td class="num">78,860</td>
+          <td class="num pos">+620</td><td class="num pos">+0.79%</td>
+          <td class="num pos">+18,600.00</td><td class="num">28.39</td>
+          <td class="l state tag">持有</td>
+          <td class="c"><div class="ops"><a href="#">平仓</a><a href="#">改单</a><a class="warn" href="#">反手</a></div></td>
+        </tr>
+        <tr>
+          <td class="l"><input type="checkbox" style="width:12px;height:12px;vertical-align:-1px"></td>
+          <td class="code">AG2612</td><td class="l">沪银</td><td class="c tag pos">多头</td>
+          <td class="num">10</td><td class="num">7,842</td><td class="num">7,915</td>
+          <td class="num pos">+73</td><td class="num pos">+0.93%</td>
+          <td class="num pos">+10,950.00</td><td class="num">14.25</td>
+          <td class="l state tag">持有</td>
+          <td class="c"><div class="ops"><a href="#">平仓</a><a href="#">改单</a><a class="warn" href="#">反手</a></div></td>
+        </tr>
+        <tr>
+          <td class="l"><input type="checkbox" style="width:12px;height:12px;vertical-align:-1px"></td>
+          <td class="code">SR2612</td><td class="l">白糖</td><td class="c tag pos">多头</td>
+          <td class="num">30</td><td class="num">6,124</td><td class="num">6,158</td>
+          <td class="num pos">+34</td><td class="num pos">+0.56%</td>
+          <td class="num pos">+10,200.00</td><td class="num">22.17</td>
+          <td class="l state tag">持有</td>
+          <td class="c"><div class="ops"><a href="#">平仓</a><a href="#">改单</a><a class="warn" href="#">反手</a></div></td>
+        </tr>
+        <tr>
+          <td class="l"><input type="checkbox" style="width:12px;height:12px;vertical-align:-1px"></td>
+          <td class="code">CF2612</td><td class="l">棉花</td><td class="c tag pos">多头</td>
+          <td class="num">10</td><td class="num">14,286</td><td class="num">14,352</td>
+          <td class="num pos">+66</td><td class="num pos">+0.46%</td>
+          <td class="num pos">+3,300.00</td><td class="num">8.61</td>
+          <td class="l state tag">持有</td>
+          <td class="c"><div class="ops"><a href="#">平仓</a><a href="#">改单</a><a class="warn" href="#">反手</a></div></td>
+        </tr>
+        <tr>
+          <td class="l"><input type="checkbox" style="width:12px;height:12px;vertical-align:-1px"></td>
+          <td class="code">AP2612</td><td class="l">苹果</td><td class="c tag pos">多头</td>
+          <td class="num">6</td><td class="num">8,246</td><td class="num">8,310</td>
+          <td class="num pos">+64</td><td class="num pos">+0.78%</td>
+          <td class="num pos">+3,840.00</td><td class="num">5.98</td>
+          <td class="l state tag">持有</td>
+          <td class="c"><div class="ops"><a href="#">平仓</a><a href="#">改单</a><a class="warn" href="#">反手</a></div></td>
+        </tr>
+        <tr>
+          <td class="l"><input type="checkbox" style="width:12px;height:12px;vertical-align:-1px"></td>
+          <td class="code">M2612</td><td class="l">豆粕</td><td class="c tag pos">多头</td>
+          <td class="num">24</td><td class="num">3,046</td><td class="num">3,068</td>
+          <td class="num pos">+22</td><td class="num pos">+0.72%</td>
+          <td class="num pos">+5,280.00</td><td class="num">8.84</td>
+          <td class="l state tag">临近强平</td>
+          <td class="c"><div class="ops"><a href="#">平仓</a><a href="#">改单</a><a class="warn" href="#">反手</a></div></td>
+        </tr>
+        <tr>
+          <td class="l"><input type="checkbox" style="width:12px;height:12px;vertical-align:-1px"></td>
+          <td class="code">SC2612</td><td class="l">原油</td><td class="c tag neg">空头</td>
+          <td class="num">4</td><td class="num">528.4</td><td class="num">522.9</td>
+          <td class="num neg">-5.5</td><td class="num neg">-1.04%</td>
+          <td class="num neg">-22,000.00</td><td class="num">25.10</td>
+          <td class="l state tag">持有</td>
+          <td class="c"><div class="ops"><a href="#">平仓</a><a href="#">改单</a><a class="warn" href="#">反手</a></div></td>
+        </tr>
+        <tr>
+          <td class="l"><input type="checkbox" style="width:12px;height:12px;vertical-align:-1px"></td>
+          <td class="code">RB2612</td><td class="l">螺纹钢</td><td class="c tag neg">空头</td>
+          <td class="num">20</td><td class="num">3,286</td><td class="num">3,251</td>
+          <td class="num neg">-35</td><td class="num neg">-1.07%</td>
+          <td class="num neg">-7,000.00</td><td class="num">7.80</td>
+          <td class="l state tag">持有</td>
+          <td class="c"><div class="ops"><a href="#">平仓</a><a href="#">改单</a><a class="warn" href="#">反手</a></div></td>
+        </tr>
+        <tr>
+          <td class="l"><input type="checkbox" style="width:12px;height:12px;vertical-align:-1px"></td>
+          <td class="code">HC2612</td><td class="l">热卷</td><td class="c tag neg">空头</td>
+          <td class="num">18</td><td class="num">3,412</td><td class="num">3,398</td>
+          <td class="num neg">-14</td><td class="num neg">-0.41%</td>
+          <td class="num neg">-2,520.00</td><td class="num">7.34</td>
+          <td class="l state tag">持有</td>
+          <td class="c"><div class="ops"><a href="#">平仓</a><a href="#">改单</a><a class="warn" href="#">反手</a></div></td>
+        </tr>
+        <tr>
+          <td class="l"><input type="checkbox" style="width:12px;height:12px;vertical-align:-1px"></td>
+          <td class="code">FG2612</td><td class="l">玻璃</td><td class="c tag neg">空头</td>
+          <td class="num">40</td><td class="num">1,286</td><td class="num">1,272</td>
+          <td class="num neg">-14</td><td class="num neg">-1.09%</td>
+          <td class="num neg">-11,200.00</td><td class="num">12.21</td>
+          <td class="l state tag">持有</td>
+          <td class="c"><div class="ops"><a href="#">平仓</a><a href="#">改单</a><a class="warn" href="#">反手</a></div></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td class="l" colspan="4">合计 · 14 个合约 · 多头 9 / 空头 5</td>
+          <td class="num">228</td><td class="num">—</td><td class="num">—</td>
+          <td class="num">—</td><td class="num">—</td>
+          <td class="num pos">+171,010.00</td>
+          <td class="num">1,000.29</td>
+          <td></td><td></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <section class="dist">
+      <div class="dh"><span>今 日 盈 亏 分 布 · 按品种</span><span>合计 +171,010.00 元</span></div>
+      <div class="drow"><span class="lb">股指</span><span class="dtrack"><span class="dbar p" style="width:47.0%"></span></span><span class="vl pos">+161,560.00</span></div>
+      <div class="drow"><span class="lb">有色</span><span class="dtrack"><span class="dbar p" style="width:8.6%"></span></span><span class="vl pos">+29,550.00</span></div>
+      <div class="drow"><span class="lb">农产品</span><span class="dtrack"><span class="dbar p" style="width:6.6%"></span></span><span class="vl pos">+22,620.00</span></div>
+      <div class="drow"><span class="lb">黑色</span><span class="dtrack"><span class="dbar n" style="width:6.0%"></span></span><span class="vl neg">-20,720.00</span></div>
+      <div class="drow"><span class="lb">能源</span><span class="dtrack"><span class="dbar n" style="width:6.4%"></span></span><span class="vl neg">-22,000.00</span></div>
+    </section>
+  </div>
+
+  <aside>
+    <div class="ahd"><b>IF2612</b><span>沪深300 · 2612</span></div>
+    <div class="sechd" style="border-top:0;margin-top:0;padding-top:12px">合 约 规 格</div>
+    <dl style="padding:0 var(--s2)">
+      <div class="kv"><dt>合约乘数</dt><dd>300 元 / 点</dd></div>
+      <div class="kv"><dt>最小变动</dt><dd>0.2 点</dd></div>
+      <div class="kv"><dt>交易保证金</dt><dd>12.00%</dd></div>
+      <div class="kv"><dt>开仓手续费</dt><dd>23.00 元 / 手</dd></div>
+      <div class="kv"><dt>最后交易日</dt><dd>2026-12-18</dd></div>
+    </dl>
+
+    <div class="sechd">本 头 寸</div>
+    <dl style="padding:0 var(--s2)">
+      <div class="kv"><dt>持仓 / 昨仓</dt><dd>24 / 0 手</dd></div>
+      <div class="kv"><dt>开仓均价</dt><dd>4,128.60</dd></div>
+      <div class="kv"><dt>浮动盈亏</dt><dd style="color:var(--up)">+126,720.00</dd></div>
+      <div class="kv"><dt>占用保证金</dt><dd>358.23 万元</dd></div>
+      <div class="kv"><dt>账户风险率</dt><dd>77.76%</dd></div>
+    </dl>
+
+    <div class="sechd">风 险 刻 度</div>
+    <div class="risk">
+      <div class="bar">
+        <i style="background:#D9E4F2"></i><i style="background:#B9CCE6"></i><i style="background:#93B3D8"></i>
+        <i style="background:#6B96C6"></i><i style="background:#4479B0"></i><i style="background:#2A5D93"></i>
+        <i style="background:#1A4B8C"></i><i style="background:#B45309"></i><i style="background:#8A4A0B"></i>
+      </div>
+      <div class="scale"><span>0%</span><span>风险率 77.76%</span><span>100%</span></div>
+    </div>
+
+    <div class="note">
+      豆粕 M2612 触发临近强平预警：占用保证金 8.84 万元，已达该合约维持保证金 9.31 万元的 95%，浮亏再扩大 5% 将触发强制减仓。
+    </div>
+  </aside>
+</div>
+
+<footer>
+  <span>共 14 条 · 每页 20 条 · 已加载 14 / 14</span>
+  <div class="pg"><span class="on">1</span></div>
+  <span>列排序：浮动盈亏 ↓ · 点击表头切换</span>
+  <div class="sp">
+    <span class="wrn">风控提示 2 条</span>
+    <span>行情延迟 18 ms</span>
+    <span>撮合引擎 v4.2.1 · 上次同步 14:26:07</span>
+  </div>
+</footer>
+
+</body>
+</html>

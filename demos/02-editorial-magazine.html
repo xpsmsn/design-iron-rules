@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>《食光志》第 14 期 · 大山里的发酵</title>
+<style>
+  :root{
+    --paper:#F7F5F2;          /* 微暖纸感底 */
+    --ink:#1A1A1A;            /* 一级文字 */
+    --body:#333333;           /* 正文 */
+    --ink-3:#6B6660;          /* 三级信息 */
+    --hair:#DDD8CF;           /* 装饰性细线（低对比，README 允许） */
+    --rule:#1A1A1A;           /* 上下大横线 */
+    --vermilion:#A8322A;      /* 唯一强调色 */
+    --serif:"Songti SC","SimSun","Source Han Serif SC","Noto Serif SC",Georgia,serif;
+    --sans:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",Helvetica,Arial,sans-serif;
+    --measure:737px;          /* 栏宽严格落在 680–760px */
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    background:var(--paper);color:var(--ink);
+    font-family:var(--sans);font-size:17px;
+    display:flex;flex-direction:column;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- 报头 ---------- */
+  .masthead{display:flex;align-items:flex-end;justify-content:space-between;padding:26px 80px 12px}
+  .paper-name{font-family:var(--serif);font-size:34px;line-height:1;letter-spacing:.22em}
+  .paper-name span{
+    display:block;margin-top:10px;font-family:var(--sans);
+    font-size:10px;letter-spacing:.34em;color:var(--ink-3);
+  }
+  .issue{text-align:right;font-size:12px;line-height:1.85;color:var(--ink-3);letter-spacing:.06em}
+  .issue b{display:block;font-size:13px;color:var(--ink);font-weight:400;letter-spacing:.14em}
+  nav{display:flex;gap:30px;padding-bottom:4px}
+  nav a{font-size:13px;color:var(--body);text-decoration:none;letter-spacing:.14em}
+  nav a.on{color:var(--vermilion);border-bottom:1px solid var(--vermilion);padding-bottom:3px}
+  .mast-rule{height:2px;background:var(--rule);flex:none}
+
+  /* ---------- 头条 ---------- */
+  .hero{padding:22px 80px 0;display:flex;justify-content:space-between;align-items:flex-end}
+  .eyebrow{font-size:12px;letter-spacing:.28em;color:var(--ink-3);display:flex;align-items:center;gap:16px}
+  .eyebrow b{color:var(--vermilion);font-weight:400;letter-spacing:.2em}
+  .hero h1{font-family:var(--serif);font-weight:400;font-size:72px;line-height:1.04;letter-spacing:.02em;margin-top:12px}
+  .hero h1 em{font-style:normal;color:var(--vermilion)}
+  .deck{width:var(--measure);font-size:16px;line-height:1.8;color:var(--body);margin-top:14px}
+  .deck b{font-weight:400;color:var(--vermilion)}
+  .byline{
+    text-align:right;font-size:12px;line-height:2;color:var(--ink-3);letter-spacing:.08em;
+    flex:none;margin-left:48px;padding-bottom:4px;
+  }
+  .byline b{font-weight:400;color:var(--ink);letter-spacing:.14em}
+
+  /* ---------- 正文区：上下大横线替代卡片 ---------- */
+  .rule-thin{height:1px;background:var(--hair);margin:22px 80px 0;flex:none}
+
+  .cols{
+    padding:0 80px;flex:none;
+    display:grid;grid-template-columns:var(--measure) 1fr;column-gap:133px;align-items:start;
+  }
+  .col-main{padding-top:26px}
+  .lead{font-size:17px;line-height:1.9;color:var(--body)}
+  .lead::first-letter{            /* 首字下沉，恰好占 3 行 */
+    float:left;font-family:var(--serif);color:var(--vermilion);
+    font-size:100px;line-height:.86;padding:3px 12px 0 0;
+  }
+  p.txt{font-size:17px;line-height:1.9;color:var(--body);text-align:justify}
+  p.txt + p.txt{margin-top:14px}
+
+  /* 提要：悬挂标点 */
+  .pull{
+    font-family:var(--serif);font-size:24px;line-height:1.5;color:var(--vermilion);
+    letter-spacing:.04em;text-indent:-.5em;margin-top:20px;   /* 悬挂标点 */
+  }
+  .pull cite{
+    display:block;text-indent:0;font-style:normal;font-family:var(--sans);
+    font-size:12px;color:var(--ink-3);letter-spacing:.14em;margin-top:10px;
+  }
+
+  /* ---------- 侧栏 ---------- */
+  .col-side{padding-top:26px}
+  .col-side h2{
+    font-family:var(--serif);font-weight:400;font-size:18px;
+    letter-spacing:.28em;color:var(--vermilion);
+    padding-bottom:9px;border-bottom:1px solid var(--ink);
+  }
+  .toc li{list-style:none;display:flex;align-items:baseline;padding:7px 0}
+  .toc .t{font-size:14px;color:var(--body);white-space:nowrap}
+  .toc .t i{font-style:normal;font-size:11px;color:var(--ink-3);letter-spacing:.14em;margin-left:10px}
+  .toc .dots{flex:1;margin:0 10px;border-bottom:1px dotted #C9C2B7;transform:translateY(-3px)}
+  .toc .pg{font-size:13px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+
+  .facts{border-top:1px solid var(--ink);margin-top:18px;padding-top:12px}
+  .fact{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0}
+  .fact dt{font-size:13px;color:var(--ink-3);letter-spacing:.1em}
+  .fact dd{font-size:15px;color:var(--ink);font-variant-numeric:tabular-nums}
+  .fact dd em{font-style:normal;font-size:12px;color:var(--ink-3);margin-left:4px}
+
+  /* ---------- 数据条 ---------- */
+  .figures{
+    margin:24px 80px 0;border-top:2px solid var(--rule);border-bottom:1px solid var(--rule);
+    display:grid;grid-template-columns:repeat(3,1fr);flex:none;
+  }
+  .fig{padding:14px 30px 15px 0}
+  .fig + .fig{border-left:1px solid var(--hair);padding-left:30px}
+  .fig .num{font-family:var(--serif);font-size:42px;line-height:1;color:var(--vermilion);font-variant-numeric:lining-nums}
+  .fig .num i{font-style:normal;font-size:17px;color:var(--ink);margin-left:6px;letter-spacing:.06em}
+  .fig .cap{font-size:12px;line-height:1.6;color:var(--ink-3);margin-top:8px}
+
+  /* ---------- 页脚 ---------- */
+  footer{
+    margin:0 80px;padding:13px 0 18px;flex:none;
+    display:flex;justify-content:space-between;align-items:flex-end;
+  }
+  footer p{font-size:11px;color:var(--ink-3);letter-spacing:.06em;line-height:1.75}
+  .ctas{display:flex;gap:28px;align-items:center;flex:none}
+  .ctas .ghost{font-size:13px;color:var(--body);letter-spacing:.12em}
+  .ctas .primary{font-size:14px;color:var(--paper);background:var(--vermilion);padding:10px 20px;letter-spacing:.12em}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div>
+    <div class="paper-name">食光志<span>SHIGUANG&nbsp;ZHI&nbsp;·&nbsp;FOOD&nbsp;AND&nbsp;LANDSCAPE&nbsp;QUARTERLY</span></div>
+  </div>
+  <div style="display:flex;align-items:flex-end;gap:52px">
+    <div class="issue"><b>第 14 期 · 2026 秋季号</b>ISSN 2026-0714 · 贵州 凯里 报道</div>
+    <nav>
+      <a href="#" class="on">专题</a><a href="#">食谱</a><a href="#">风物</a><a href="#">人物</a>
+    </nav>
+  </div>
+</div>
+<div class="mast-rule"></div>
+
+<section class="hero">
+  <div>
+    <div class="eyebrow"><b>秋季专题</b><span>封面故事</span><span>第 014 页</span></div>
+    <h1>大山里的<em>发酵</em></h1>
+    <p class="deck">
+      凯里朗德镇的坡地上，三十九口陶缸正在同时工作。本期我们跟着苗族酿造师罗秀英，
+      记录一缸酸汤从封缸到开缸的 <b>180 天</b>——以及这片山坡如何重新安排它的作物。
+    </p>
+  </div>
+  <div class="byline">撰文 <b>秦 宜</b><br>摄影 罗敬予 · 制图 谷雨工作室</div>
+</section>
+
+<div class="rule-thin"></div>
+
+<section class="cols">
+  <article class="col-main">
+    <p class="lead">清晨五点半，雾还压在朗德镇的瓦屋顶上，罗秀英已经把第一口缸的封口揭开。白汽带着一股酒曲的甜腥味，要过三十秒才散得干净。</p>
+    <p class="txt">
+      苗家人做酸汤不用酵母也不加糖，靠的是米酒在陶缸里自己长出的乳酸。三十九口缸轮着来，热天发酵快，冬天要裹两层稻草保暖，这套节奏她家传了四代。
+    </p>
+    <p class="txt">
+      2019 年她把坡上 8.3 亩地全改成果园后番茄一度不够用，便在背阴的坡脚补种了两千三百株。新品种果肉厚、出酸慢，酸度从 pH 4.1 降到 3.4。
+    </p>
+    <p class="txt">
+      开缸当天要先尝一勺生汤。酸得太急的不能要，罗秀英只留那种入口圆、咽下后舌根还挂一点回甘的。
+    </p>
+    <p class="pull">「坛子是会说话的。」<cite>—— 罗秀英，开缸前不接受采访</cite></p>
+  </article>
+
+  <aside class="col-side">
+    <h2>本 期 目 录</h2>
+    <ul class="toc">
+      <li><span class="t">山坳里的酸汤缸<i>封面</i></span><span class="dots"></span><span class="pg">014</span></li>
+      <li><span class="t">罗秀英与三十九口缸<i>人物</i></span><span class="dots"></span><span class="pg">028</span></li>
+      <li><span class="t">乳酸是怎么长出来的<i>工艺</i></span><span class="dots"></span><span class="pg">036</span></li>
+      <li><span class="t">凯里酸汤鱼店的账本<i>风物</i></span><span class="dots"></span><span class="pg">052</span></li>
+      <li><span class="t">一锅酸汤的九种吃法<i>食谱</i></span><span class="dots"></span><span class="pg">068</span></li>
+    </ul>
+
+    <dl class="facts">
+      <div class="fact"><dt>单缸容积</dt><dd>220 <em>升</em></dd></div>
+      <div class="fact"><dt>现存陶缸</dt><dd>39 <em>口</em></dd></div>
+      <div class="fact"><dt>坡地面积</dt><dd>8.3 <em>亩</em></dd></div>
+      <div class="fact"><dt>补种番茄苗</dt><dd>2,300 <em>株</em></dd></div>
+    </dl>
+  </aside>
+</section>
+
+<section class="figures">
+  <div class="fig">
+    <div class="num">180<i>天</i></div>
+    <div class="cap">单缸自然发酵周期，全程不加温，不接任何加热设备</div>
+  </div>
+  <div class="fig">
+    <div class="num">39<i>口</i></div>
+    <div class="cap">朗德镇现存陶缸，其中 12 口启用已超过十年未停用</div>
+  </div>
+  <div class="fig">
+    <div class="num">3.4<i>pH</i></div>
+    <div class="cap">本季酸汤酸度，较 2019 年改种果园前下降 0.7</div>
+  </div>
+</section>
+
+<footer>
+  <p>《食光志》第 14 期 · 2026 年 9 月刊 · 编辑部 贵州省黔东南州凯里市仰阿格西路 27 号</p>
+  <div class="ctas">
+    <span class="ghost">打印本期目录</span>
+    <span class="primary">订阅秋季号</span>
+  </div>
+</footer>
+
+</body>
+</html>

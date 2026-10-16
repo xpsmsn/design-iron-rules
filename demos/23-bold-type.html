@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>疾风 JIFENG · 跑鞋</title>
+<style>
+  :root{
+    --bg:#F3F1EA;
+    --ink:#101010;
+    --ink-2:#5B5B57;
+    --ink-3:#6B6B66;
+    --rule:#D6D3CA;
+    --accent:#E4401C;
+    --f-sans:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",Helvetica,Arial,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    background:var(--bg);color:var(--ink);
+    font-family:var(--f-sans);
+    display:flex;flex-direction:column;
+    -webkit-font-smoothing:antialiased;
+  }
+  .pad{padding:0 56px}
+
+  /* ---------- 顶栏：功能性文本保持正常字号 ---------- */
+  header{
+    display:flex;justify-content:space-between;align-items:center;
+    height:74px;padding:0 56px;border-bottom:1px solid var(--rule);
+  }
+  .logo{font-size:21px;font-weight:700;letter-spacing:-.01em}
+  .logo i{font-style:normal;color:var(--accent);letter-spacing:.06em;font-size:15px;margin-left:10px;font-weight:400}
+  nav{display:flex;gap:34px}
+  nav a{font-size:14px;color:var(--ink-2);text-decoration:none;letter-spacing:.06em}
+  nav a.on{color:var(--ink);font-weight:700}
+  .tools{display:flex;gap:22px;font-size:13px;color:var(--ink-2);letter-spacing:.06em}
+
+  main{flex:1;padding-top:34px;display:flex;flex-direction:column}
+
+  /* ---------- 首屏：字即主视觉 ---------- */
+  .hero{display:grid;grid-template-columns:1fr 268px;gap:56px}
+  .eyebrow{font-size:13px;letter-spacing:.16em;color:var(--ink-2)}
+  .eyebrow b{color:var(--ink);font-weight:700}
+  h1{
+    font-size:164px;font-weight:400;line-height:.94;
+    letter-spacing:-.03em;margin-top:16px;white-space:nowrap;
+  }
+  h1 em{font-style:normal;color:var(--accent)}
+  .sub{font-size:19px;letter-spacing:.01em;margin-top:22px;font-weight:700}
+  .sub em{font-style:normal;font-weight:400;color:var(--ink-2)}
+  .buy{display:flex;align-items:baseline;gap:34px;margin-top:26px}
+  .price{font-size:44px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .price span{font-size:22px;font-weight:400;margin-right:4px}
+  .sizes{font-size:13px;color:var(--ink-2);line-height:1.8;letter-spacing:.04em}
+  .acts{display:flex;gap:14px;margin-top:24px}
+  .p{font-family:var(--f-sans);font-size:15px;font-weight:700;letter-spacing:.08em;
+    background:var(--ink);color:var(--bg);border:0;padding:15px 30px}
+  .g{font-family:var(--f-sans);font-size:15px;font-weight:700;letter-spacing:.08em;
+    background:transparent;color:var(--ink);border:2px solid var(--ink);padding:13px 28px}
+
+  .specs{border-left:1px solid var(--rule);padding-left:32px;display:flex;flex-direction:column;justify-content:flex-end}
+  .spec{padding:16px 0;border-bottom:1px solid var(--rule)}
+  .spec:last-child{border-bottom:0}
+  .spec b{display:block;font-size:66px;font-weight:700;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+  .spec b i{font-style:normal;font-size:22px;font-weight:400;letter-spacing:0;margin-left:4px;color:var(--ink-2)}
+  .spec span{display:block;font-size:12px;color:var(--ink-2);letter-spacing:.12em;margin-top:9px}
+
+  /* ---------- 在售矩阵 ---------- */
+  .matrix{margin-top:30px}
+  .m-h{display:flex;justify-content:space-between;align-items:baseline;
+    border-top:2px solid var(--ink);padding-top:12px}
+  .m-h h2{font-size:13px;letter-spacing:.2em;font-weight:700}
+  .m-h span{font-size:12px;color:var(--ink-2);letter-spacing:.06em}
+  .row3{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+  .pd{padding:18px 30px 0 0;border-right:1px solid var(--rule)}
+  .pd:nth-child(2),.pd:nth-child(3),.pd:nth-child(4){padding-left:30px}
+  .pd:last-child{border-right:0;padding-right:0}
+  .pd .no{font-size:12px;color:var(--ink-3);letter-spacing:.16em}
+  .pd .nm{font-size:34px;font-weight:700;letter-spacing:-.02em;margin-top:8px}
+  .pd .ds{font-size:13px;color:var(--ink-2);margin-top:8px;letter-spacing:.02em}
+  .pd .ft{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+  .sw{display:flex;gap:8px}
+  .sw i{width:16px;height:16px;display:block}
+  .pd .pr{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+  .pd .go{font-size:13px;color:var(--ink);letter-spacing:.06em;margin-top:12px}
+
+  /* ---------- 赛事条 ---------- */
+  .race{
+    margin-top:auto;background:var(--ink);color:var(--bg);
+    display:flex;justify-content:space-between;align-items:center;
+    padding:16px 56px;
+  }
+  .race .l{display:flex;align-items:baseline;gap:20px}
+  .race .l b{font-size:19px;font-weight:700;letter-spacing:.02em}
+  .race .l span{font-size:13px;color:#BFBFB8;letter-spacing:.04em}
+  .race .r{font-size:14px;font-weight:700;letter-spacing:.08em;
+    background:var(--bg);color:var(--ink);padding:11px 20px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">疾风<i>JIFENG</i></div>
+  <nav>
+    <a href="#" class="on">鞋款</a>
+    <a href="#">科技</a>
+    <a href="#">赛事</a>
+    <a href="#">门店</a>
+    <a href="#">跑步社区</a>
+  </nav>
+  <div class="tools">鞋码查询 · 订单与配送 · 门店自提</div>
+</header>
+
+<main>
+  <section class="hero pad">
+    <div>
+      <div class="eyebrow"><b>2026 秋季主线</b> · 碳板竞速 · 10 月 18 日 10:00 首发</div>
+      <h1>夜影<em>4.0</em></h1>
+      <div class="sub">299 g 单只 · 前掌 6 mm 后跟 8 mm · 氮气推进中底回弹 <em>78%</em></div>
+      <div class="buy">
+        <div class="price"><span>¥</span>1,299</div>
+        <div class="sizes">现货 42 / 42.5 / 43 / 43.5 / 44<br>其余 6 个尺码 10 月 25 日补货</div>
+      </div>
+      <div class="acts">
+        <button class="p">预约试跑</button>
+        <button class="g">查看碳板结构</button>
+      </div>
+    </div>
+
+    <aside class="specs">
+      <div class="spec"><b>299<i>g</i></b><span>单只重量 · 42 码 US9</span></div>
+      <div class="spec"><b>78<i>%</i></b><span>中底能量回弹率</span></div>
+      <div class="spec"><b>6<i>mm</i></b><span>前掌落差 · 后跟 8 mm</span></div>
+    </aside>
+  </section>
+
+  <section class="matrix pad">
+    <div class="m-h">
+      <h2>其 他 在 售 鞋 款</h2>
+      <span>官网在售共 5 款（含本页夜影 4.0）· 本季新增 1 款</span>
+    </div>
+    <div class="row3">
+      <div class="pd">
+        <div class="no">JF-R02</div>
+        <div class="nm">夜影 3.5</div>
+        <div class="ds">日常慢跑 · 超临界发泡中底</div>
+        <div class="ft">
+          <div class="sw"><i style="background:#101010"></i><i style="background:#E4401C"></i></div>
+          <div class="pr">¥ 899</div>
+        </div>
+        <div class="go">看尺码库存 →</div>
+      </div>
+      <div class="pd">
+        <div class="no">JF-T11</div>
+        <div class="nm">白昼 T11</div>
+        <div class="ds">路跑训练 · 6 mm 落差全掌碳板</div>
+        <div class="ft">
+          <div class="sw"><i style="background:#F3F1EA;border:1px solid #D6D3CA"></i><i style="background:#2B4ACB"></i><i style="background:#101010"></i></div>
+          <div class="pr">¥ 1,099</div>
+        </div>
+        <div class="go">看尺码库存 →</div>
+      </div>
+      <div class="pd">
+        <div class="no">JF-K07</div>
+        <div class="nm">越野 K07</div>
+        <div class="ds">山径 30 km · Vibram 大底</div>
+        <div class="ft">
+          <div class="sw"><i style="background:#3F6B45"></i><i style="background:#D9C4A3"></i></div>
+          <div class="pr">¥ 1,199</div>
+        </div>
+        <div class="go">看尺码库存 →</div>
+      </div>
+      <div class="pd">
+        <div class="no">JF-C01</div>
+        <div class="nm">竞速 C1</div>
+        <div class="ds">碳板竞速 · 4 mm 落差</div>
+        <div class="ft">
+          <div class="sw"><i style="background:#E4401C"></i><i style="background:#101010"></i></div>
+          <div class="pr">¥ 1,499</div>
+        </div>
+        <div class="go">看尺码库存 →</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="race">
+  <div class="l">
+    <b>疾风夜跑 2026 · 上海站</b>
+    <span>10 月 31 日 20:00 苏州河 1 号桥 · 已报名 3,840 人 · 额满 4,000</span>
+  </div>
+  <div class="r">领取号码布 →</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>霓虹纪元 · 第七赛季 深潜协议</title>
+<style>
+  :root{
+    --bg:#0A0E14;
+    --panel:#10161F;
+    --panel-2:#141C27;
+    --ink-1:#E8EDF2;
+    --ink-2:#9AA7B8;
+    --ink-3:#7E8C9D;
+    --cyan:#00F0FF;
+    --pink:#FF2E88;
+    --acid:#39FF14;
+    --warn:#F5FF00;
+    --cut:14px;
+    --f-sans:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",Helvetica,Arial,sans-serif;
+    --f-mono:"Cascadia Code",Consolas,"SF Mono","Courier New","Microsoft YaHei",monospace;
+    --pad:64px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    background:var(--bg);color:var(--ink-1);
+    font-family:var(--f-sans);
+    -webkit-font-smoothing:antialiased;
+    display:flex;flex-direction:column;
+    position:relative;
+  }
+
+  /* 透视网格地平线 */
+  .horizon{
+    position:absolute;left:0;right:0;bottom:0;height:340px;z-index:0;
+    background:
+      repeating-linear-gradient(90deg,rgba(0,240,255,.20) 0 1px,transparent 1px 78px),
+      repeating-linear-gradient(0deg,rgba(0,240,255,.16) 0 1px,transparent 1px 46px);
+    -webkit-mask-image:linear-gradient(transparent,#000 42%,transparent 96%);
+    mask-image:linear-gradient(transparent,#000 42%,transparent 96%);
+    -webkit-mask-size:100% 100%;
+  }
+  /* CRT 暗角 */
+  .vignette{
+    position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(112% 84% at 50% 42%,transparent 42%,rgba(0,0,0,.72) 100%);
+  }
+  /* 扫描线 ≤ 8% */
+  .scan{
+    position:absolute;inset:0;z-index:6;pointer-events:none;opacity:.05;
+    background:repeating-linear-gradient(0deg,#9FD8FF 0 1px,transparent 1px 3px);
+  }
+
+  /* ---------- 顶栏 ---------- */
+  header{position:relative;z-index:5;padding:0 var(--pad)}
+  .topbar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 0;border-bottom:1px solid rgba(0,240,255,.16);
+    font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;color:var(--ink-3);
+  }
+  .servers{display:flex;gap:26px}
+  .servers b{font-weight:400;color:var(--acid)}
+  .servers .warn{color:var(--warn)}
+  nav{display:flex;gap:38px;align-items:center;padding:20px 0 0}
+  nav a{font-size:14px;color:var(--ink-2);text-decoration:none;letter-spacing:.1em}
+  nav a.on{
+    color:var(--cyan);
+    text-shadow:0 0 14px rgba(0,240,255,.75);
+  }
+
+  main{position:relative;z-index:5;flex:1;padding:0 var(--pad);display:flex;flex-direction:column}
+
+  /* ---------- 主视觉 ---------- */
+  .hero{display:grid;grid-template-columns:7fr 5fr;gap:56px;padding-top:24px;align-items:start}
+
+  .season-tag{
+    display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:.26em;
+    color:var(--pink);padding:6px 15px;
+    border:1px solid rgba(255,46,136,.55);
+    clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);
+    text-shadow:0 0 12px rgba(255,46,136,.6);
+  }
+  h1{
+    font-size:70px;font-weight:800;line-height:1.02;letter-spacing:-.02em;
+    margin-top:16px;
+    color:#F2F7FA;
+    text-shadow:0 0 26px rgba(0,240,255,.45),0 0 64px rgba(0,240,255,.22);
+  }
+  h1 .b{
+    display:block;
+    background:linear-gradient(94deg,#00F0FF 8%,#FF2E88 88%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:none;filter:drop-shadow(0 0 22px rgba(255,46,136,.42));
+  }
+  .lede{font-size:15.5px;line-height:1.78;color:var(--ink-1);max-width:540px;margin-top:16px;opacity:.92}
+  .lede .cy{color:var(--cyan)}
+  .lede .pk{color:var(--pink)}
+
+  .cta-row{display:flex;gap:16px;margin-top:24px;align-items:stretch}
+  .btn{
+    font-family:var(--f-sans);font-size:15px;font-weight:700;letter-spacing:.06em;
+    padding:14px 28px;border:none;cursor:pointer;
+    clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);
+  }
+  .btn-fill{background:var(--cyan);color:#0A0E14;text-shadow:none}
+  .btn-ghost{
+    background:transparent;color:var(--cyan);
+    border:1px solid rgba(0,240,255,.55);
+    clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);
+  }
+
+  .meta-row{display:flex;gap:40px;margin-top:24px;font-family:var(--f-mono)}
+  .meta .k{font-size:11px;color:var(--ink-3);letter-spacing:.14em}
+  .meta .v{font-size:20px;font-weight:700;margin-top:7px;font-variant-numeric:tabular-nums}
+  .meta .v.cy{color:var(--cyan);text-shadow:0 0 16px rgba(0,240,255,.6)}
+  .meta .v.pk{color:var(--pink);text-shadow:0 0 16px rgba(255,46,136,.6)}
+
+  /* ---------- 赛季通行证卡 ---------- */
+  .pass{
+    background:var(--panel);border:1px solid rgba(0,240,255,.32);
+    clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px);
+    padding:22px 26px 20px;
+  }
+  .pass-head{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:14px;border-bottom:1px solid rgba(0,240,255,.20)}
+  .pass-head h2{font-size:14px;font-weight:700;letter-spacing:.14em;color:var(--cyan);text-shadow:0 0 14px rgba(0,240,255,.6)}
+  .pass-head span{font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+  .price{display:flex;align-items:baseline;gap:12px;margin-top:16px}
+  .price .amt{font-size:38px;font-weight:800;color:#F2F7FA;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .price .old{font-size:14px;color:var(--ink-3);text-decoration:line-through}
+  .price .off{font-family:var(--f-mono);font-size:11px;color:#0A0E14;background:var(--acid);padding:3px 8px;letter-spacing:.1em}
+
+  .tiers{margin-top:16px}
+  .tier{display:grid;grid-template-columns:96px 1fr 74px;gap:14px;align-items:center;padding:9px 0;border-top:1px solid rgba(255,255,255,.07)}
+  .tier .t{font-size:13px;color:var(--ink-1);letter-spacing:.04em}
+  .tier .d{font-size:12px;color:var(--ink-2)}
+  .tier .q{font-family:var(--f-mono);font-size:12px;text-align:right;color:var(--ink-1)}
+  .bar{grid-column:1/-1;height:6px;background:rgba(255,255,255,.08);margin-top:-4px}
+  .bar i{display:block;height:100%}
+  .pass-foot{margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07);display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:11px;color:var(--ink-3);letter-spacing:.06em}
+
+  /* ---------- 赛季特性 ---------- */
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:26px}
+  .feat{
+    background:var(--panel-2);
+    border:1px solid rgba(255,255,255,.09);
+    border-top:2px solid var(--cyan);
+    padding:18px 22px 20px;
+  }
+  .feat:nth-child(2){border-top-color:var(--pink)}
+  .feat:nth-child(3){border-top-color:var(--acid)}
+  .feat .ico{
+    width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+    border:1px solid rgba(0,240,255,.45);
+    clip-path:polygon(0 9px,9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%);
+  }
+  .feat:nth-child(2) .ico{border-color:rgba(255,46,136,.5)}
+  .feat:nth-child(3) .ico{border-color:rgba(57,255,20,.45)}
+  .feat h3{font-size:16.5px;font-weight:700;margin-top:12px;letter-spacing:.03em}
+  .feat p{font-size:13.5px;line-height:1.7;color:var(--ink-2);margin-top:8px}
+  .feat .tag{
+    display:inline-block;margin-top:12px;font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;
+    color:var(--ink-2);border:1px solid rgba(255,255,255,.20);padding:3px 9px;
+  }
+
+  /* ---------- 页脚 ---------- */
+  footer{
+    position:relative;z-index:5;
+    margin:0 var(--pad);padding:14px 0 18px;
+    border-top:1px solid rgba(255,255,255,.10);
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  footer p{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);letter-spacing:.08em;line-height:1.9}
+  .foot-r{display:flex;gap:30px;align-items:center}
+  .foot-r a{font-size:13px;color:var(--ink-2);text-decoration:none;letter-spacing:.06em}
+  .foot-r .hi{color:var(--warn);text-shadow:0 0 14px rgba(245,255,0,.55)}
+</style>
+</head>
+<body>
+
+<div class="horizon"></div>
+<div class="vignette"></div>
+<div class="scan"></div>
+
+<header>
+  <div class="topbar">
+    <div class="servers">
+      <span>赛季 <b>S07</b> · 深潜协议</span>
+      <span>上海一区 <b>在线 42,318</b></span>
+      <span>亚服 <span class="warn">延迟 168ms</span></span>
+    </div>
+    <div>版本 v7.4.2 · 2026.10.24 更新</div>
+  </div>
+  <nav>
+    <a href="#">赛季手册</a>
+    <a href="#">新武器</a>
+    <a href="#" class="on">通行证</a>
+    <a href="#">排位赛</a>
+    <a href="#">社区</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <div class="season-tag">SEASON 07 / 2026.10.24 – 12.14</div>
+      <h1>深潜协议<span class="b">ABYSS PROTOCOL</span></h1>
+      <p class="lede">
+        全新海底都市 <span class="cy">「鲸落」</span>开放，8 张作战地图、
+        4 把突击步枪与 1 名可操作角色加入本赛季。通行证分
+        <span class="pk">标准 / 精英 / 典藏</span> 三档，
+        典藏档含 12 款外观，其中 3 款为动态涂装。
+      </p>
+
+      <div class="cta-row">
+        <button class="btn btn-fill">购买赛季通行证 ¥68</button>
+        <button class="btn btn-ghost">查看赛季奖励清单</button>
+      </div>
+
+      <div class="meta-row">
+        <div class="meta"><div class="k">剩余天数</div><div class="v cy">17</div></div>
+        <div class="meta"><div class="k">段位巅峰人数</div><div class="v">1,846</div></div>
+        <div class="meta"><div class="k">新皮肤总数</div><div class="v pk">36</div></div>
+        <div class="meta"><div class="k">通行证等级</div><div class="v">80</div></div>
+      </div>
+    </div>
+
+    <div class="pass">
+      <div class="pass-head">
+        <h2>赛季通行证</h2>
+        <span>剩余 17 天 · 31,400 级</span>
+      </div>
+
+      <div class="price">
+        <div class="amt">¥68</div>
+        <div class="old">¥98</div>
+        <div class="off">-30%</div>
+      </div>
+
+      <div class="tiers">
+        <div class="tier">
+          <div class="t">标准档</div>
+          <div class="d">每 5 级获得 1 个补给箱</div>
+          <div class="q">¥68</div>
+          <div class="bar"><i style="width:100%;background:#3D7BFF"></i></div>
+        </div>
+        <div class="tier">
+          <div class="t">精英档</div>
+          <div class="d">标准 + 每周额外 3 张挑战券</div>
+          <div class="q">¥128</div>
+          <div class="bar"><i style="width:76%;background:var(--pink)"></i></div>
+        </div>
+        <div class="tier">
+          <div class="t">典藏档</div>
+          <div class="d">精英 + 12 款外观 · 3 款动态涂装</div>
+          <div class="q">¥328</div>
+          <div class="bar"><i style="width:34%;background:var(--acid)"></i></div>
+        </div>
+      </div>
+
+      <div class="pass-foot">
+        <span>预计游玩时长 42 小时</span>
+        <span>等级进度 34 / 80</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="feat">
+      <div class="ico">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#00F0FF" stroke-width="1.4">
+          <path d="M2 13 L6 7 L10 11 L14 4 L18 9"/>
+          <path d="M2 17 h16"/>
+        </svg>
+      </div>
+      <h3>鲸落作战地图</h3>
+      <p>海面下 1,240 米，垂直战场分三层，潮汐每 90 秒改写通路。</p>
+      <span class="tag">8 张新地图</span>
+    </div>
+    <div class="feat">
+      <div class="ico">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#FF2E88" stroke-width="1.4">
+          <circle cx="10" cy="10" r="7"/>
+          <path d="M10 3 v14 M3 10 h14"/>
+        </svg>
+      </div>
+      <h3>可操作角色「蛎」</h3>
+      <p>首个水下行动角色，声呐标记暴露敌人轮廓 2.5 秒，需消耗氧气槽。</p>
+      <span class="tag">1 名新角色</span>
+    </div>
+    <div class="feat">
+      <div class="ico">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#39FF14" stroke-width="1.4">
+          <path d="M3 15 L17 5 M17 5 h-6 M17 5 v6"/>
+          <path d="M3 15 v-5 h5"/>
+        </svg>
+      </div>
+      <h3>突击步枪 · 潮汐 M4</h3>
+      <p>水下弹道扩散降低 30%，配套三段式消音器与水下专用瞄具。</p>
+      <span class="tag">4 把新枪</span>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>《霓虹纪元》运营：赛博纪元互动 · 版号 ISBN 978-7-5388-4712-6<br>客服工单响应时间 ≤ 4 小时 · 未成年人时段限制已启用</p>
+  <div class="foot-r">
+    <a href="#">退款与充值说明</a>
+    <a href="#">赛季规则</a>
+    <a href="#" class="hi">进入赛季大厅 →</a>
+  </div>
+</footer>
+
+</body>
+</html>

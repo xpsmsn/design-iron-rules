@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>nimbus — 分布式对象存储 CLI</title>
+<style>
+  :root{
+    --bg:#070B09;
+    --panel:#0E1512;
+    --panel-2:#121A16;
+    --ink-1:#D8E5DC;
+    --ink-2:#8FA396;
+    --ink-3:#7E8F84;
+    --green:#00C853;
+    --amber:#FFB000;
+    --cyan:#7DD3FC;
+    --red:#FF8A8A;
+    --f-mono:"Cascadia Code",Consolas,"SF Mono","Courier New","Microsoft YaHei","PingFang SC","Noto Sans SC",monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    background:var(--bg);color:var(--ink-1);
+    font-family:var(--f-mono);
+    font-size:13px;line-height:1.72;
+    display:flex;flex-direction:column;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* 扫描线 ≤ 8% */
+  .scan{
+    position:fixed;inset:0;z-index:9;pointer-events:none;opacity:.04;
+    background:repeating-linear-gradient(0deg,#7DFFB0 0 1px,transparent 1px 3px);
+  }
+
+  /* ---------- 标题栏 ---------- */
+  .titlebar{
+    display:flex;justify-content:space-between;align-items:center;
+    background:var(--panel-2);border-bottom:1px solid #1E2A24;
+    padding:10px 22px;font-size:12px;letter-spacing:.06em;color:var(--ink-2);
+    flex:none;
+  }
+  .titlebar .tb-l{display:flex;align-items:center;gap:14px}
+  .led{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);flex:none}
+  .titlebar b{color:var(--ink-1);font-weight:600}
+  .titlebar .tb-r{display:flex;gap:24px;font-size:11px;color:var(--ink-3)}
+  .titlebar .tb-r span b{font-weight:400;color:var(--green)}
+
+  /* ---------- 主体 ---------- */
+  main{flex:1;display:grid;grid-template-columns:1fr 452px;gap:18px;padding:18px 22px 14px;min-height:0}
+
+  /* 窗口：1px 实线模拟终端窗框 */
+  .win{border:1px solid #1E2A24;background:var(--panel);display:flex;flex-direction:column;min-height:0}
+  .win-head{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:7px 14px;background:var(--panel-2);border-bottom:1px solid #1E2A24;
+    font-size:11px;letter-spacing:.1em;color:var(--ink-3);flex:none;
+  }
+  .win-head .tag{color:var(--green)}
+  .win-body{padding:16px 18px;overflow:hidden}
+
+  /* ---------- 会话日志 ---------- */
+  .banner{color:var(--green);font-size:12px;line-height:1.55;opacity:.75;margin-bottom:10px;white-space:pre}
+  .ln{white-space:pre-wrap;word-break:break-all}
+  .ln .ps{color:var(--ink-3)}
+  .ln .cmd{color:var(--ink-1);font-weight:600}
+  .ln .fl{color:var(--cyan)}
+  .ln .ok{color:var(--green)}
+  .ln .dim{color:var(--ink-3)}
+  .ln .key{color:var(--ink-2)}
+  .ln .val{color:var(--ink-1)}
+  .ln .warn{color:var(--amber)}
+  .ln .err{color:var(--red)}
+  .ln .url{color:var(--cyan)}
+  .gap{margin-top:13px}
+  .cursor{display:inline-block;width:8px;height:15px;background:var(--green);vertical-align:-3px}
+
+  /* ---------- 集群表 ---------- */
+  .cap-title{
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding-bottom:9px;margin-bottom:12px;border-bottom:1px solid #1E2A24;
+    font-size:11px;letter-spacing:.12em;color:var(--ink-3);
+  }
+  .cap-title b{color:var(--green);font-weight:600}
+
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  thead th{
+    text-align:left;font-weight:400;color:var(--ink-3);font-size:11px;letter-spacing:.08em;
+    padding:0 0 8px;border-bottom:1px solid #1E2A24;
+  }
+  thead th.r,td.r{text-align:right}
+  tbody td{padding:8px 0;border-bottom:1px solid #182220;color:var(--ink-1)}
+  tbody td.r{font-variant-numeric:tabular-nums}
+  tbody td.dim{color:var(--ink-2)}
+  .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:7px;vertical-align:0px}
+  .dot.warn{background:var(--amber)}
+
+  .usage{margin-top:16px}
+  .usage-row{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-2);margin-bottom:7px;letter-spacing:.06em}
+  .usage-row b{color:var(--ink-1);font-weight:600;font-variant-numeric:tabular-nums}
+  .utrack{height:9px;background:#0A100D;border:1px solid #1E2A24;display:flex}
+  .utrack i{display:block;height:100%}
+  .ulegend{display:flex;gap:20px;margin-top:9px;font-size:11px;color:var(--ink-3);flex-wrap:wrap}
+  .ulegend span::before{
+    content:"";display:inline-block;width:8px;height:8px;margin-right:6px;vertical-align:0px;
+  }
+  .ulegend .s1::before{background:#00C853}
+  .ulegend .s2::before{background:#00A844}
+  .ulegend .s3::before{background:#0B7A36}
+
+  /* ---------- 快捷键 ---------- */
+  .keys{display:grid;grid-template-columns:auto 1fr;gap:9px 14px;align-items:baseline;font-size:12px}
+  .keys kbd{
+    font-family:var(--f-mono);font-size:11px;color:var(--ink-1);
+    background:var(--panel-2);border:1px solid #2A3830;border-bottom-width:2px;
+    padding:2px 8px;white-space:nowrap;
+  }
+  .keys .kd{color:var(--ink-2)}
+
+  .cmdref{margin-top:16px;padding-top:14px;border-top:1px solid #1E2A24}
+  .cmdref .r{display:flex;justify-content:space-between;gap:12px;font-size:11.5px;padding:4px 0}
+  .cmdref .r b{color:var(--cyan);font-weight:400;white-space:nowrap}
+  .cmdref .r span{color:var(--ink-3);text-align:right}
+
+  /* ---------- 页脚 ---------- */
+  footer{
+    flex:none;border-top:1px solid #1E2A24;background:var(--panel-2);
+    display:flex;justify-content:space-between;align-items:center;
+    padding:9px 22px;font-size:11px;letter-spacing:.06em;color:var(--ink-3);
+  }
+  footer b{color:var(--green);font-weight:400}
+  footer .r{display:flex;gap:22px}
+</style>
+</head>
+<body>
+
+<div class="scan"></div>
+
+<div class="titlebar">
+  <div class="tb-l">
+    <span class="led"></span>
+    <b>nimbus</b>
+    <span>分布式对象存储 · 命令行 v2.9.4</span>
+  </div>
+  <div class="tb-r">
+    <span>区域 <b>cn-east-1</b></span>
+    <span>身份 <b>svc-ci@corp.nimbus.io</b></span>
+    <span>凭据剩余 <b>5h 52m</b></span>
+  </div>
+</div>
+
+<main>
+
+  <!-- 左：会话 -->
+  <section class="win">
+    <div class="win-head">
+      <span>会话 · ~/work/ep07-pipeline</span>
+      <span class="tag">zsh · 128×40</span>
+    </div>
+    <div class="win-body">
+      <div class="banner">+------------------------------------------+
+|   nimbus cli v2.9.4                      |
++------------------------------------------+</div>
+
+      <div class="ln"><span class="ps">$</span> <span class="cmd">nimbus auth login --profile prod-cn-east</span></div>
+      <div class="ln"><span class="ok">✔</span> <span class="val">已使用设备密钥登录</span> <span class="dim">· 身份 svc-ci@corp.nimbus.io</span></div>
+      <div class="ln"><span class="ok">✔</span> <span class="val">凭据有效期 6 小时</span> <span class="dim">至 2026-10-17 01:24 CST</span></div>
+
+      <div class="ln gap"><span class="ps">$</span> <span class="cmd">nimbus cluster attach cn-east-1</span></div>
+      <div class="ln">  <span class="key">集群</span>   <span class="val">cn-east-1</span></div>
+      <div class="ln">  <span class="key">可用区</span> <span class="val">cn-east-1a / 1b / 1c</span> <span class="dim">· 上海</span></div>
+      <div class="ln">  <span class="key">节点</span>   <span class="val">12 online</span> <span class="dim">/ 0 degraded</span></div>
+      <div class="ln">  <span class="key">仲裁</span>   <span class="ok">healthy</span> <span class="dim">— 写入需 R+3 确认，可用 W+2</span></div>
+
+      <div class="ln gap"><span class="ps">$</span> <span class="cmd">nimbus bucket create</span> <span class="fl">--name</span> <span class="val">media-4k-2026</span> <span class="fl">--quota</span> <span class="val">512TB</span></div>
+      <div class="ln">  <span class="key">名称</span>   <span class="val">media-4k-2026</span></div>
+      <div class="ln">  <span class="key">端点</span>   <span class="url">https://s3.nimbus.internal:9000/media-4k-2026</span></div>
+      <div class="ln">  <span class="key">纠删码</span> <span class="warn">RS 6+3</span> <span class="dim">— 单对象最大 64 MB 分片，跨 3 个机架</span></div>
+
+      <div class="ln gap"><span class="ps">$</span> <span class="cmd">nimbus put</span> <span class="fl">./renders/ep07_master.mov</span> <span class="fl">--replica</span> <span class="val">3</span> <span class="fl">--integrity</span> <span class="val">sha256</span></div>
+      <div class="ln">  <span class="dim">19:22:07</span>  分片 <span class="val">1/24</span>  <span class="val">96.0 MB</span>  <span class="ok">18.6 MB/s</span></div>
+      <div class="ln">  <span class="dim">19:22:41</span>  分片 <span class="val">12/24</span> <span class="val">1.15 GB</span>  <span class="ok">16.1 MB/s</span></div>
+      <div class="ln">  <span class="dim">19:24:11</span>  <span class="ok">✔ 2.31 GB 分 24 片写入完成</span> <span class="dim">用时 2 分 04 秒</span></div>
+      <div class="ln">  <span class="dim">19:24:11</span>  <span class="ok">✔ ETag 8f2ac41e9b07</span> <span class="dim">校验 sha256 通过</span></div>
+
+      <div class="ln gap"><span class="ps">$</span> <span class="cmd">nimbus ls</span> <span class="fl">--bucket</span> <span class="val">media-4k-2026</span> <span class="fl">--prefix</span> <span class="val">renders/</span></div>
+      <div class="ln">  <span class="dim">ep05_master.mov   1.84 GB  2026-09-28 14:02</span></div>
+      <div class="ln">  <span class="dim">ep06_master.mov   2.07 GB  2026-10-11 09:47</span></div>
+      <div class="ln">  <span class="val">ep07_master.mov   2.31 GB  2026-10-16 19:24</span> <span class="ok">← 新增</span></div>
+      <div class="ln gap"><span class="ps">$</span> <span class="cmd">nimbus doctor</span> <span class="fl">--checks</span> <span class="val">quorum,erasure,clock</span></div>
+      <div class="ln">  <span class="key">quorum</span>   <span class="ok">ok</span>    <span class="dim">写入延迟 p99 4.1 ms</span></div>
+      <div class="ln">  <span class="key">erasure</span>  <span class="ok">ok</span>    <span class="dim">RS 6+3 校验通过 12,800 片</span></div>
+      <div class="ln">  <span class="key">clock</span>    <span class="warn">warn</span>  <span class="dim">nimb-09 偏移 1.8 s（阈值 1.0 s）</span></div>
+
+      <div class="ln gap"><span class="ps">$</span> <span class="cmd">nimbus snapshot schedule</span> <span class="fl">--bucket</span> <span class="val">media-4k-2026</span> <span class="fl">--cron</span> <span class="val">"0 3 * * *"</span></div>
+      <div class="ln"><span class="ps">$</span> <span class="cursor"></span></div>
+    </div>
+  </section>
+
+  <!-- 右：状态与参考 -->
+  <div style="display:flex;flex-direction:column;gap:18px;min-height:0">
+
+    <section class="win" style="flex:none">
+      <div class="win-head">
+        <span>集群容量 · cn-east-1</span>
+        <span class="tag">采样 19:25:02</span>
+      </div>
+      <div class="win-body">
+        <table>
+          <thead>
+            <tr>
+              <th>节点</th><th>角色</th><th>状态</th><th class="r">已用 / 容量</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>nimb-01</td><td class="dim">coordinator</td><td><span class="dot"></span>健康</td><td class="r">18.2 / 64.0 TB</td></tr>
+            <tr><td>nimb-04</td><td class="dim">storage</td><td><span class="dot"></span>健康</td><td class="r">41.7 / 64.0 TB</td></tr>
+            <tr><td>nimb-07</td><td class="dim">storage</td><td><span class="dot"></span>健康</td><td class="r">39.4 / 64.0 TB</td></tr>
+            <tr><td>nimb-09</td><td class="dim">storage</td><td><span class="dot warn"></span>重平衡中</td><td class="r">48.6 / 64.0 TB</td></tr>
+          </tbody>
+        </table>
+
+        <div class="usage">
+          <div class="usage-row">
+            <span>总容量</span>
+            <b>2.31 PB / 4.00 PB · 57.8%</b>
+          </div>
+          <div class="utrack">
+            <i style="width:34%;background:#0B7A36"></i>
+            <i style="width:16%;background:#00A844"></i>
+            <i style="width:7.8%;background:#00C853"></i>
+          </div>
+          <div class="ulegend">
+            <span class="s3">冷数据 1.36 PB</span>
+            <span class="s2">温数据 640 TB</span>
+            <span class="s1">热数据 312 TB</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="win" style="flex:1">
+      <div class="win-head">
+        <span>常用子命令</span>
+        <span class="tag">nimbus --help</span>
+      </div>
+      <div class="win-body" style="padding:14px 18px 16px">
+        <div class="keys">
+          <kbd>nimbus status</kbd><span class="kd">集群与节点实时状态</span>
+          <kbd>nimbus put</kbd><span class="kd">上传对象，支持分片并发</span>
+          <kbd>nimbus snapshot</kbd><span class="kd">定时快照与增量恢复</span>
+        </div>
+
+        <div class="cmdref">
+          <div class="r"><b>--replica &lt;n&gt;</b><span>副本数 1–12</span></div>
+          <div class="r"><b>--integrity sha256</b><span>端到端校验</span></div>
+          <div class="r"><b>--prefix &lt;p&gt;</b><span>路径前缀过滤</span></div>
+          <div class="r"><b>--cron &lt;expr&gt;</b><span>五段式 cron</span></div>
+          <div class="r"><b>--concurrent &lt;n&gt;</b><span>并发上传数</span></div>
+          <div class="r"><b>--dry-run</b><span>仅校验不写入</span></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div>退出码 <b>0</b> · 耗时 <b>3 分 18 秒</b> · 日志已写入 <b>/var/log/nimbus/cli.log</b></div>
+  <div class="r">
+    <span>文档 nimbus.io/docs/cli</span>
+    <span>快捷键 Ctrl+C 中断 · Ctrl+R 补全</span>
+    <span>当前 profile <b>prod-cn-east</b></span>
+  </div>
+</footer>
+
+</body>
+</html>

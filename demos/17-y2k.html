@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Y2K LAB · CHROME BLOOM 系列</title>
+<style>
+  :root{
+    --sky-1:#F4E9FF;
+    --sky-2:#E4F0FF;
+    --chrome:#241B3A;
+    --chrome-2:#2E2350;
+    --ink-1:#1A1226;
+    --ink-2:#5B4B7A;
+    --purple:#6344E8;
+    --pink:#FF6EC7;
+    --mint:#B8FFE0;
+    --silver:#EDEAF6;
+    --f-sans:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",Helvetica,Arial,sans-serif;
+    --f-mono:"Cascadia Code",Consolas,"SF Mono","Courier New","Microsoft YaHei",monospace;
+    --pad:64px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    font-family:var(--f-sans);color:var(--ink-1);
+    display:flex;flex-direction:column;
+    background:
+      radial-gradient(120% 80% at 12% 6%,#FFD9F2 0%,rgba(255,217,242,0) 52%),
+      radial-gradient(100% 70% at 88% 12%,#C9E4FF 0%,rgba(201,228,255,0) 50%),
+      linear-gradient(168deg,var(--sky-1) 0%,var(--sky-2) 58%,#EFE9FF 100%);
+    -webkit-font-smoothing:antialiased;
+  }
+  /* 镭射细网格 */
+  .rainbow{
+    position:absolute;inset:0;z-index:0;opacity:.30;pointer-events:none;
+    background:
+      repeating-linear-gradient(0deg,rgba(99,68,232,.16) 0 1px,transparent 1px 26px),
+      repeating-linear-gradient(90deg,rgba(99,68,232,.13) 0 1px,transparent 1px 26px);
+    -webkit-mask-image:radial-gradient(120% 90% at 50% 40%,#000 20%,transparent 78%);
+    mask-image:radial-gradient(120% 90% at 50% 40%,#000 20%,transparent 78%);
+  }
+
+  /* ---------- 页眉 ---------- */
+  header{
+    position:relative;z-index:2;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:22px var(--pad) 0;
+  }
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .cd{
+    width:40px;height:40px;border-radius:50%;flex:none;
+    background:
+      radial-gradient(circle at 50% 50%,#fff 0 15%,transparent 16%),
+      conic-gradient(from 20deg,#FF6EC7,#B8FFE0,#8FB8FF,#6344E8,#FF6EC7);
+    box-shadow:0 4px 14px rgba(36,27,58,.22);
+    position:relative;
+  }
+  .brand .cd::after{
+    content:"";position:absolute;inset:0;border-radius:50%;
+    background:linear-gradient(118deg,rgba(255,255,255,.92) 12%,rgba(255,255,255,0) 34%,rgba(255,255,255,0) 62%,rgba(255,255,255,.75) 86%);
+  }
+  .brand b{font-size:23px;font-weight:800;letter-spacing:.04em}
+  .brand b i{font-style:normal;color:var(--purple)}
+  .brand .tagline{font-size:11px;color:var(--ink-2);letter-spacing:.2em;margin-top:2px}
+  nav{display:flex;gap:14px;align-items:center}
+  nav a{
+    font-size:14px;color:var(--ink-1);text-decoration:none;letter-spacing:.06em;
+    padding:9px 22px;border-radius:999px;background:rgba(255,255,255,.62);
+    border:1px solid rgba(36,27,58,.14);
+  }
+  nav a.on{
+    color:#fff;font-weight:700;border-color:transparent;
+    background:linear-gradient(100deg,#6344E8,#8A6BFF);
+    box-shadow:0 6px 18px rgba(99,68,232,.42);
+  }
+
+  /* ---------- 主体 ---------- */
+  main{position:relative;z-index:2;flex:1;padding:0 var(--pad);display:flex;flex-direction:column}
+
+  .hero{display:grid;grid-template-columns:8fr 4fr;gap:52px;padding-top:34px;align-items:center}
+  .kicker{
+    display:inline-flex;align-items:center;gap:9px;
+    font-size:12px;letter-spacing:.18em;color:#241B3A;
+    background:var(--mint);border:1px solid rgba(36,27,58,.20);
+    padding:7px 18px;border-radius:999px;font-weight:600;
+  }
+  h1{
+    font-size:82px;font-weight:800;line-height:1.0;letter-spacing:-.03em;
+    margin-top:20px;
+    background:linear-gradient(96deg,#6344E8 0%,#FF6EC7 48%,#2E9BE0 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  h1 small{display:block;font-size:25px;font-weight:600;letter-spacing:.16em;color:var(--ink-2);margin-top:14px;-webkit-text-fill-color:var(--ink-2)}
+  .lede{font-size:16px;line-height:1.85;color:var(--ink-1);max-width:600px;margin-top:20px}
+  .lede b{font-weight:700}
+
+  .cta-row{display:flex;gap:14px;margin-top:28px;align-items:center}
+  .bubble{
+    font-family:var(--f-sans);font-size:15px;font-weight:700;letter-spacing:.05em;
+    padding:16px 34px;border-radius:999px;border:none;cursor:pointer;
+  }
+  .b-fill{
+    color:#fff;
+    background:linear-gradient(100deg,#6344E8,#8A6BFF);
+    box-shadow:0 8px 22px rgba(99,68,232,.46),inset 0 2px 0 rgba(255,255,255,.45);
+  }
+  .b-pink{
+    color:var(--ink-1);
+    background:linear-gradient(100deg,#FF8BD9,#FF6EC7);
+    box-shadow:0 8px 22px rgba(255,110,199,.48),inset 0 2px 0 rgba(255,255,255,.6);
+  }
+  .cta-note{font-size:13px;color:var(--ink-2)}
+
+  /* 倒计时气泡 */
+  .count{
+    background:linear-gradient(150deg,var(--chrome),var(--chrome-2));
+    border-radius:28px;padding:30px 32px;color:#fff;
+    box-shadow:0 20px 48px rgba(36,27,58,.34);
+    position:relative;overflow:hidden;
+  }
+  .count::before{
+    content:"";position:absolute;inset:0;
+    background:conic-gradient(from 0deg,rgba(255,110,199,.34),rgba(184,255,224,.30),rgba(99,68,232,.34),rgba(255,110,199,.34));
+    opacity:.30;
+  }
+  .count>*{position:relative}
+  .count .cl{font-size:12px;letter-spacing:.2em;color:var(--mint);margin-bottom:6px}
+  .count .cd{font-size:32px;font-weight:800;letter-spacing:.02em;line-height:1.35}
+  .count .cdsub{font-size:13px;color:#B9A7D6;margin-top:12px;line-height:1.7}
+  .count .limit{
+    display:inline-block;margin-top:16px;font-size:12px;letter-spacing:.08em;
+    background:var(--pink);color:var(--ink-1);border-radius:999px;padding:6px 15px;font-weight:700;
+  }
+
+  /* ---------- 商品 ---------- */
+  .goods{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:40px}
+  .card{
+    background:#fff;border-radius:26px;padding:16px 16px 20px;
+    border:1px solid rgba(36,27,58,.10);
+    box-shadow:0 12px 30px rgba(36,27,58,.13);
+    display:flex;flex-direction:column;
+  }
+  .card .swatch{
+    height:126px;border-radius:18px;position:relative;overflow:hidden;
+    display:flex;align-items:flex-end;justify-content:space-between;padding:12px 14px;
+  }
+  .sw1{background:linear-gradient(128deg,#6344E8 0%,#A98CFF 34%,#FF8BD9 62%,#B8FFE0 100%)}
+  .sw2{background:linear-gradient(128deg,#2E9BE0 0%,#B8FFE0 40%,#FF6EC7 78%,#6344E8 100%)}
+  .sw3{background:linear-gradient(128deg,#1A1226 0%,#6344E8 46%,#5FE8D0 74%,#EDEAF6 100%)}
+  .card .swatch .badge{
+    font-size:11px;letter-spacing:.1em;font-weight:700;color:#1A1226;
+    background:rgba(255,255,255,.88);border-radius:999px;padding:5px 12px;
+  }
+  .card .swatch .chrome-tag{
+    font-size:11px;letter-spacing:.1em;font-weight:700;color:#1A1226;
+    background:var(--silver);border-radius:999px;padding:5px 12px;
+  }
+  .card h3{font-size:18px;font-weight:700;margin-top:16px;letter-spacing:.01em}
+  .card .desc{font-size:13px;color:var(--ink-2);line-height:1.75;margin-top:8px}
+  .card .sizes{display:flex;gap:7px;margin-top:13px;flex-wrap:wrap}
+  .card .sizes span{
+    font-size:11px;letter-spacing:.06em;color:var(--ink-2);
+    border:1px solid rgba(26,18,38,.20);border-radius:999px;padding:3px 10px;
+  }
+  .card .sizes span.out{color:#9A8FAE;border-color:rgba(26,18,38,.12);text-decoration:line-through}
+  .card .price-row{
+    display:flex;align-items:baseline;justify-content:space-between;
+    margin-top:16px;padding-top:14px;border-top:1px solid rgba(26,18,38,.10);
+  }
+  .card .price{font-size:23px;font-weight:800;font-variant-numeric:tabular-nums}
+  .card .price em{font-style:normal;font-size:13px;font-weight:600;color:var(--ink-2);margin-left:6px}
+  .card .stock{font-size:12px;color:var(--ink-2);font-weight:600}
+
+  /* ---------- 页脚 ---------- */
+  footer{
+    position:relative;z-index:2;
+    margin:0 var(--pad);padding:16px 0 22px;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  footer .fl{display:flex;align-items:center;gap:16px}
+  footer p{font-size:12px;color:var(--ink-2);line-height:1.8;letter-spacing:.04em}
+  footer .stars{font-size:20px;color:#6344E8;letter-spacing:6px}
+  footer a{font-size:13px;color:var(--purple);text-decoration:none;font-weight:700;letter-spacing:.04em}
+</style>
+</head>
+<body>
+
+<div class="rainbow"></div>
+
+<header>
+  <div class="brand">
+    <div class="cd"></div>
+    <div>
+      <b>Y2K<i>LAB</i></b>
+      <div class="tagline">复 古 未 来 · 限 量 联 名</div>
+    </div>
+  </div>
+  <nav>
+    <a href="#">新品</a>
+    <a href="#" class="on">CHROME BLOOM</a>
+    <a href="#">全部商品</a>
+    <a href="#">购物袋 (2)</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <div class="kicker">2026 冬季系列 · 全国限量 900 件</div>
+      <h1>CHROME BLOOM<small>镀铬花卉 · 三件套限定</small></h1>
+      <p class="lede">
+        以 2003 年 DVD 包装盒的镭射反光为原型，重印当年限量 <b>1,200 张</b>的铝箔贴纸。
+        每件商品随机附一张原版贴纸编号，编号可在档案馆比对。
+      </p>
+      <div class="cta-row">
+        <button class="bubble b-fill">加入购物袋 · ¥469</button>
+        <button class="bubble b-pink">预约发售提醒</button>
+        <span class="cta-note">满 ¥399 免运费</span>
+      </div>
+    </div>
+
+    <div class="count">
+      <div class="cl">线上发售倒计时</div>
+      <div class="cd">11 天 04 小时<br>38 分 20 秒</div>
+      <div class="cdsub">2026 年 11 月 8 日 20:00 开抢<br>上海安福路 312 号旗舰店同步发售</div>
+      <div class="limit">每款限量 300 件</div>
+    </div>
+  </section>
+
+  <section class="goods">
+    <div class="card">
+      <div class="swatch sw1">
+        <span class="badge">主推</span>
+        <span class="chrome-tag">镀铬紫</span>
+      </div>
+      <h3>流光夹克 · 镀铬紫</h3>
+      <div class="desc">四面反光条拼片，袖口内置磁吸扣。300 件，编号 001–300。</div>
+      <div class="sizes"><span>S</span><span>M</span><span>L</span><span>XL</span><span class="out">XXL</span></div>
+      <div class="price-row">
+        <div class="price">¥469</div>
+        <div class="stock">已预约 214 件</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="swatch sw2">
+        <span class="chrome-tag">薄荷粉</span>
+      </div>
+      <h3>镭射腰包 · 薄荷粉</h3>
+      <div class="desc">欧根纱网面 + 铝箔内衬，可塞下 6 寸机型与充电宝。300 件。</div>
+      <div class="sizes"><span>均码</span></div>
+      <div class="price-row">
+        <div class="price">¥259</div>
+        <div class="stock">已预约 167 件</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="swatch sw3">
+        <span class="badge">套装</span>
+        <span class="chrome-tag">三件套</span>
+      </div>
+      <h3>CHROME BLOOM 套装</h3>
+      <div class="desc">夹克 + 腰包 + 随机原版贴纸，限量 120 套，仅线上发售。</div>
+      <div class="sizes"><span>M / L</span><span>XL</span></div>
+      <div class="price-row">
+        <div class="price">¥699<em>单买 ¥728</em></div>
+        <div class="stock">已预约 96 套</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="fl">
+    <span class="stars">✦✧✦</span>
+    <p>Y2K LAB 上海安福路 312 号 · 每日 13:00–21:00<br>退换政策：未拆封 7 天无理由，拆封后仅限质量问题</p>
+  </div>
+  <a href="#">查看尺码对照表 →</a>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>云隐茶事</title>
+<style>
+  :root{
+    --paper:#F5F1E8;
+    --ink:#1C1A17;
+    --ink-2:#4A453D;
+    --ink-3:#6E675C;
+    --line:#D8D1C2;
+    --cinnabar:#C8322D;
+    --daiqing:#3E5C5B;
+    --f-song:"Songti SC","SimSun","Source Han Serif SC","Noto Serif SC",Georgia,serif;
+    --f-kai:"Kaiti SC","KaiTi","STKaiti","Songti SC",serif;
+    --f-hei:"Microsoft YaHei","PingFang SC","Hiragino Sans GB",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    background:var(--paper);color:var(--ink);
+    font-family:var(--f-hei);
+    display:flex;flex-direction:column;
+  }
+
+  /* ---------- 页眉 ---------- */
+  header{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    padding:40px 88px 0;
+  }
+  .brand{font-family:var(--f-kai);font-size:34px;letter-spacing:.24em}
+  .brand-sub{
+    font-size:11px;color:var(--ink-3);letter-spacing:.34em;
+    margin-top:10px;padding-left:2px;
+  }
+  nav{display:flex;gap:38px;padding-bottom:6px}
+  nav a{font-size:14px;color:var(--ink-2);text-decoration:none;letter-spacing:.16em}
+  nav a.on{color:var(--daiqing)}
+
+  /* ---------- 主文 ---------- */
+  main{flex:1;padding:0 88px}
+
+  .hero{
+    display:grid;grid-template-columns:8fr 4fr;gap:80px;
+    padding-top:56px;align-items:start;
+  }
+  .hero h1{
+    font-family:var(--f-song);font-weight:400;
+    font-size:46px;line-height:1.5;letter-spacing:.06em;
+  }
+  .hero h1 em{font-style:normal;color:var(--daiqing)}
+  .hero p{
+    font-size:15px;line-height:1.95;color:var(--ink-2);
+    max-width:470px;margin-top:22px;
+  }
+
+  /* 圆窗 */
+  .moon{
+    width:212px;height:212px;border:1px solid var(--line);
+    border-radius:50%;margin:16px 0 0 auto;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:12px;
+  }
+  .moon .ch{font-family:var(--f-song);font-size:40px;color:var(--ink);letter-spacing:.1em}
+  .moon .en{font-size:10px;color:var(--ink-3);letter-spacing:.3em;text-transform:uppercase}
+
+  /* ---------- 茶谱 ---------- */
+  .teas{padding-top:40px}
+  .teas-head{display:flex;justify-content:space-between;align-items:baseline}
+  .teas-head h2{
+    font-family:var(--f-song);font-size:19px;font-weight:400;letter-spacing:.28em;
+  }
+  .teas-head .more{font-size:13px;color:var(--daiqing);letter-spacing:.1em}
+
+  .tea{
+    display:grid;grid-template-columns:1fr 200px 210px 92px;
+    gap:32px;align-items:baseline;
+    padding:14px 0;border-bottom:1px solid var(--line);
+  }
+  .tea .nm{font-family:var(--f-song);font-size:22px;letter-spacing:.08em}
+  .tea .sub{font-size:12px;color:var(--ink-3);margin-top:6px;letter-spacing:.06em}
+  .tea .meta{font-size:14px;color:var(--ink-2);line-height:1.7}
+  .tea .meta small{display:block;font-size:12px;color:var(--ink-3)}
+  .tea .yr{font-size:13px;color:var(--ink-2);text-align:right;letter-spacing:.08em}
+
+  /* ---------- 页脚 ---------- */
+  footer{
+    margin:0 88px;padding:24px 0 30px;
+    display:flex;justify-content:space-between;align-items:flex-end;
+  }
+  .foot-l{display:flex;align-items:flex-end;gap:18px}
+  .seal{
+    width:46px;height:46px;background:var(--cinnabar);color:#F5F1E8;
+    font-family:var(--f-song);font-size:15px;line-height:1.05;
+    display:flex;align-items:center;justify-content:center;
+    text-align:center;letter-spacing:.06em;flex:none;
+  }
+  .foot-l p{font-size:12px;color:var(--ink-3);line-height:1.9;letter-spacing:.06em}
+  .foot-r{font-size:13px;color:var(--daiqing);letter-spacing:.16em}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="brand">云隐茶事</div>
+    <div class="brand-sub">自 采 · 自 制 · 自 售</div>
+  </div>
+  <nav>
+    <a href="#" class="on">山场</a>
+    <a href="#">茶谱</a>
+    <a href="#">器物</a>
+    <a href="#">寻访</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <h1>雾从谷底升起来的时候，<br>茶树<em>才开始一年的活</em>。</h1>
+      <p>
+        我们在闽东、粤东与西双版纳留了六块山场，不设合作社、不催芽，
+        只按茶农自己的节奏采摘。做茶这件事急不得——
+        火候差一分，出来的汤就散了。
+      </p>
+    </div>
+    <div class="moon">
+      <div class="ch">六山</div>
+      <div class="en">Six Gardens</div>
+    </div>
+  </section>
+
+  <section class="teas">
+    <div class="teas-head">
+      <h2>今 年 茶 谱</h2>
+      <div class="more">全部 14 款 →</div>
+    </div>
+
+    <div class="tea">
+      <div>
+        <div class="nm">白毫银针</div>
+        <div class="sub">一芽一叶 · 毫香</div>
+      </div>
+      <div class="meta">福建 福鼎<small>太姥山 · 海拔 720m</small></div>
+      <div class="meta">针肥毫壮<small>干茶 68g · 罐装</small></div>
+      <div class="yr">¥ 468</div>
+    </div>
+    <div class="tea">
+      <div>
+        <div class="nm">凤凰单丛 · 蜜兰香</div>
+        <div class="sub">古树 · 炭焙</div>
+      </div>
+      <div class="meta">广东 潮州<small>凤凰山 · 海拔 480m</small></div>
+      <div class="meta">高香回甘<small>干茶 125g · 罐装</small></div>
+      <div class="yr">¥ 328</div>
+    </div>
+    <div class="tea">
+      <div>
+        <div class="nm">牛栏坑肉桂</div>
+        <div class="sub">传统焙火 · 三坑之一</div>
+      </div>
+      <div class="meta">福建 武夷山<small>牛栏坑 · 海拔 360m</small></div>
+      <div class="meta">岩骨花香<small>干茶 80g · 罐装</small></div>
+      <div class="yr">¥ 588</div>
+    </div>
+    <div class="tea">
+      <div>
+        <div class="nm">老班章古树</div>
+        <div class="sub">生态茶 · 2003 年</div>
+      </div>
+      <div class="meta">云南 西双版纳<small>布朗山 · 海拔 1,760m</small></div>
+      <div class="meta">汤感厚重<small>干茶 200g · 饼装</small></div>
+      <div class="yr">¥ 1,280</div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="foot-l">
+    <div class="seal">云隐<br>茶事</div>
+    <p>福州市鼓楼区鼓西路 42 号<br>周二至周日 10:30 – 18:00</p>
+  </div>
+  <div class="foot-r">预约品鉴 →</div>
+</footer>
+
+</body>
+</html>

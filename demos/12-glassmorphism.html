@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>潮汐 音乐 App 播放页</title>
+<style>
+  :root{
+    --ink:#FFFFFF;
+    --ink-2:#D8D4E8;
+    --accent:#FF7A5C;
+    --accent-2:#5FD3C4;
+    /* 三层玻璃：装饰层 / 卡片层 / 浮层 */
+    --glass-1:rgba(255,255,255,.13);
+    --glass-card:rgba(255,255,255,.15);
+    --glass-text:rgba(20,16,44,.62);
+    --edge:1px solid rgba(255,255,255,.22);
+    --edge-2:1px solid rgba(255,255,255,.16);
+    --blur:blur(22px) saturate(180%);
+    --drop:0 14px 40px rgba(8,6,24,.42);
+    --f:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",sans-serif;
+    --pad:40px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    font-family:var(--f);color:var(--ink);
+    background:#14102B;
+    display:flex;flex-direction:column;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+  }
+  /* 底层必须有足够色彩与明暗变化，否则玻璃=半透明色块 */
+  .bg{position:absolute;inset:0;overflow:hidden;z-index:0}
+  .blob{position:absolute;border-radius:50%;filter:blur(72px)}
+  .b1{width:600px;height:540px;left:-110px;top:-130px;background:#5B3FC4}
+  .b2{width:560px;height:500px;right:-40px;top:-110px;background:#93387A}
+  .b3{width:720px;height:540px;left:-60px;bottom:-250px;background:#1C6B9E}
+  .b4{width:520px;height:460px;right:180px;bottom:-190px;background:#2A8F86}
+  .b5{width:470px;height:430px;left:640px;top:150px;background:#3B6FD4;opacity:.9}
+  .vig{position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 40%,transparent 30%,rgba(10,7,26,.55) 100%)}
+
+  header{
+    position:relative;z-index:2;height:76px;flex:none;
+    display:flex;align-items:center;gap:30px;padding:0 var(--pad);
+  }
+  .logo{display:flex;align-items:center;gap:11px}
+  .logo .w{
+    width:36px;height:36px;border-radius:11px;background:var(--glass-card);
+    border:var(--edge);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+    display:flex;align-items:center;justify-content:center;box-shadow:var(--drop)
+  }
+  .logo b{font-size:21px;font-weight:700;letter-spacing:.14em}
+  nav{display:flex;gap:8px}
+  nav a{
+    font-size:13.5px;color:var(--ink-2);text-decoration:none;letter-spacing:.06em;
+    padding:9px 17px;border-radius:999px;
+    background:var(--glass-1);border:var(--edge-2);
+    backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur)
+  }
+  nav a.on{color:#FFFFFF;background:var(--glass-text);border:var(--edge);font-weight:600}
+  .search{
+    margin-left:auto;display:flex;align-items:center;gap:10px;
+    width:250px;height:40px;border-radius:999px;padding:0 18px;
+    background:var(--glass-text);border:var(--edge);
+    backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);box-shadow:var(--drop)
+  }
+  .search input{
+    background:none;border:none;outline:none;color:var(--ink);
+    font-family:var(--f);font-size:13.5px;flex:1;letter-spacing:.03em
+  }
+  .search input::placeholder{color:var(--ink-2);opacity:1}
+
+  main{
+    position:relative;z-index:2;flex:1;padding:6px var(--pad) 0;
+    display:flex;gap:24px;min-height:0
+  }
+
+  /* ---------- 左侧：封面与播放控制 ---------- */
+  .left{width:520px;flex:none;display:flex;flex-direction:column}
+  .cover{
+    width:356px;height:356px;border-radius:26px;position:relative;flex:none;
+    background:linear-gradient(155deg,#2C6E9E 0%,#3B4C9B 42%,#7A3F86 100%);
+    box-shadow:0 26px 60px rgba(6,4,20,.6), inset 0 1px 0 rgba(255,255,255,.28);
+    overflow:hidden;border:var(--edge);
+  }
+  .cover .sheen{
+    position:absolute;inset:0;
+    background:linear-gradient(118deg,rgba(255,255,255,.34) 0%,rgba(255,255,255,.05) 38%,transparent 58%);
+  }
+  .cover .moon{
+    position:absolute;right:44px;top:42px;width:96px;height:96px;border-radius:50%;
+    background:radial-gradient(circle at 38% 34%,#FFF3D6,#F0B46A 62%,#C4643F);
+    box-shadow:0 0 44px rgba(240,180,106,.55);
+  }
+  .cover svg{position:absolute;left:0;bottom:0}
+  .cover .tagname{
+    position:absolute;left:24px;bottom:22px;display:flex;flex-direction:column;gap:5px
+  }
+  .cover .tagname b{font-size:19px;font-weight:700;letter-spacing:.04em}
+  .cover .tagname span{font-size:11.5px;color:rgba(255,255,255,.82);letter-spacing:.1em}
+
+  .now{
+    margin-top:26px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px
+  }
+  .now .nm{font-size:27px;font-weight:700;letter-spacing:.02em}
+  .now .ar{font-size:13.5px;color:var(--ink-2);margin-top:8px;letter-spacing:.04em}
+  .like{
+    width:44px;height:44px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+    background:var(--glass-card);border:var(--edge);
+    backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);box-shadow:var(--drop)
+  }
+  .like svg{fill:var(--accent)}
+
+  .bar{margin-top:20px;display:flex;align-items:center;gap:14px}
+  .track{flex:1;height:7px;border-radius:99px;background:rgba(255,255,255,.2);position:relative}
+  .track i{position:absolute;left:0;top:0;bottom:0;width:50%;border-radius:99px;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+  .track b{position:absolute;left:50%;top:50%;width:14px;height:14px;border-radius:50%;
+    transform:translate(-50%,-50%);background:#FFFFFF;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+  .bar span{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums;width:42px}
+  .bar span.r{text-align:right}
+
+  .ctrl{display:flex;align-items:center;justify-content:center;gap:22px;margin-top:24px}
+  .cbtn{
+    width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:var(--glass-card);border:var(--edge);
+    backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);box-shadow:var(--drop)
+  }
+  .cbtn svg{fill:var(--ink)}
+  .cbtn.main{
+    width:70px;height:70px;
+    background:linear-gradient(150deg,rgba(255,122,92,.92),rgba(216,74,110,.92));
+    border:1px solid rgba(255,255,255,.34);
+    box-shadow:0 14px 32px rgba(180,50,60,.45), inset 0 1px 0 rgba(255,255,255,.4)
+  }
+  .cbtn.main svg{fill:#FFFFFF;width:26px;height:26px}
+
+  .row2{display:flex;gap:12px;margin-top:22px}
+  .chip{
+    flex:1;padding:13px 16px;border-radius:16px;
+    background:var(--glass-text);border:var(--edge-2);
+    backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur)
+  }
+  .chip span{font-size:10.5px;color:var(--ink-2);letter-spacing:.16em}
+  .chip b{display:block;font-size:14px;font-weight:600;margin-top:6px;letter-spacing:.03em}
+
+  /* ---------- 右侧：歌词与队列 ---------- */
+  .right{flex:1;display:flex;gap:24px;min-height:0}
+  .panel{
+    background:var(--glass-text);border:var(--edge);
+    backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+    box-shadow:var(--drop), inset 0 1px 0 rgba(255,255,255,.26);border-radius:22px;
+  }
+  .lyrics{width:398px;flex:none;padding:24px 26px;display:flex;flex-direction:column}
+  .p-head{display:flex;align-items:baseline;justify-content:space-between;padding-bottom:14px}
+  .p-head h2{font-size:14px;font-weight:600;letter-spacing:.14em}
+  .p-head span{font-size:11px;color:var(--ink-2);letter-spacing:.1em}
+  .lyric{margin-top:15px;line-height:1.45;letter-spacing:.03em;color:var(--ink-2)}
+  .lyric.now{color:#FFFFFF;font-size:22px;font-weight:600;margin-top:22px}
+  .lyric.now + .lyric{margin-top:15px}
+  .lyric.hit{color:var(--accent-2);font-size:17px;font-weight:600}
+  .lfoot{margin-top:auto;padding-top:16px;border-top:1px solid rgba(255,255,255,.16);
+    font-size:11.5px;color:var(--ink-2);line-height:1.9;letter-spacing:.04em}
+
+  .queue{flex:1;padding:24px 26px;display:flex;flex-direction:column;min-height:0}
+  .qlist{margin-top:14px;display:flex;flex-direction:column;gap:2px;flex:1;justify-content:space-evenly}
+  .qi{display:flex;align-items:center;gap:14px;padding:13px 12px;border-radius:12px}
+  .qi.on{background:rgba(255,255,255,.10)}
+  .qi .idx{font-size:11.5px;color:var(--ink-2);width:18px;font-variant-numeric:tabular-nums}
+  .qi .tx{flex:1}
+  .qi .tx b{display:block;font-size:14px;font-weight:500;letter-spacing:.02em}
+  .qi .tx span{display:block;font-size:11.5px;color:var(--ink-2);margin-top:3px}
+  .qi .du{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+  .qi .bars{display:flex;align-items:flex-end;gap:2px;height:14px}
+  .qi .bars i{width:3px;background:var(--accent-2);border-radius:1px}
+
+  footer{
+    position:relative;z-index:2;height:74px;flex:none;
+    display:flex;align-items:center;gap:26px;padding:0 var(--pad)
+  }
+  .fitem{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--ink-2);letter-spacing:.04em}
+  .fitem i{width:7px;height:7px;border-radius:50%;background:var(--accent-2);display:block;
+    box-shadow:0 0 9px rgba(95,211,196,.85)}
+  .fitem b{color:#FFFFFF;font-weight:600}
+  .fright{margin-left:auto;font-size:12px;color:var(--ink-2);letter-spacing:.06em}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="blob b4"></div>
+  <div class="blob b5"></div>
+  <div class="vig"></div>
+</div>
+
+<header>
+  <div class="logo">
+    <div class="w">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9.5c2.2 0 2.2 2.4 4.4 2.4S9.6 9.5 11.8 9.5s2.2 2.4 4.4 2.4 2.2-2.4 4.4-2.4"/>
+        <path d="M3 15.5c2.2 0 2.2 2.4 4.4 2.4s2.2-2.4 4.4-2.4 2.2 2.4 4.4 2.4 2.2-2.4 4.4-2.4"/>
+      </svg>
+    </div>
+    <b>潮汐</b>
+  </div>
+  <nav>
+    <a href="#" class="on">正在播放</a>
+    <a href="#">发现音乐</a>
+    <a href="#">我的歌单</a>
+    <a href="#">下载</a>
+  </nav>
+  <div class="search">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D8D4E8" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg>
+    <input type="text" placeholder="搜歌曲、歌手或专辑">
+  </div>
+</header>
+
+<main>
+  <!-- 左侧 -->
+  <div class="left">
+    <div class="cover">
+      <div class="moon"></div>
+      <svg width="356" height="178" viewBox="0 0 340 170" fill="none" preserveAspectRatio="none">
+        <g stroke="rgba(255,255,255,.30)" stroke-width="1.6">
+          <path d="M0 150c34-22 66 18 100-4s64-24 100-6 74 10 140-18"/>
+          <path d="M0 162c34-20 66 16 100-6s64-22 100-4 74 8 140-20"/>
+          <path d="M0 132c34-24 66 20 100-2s64-26 100-8 74 12 140-16"/>
+        </g>
+        <g stroke="rgba(255,255,255,.5)" stroke-width="2.4" stroke-linecap="round">
+          <path d="M40 52h34"/><path d="M40 68h22"/><path d="M40 84h28"/>
+        </g>
+      </svg>
+      <div class="sheen"></div>
+      <div class="tagname">
+        <b>潮汐观测</b>
+        <span>TIDAL OBSERVATION · 2026</span>
+      </div>
+    </div>
+
+    <div class="now">
+      <div>
+        <div class="nm">夜航船</div>
+        <div class="ar">海潮乐团 · 专辑《潮汐观测》 · 2026 年 9 月 12 日</div>
+      </div>
+      <div class="like">
+        <svg width="19" height="19" viewBox="0 0 24 24"><path d="M12 20.5S3.5 15 3.5 9.2A4.2 4.2 0 0 1 12 7a4.2 4.2 0 0 1 8.5 2.2c0 5.8-8.5 11.3-8.5 11.3z"/></svg>
+      </div>
+    </div>
+
+    <div class="bar">
+      <span>2:07</span>
+      <div class="track"><i></i><b></b></div>
+      <span class="r">4:12</span>
+    </div>
+
+    <div class="ctrl">
+      <div class="cbtn"><svg width="19" height="19" viewBox="0 0 24 24"><path d="M7 5.5h2.2v13H7zM14 5.5h2.2v13H14zM18.5 5.5l-6 6.5 6 6.5z"/></svg></div>
+      <div class="cbtn"><svg width="21" height="21" viewBox="0 0 24 24"><path d="M18.5 5.5 8 12l10.5 6.5z"/></svg></div>
+      <div class="cbtn main"><svg viewBox="0 0 24 24"><path d="M6.5 5h3.2v14H6.5zM14.3 5h3.2v14h-3.2z"/></svg></div>
+      <div class="cbtn"><svg width="21" height="21" viewBox="0 0 24 24"><path d="M5.5 5.5 16 12 5.5 18.5z"/></svg></div>
+      <div class="cbtn"><svg width="19" height="19" viewBox="0 0 24 24"><path d="M17 5.5h2.2v13H17zM11.5 5.5 4 12l7.5 6.5zM4.8 5.5H7v13H4.8z"/></svg></div>
+    </div>
+
+    <div class="row2">
+      <div class="chip"><span>音 质</span><b>Hi-Res 24bit / 96 kHz</b></div>
+      <div class="chip"><span>声 场</span><b>杜比全景声</b></div>
+    </div>
+  </div>
+
+  <!-- 右侧 -->
+  <div class="right">
+    <section class="panel lyrics">
+      <div class="p-head"><h2>歌 词</h2><span>夜航船 · 第 2 段</span></div>
+      <div class="lyric">潮水退到很远的地方</div>
+      <div class="lyric">船头的灯就亮了一整夜</div>
+      <div class="lyric now">海风把灯塔吹得很亮</div>
+      <div class="lyric">我在甲板上数着星星</div>
+      <div class="lyric">数到第七颗就忘了数到哪里</div>
+      <div class="lyric">你说这一班船会开到哪里</div>
+      <div class="lyric">我说去有潮水的地方</div>
+      <div class="lyric">船体轻轻晃了一下</div>
+      <div class="lyric">像是有人在远处应和</div>
+      <div class="lyric">把名字写在浪上</div>
+      <div class="lyric">明天它就不见了</div>
+      <div class="lyric">而我还站在这里</div>
+      <div class="lyric">等下一次退潮</div>
+      <div class="lfoot">词 / 编曲：沈砚舟<br>混音：陆听白 · 母带：K. Saito</div>
+    </section>
+
+    <section class="panel queue">
+      <div class="p-head"><h2>接 下 来 播 放</h2><span>本单 9 首 · 37 分 33 秒</span></div>
+      <div class="qlist">
+        <div class="qi on">
+          <div class="idx">01</div>
+          <div class="bars"><i style="height:9px"></i><i style="height:14px"></i><i style="height:6px"></i></div>
+          <div class="tx"><b>夜航船</b><span>海潮乐团</span></div>
+          <div class="du">4:12</div>
+        </div>
+        <div class="qi">
+          <div class="idx">02</div>
+          <div class="tx"><b>候鸟笔记</b><span>海潮乐团</span></div>
+          <div class="du">3:48</div>
+        </div>
+        <div class="qi">
+          <div class="idx">03</div>
+          <div class="tx"><b>盐田火</b><span>陈屿</span></div>
+          <div class="du">5:06</div>
+        </div>
+        <div class="qi">
+          <div class="idx">04</div>
+          <div class="tx"><b>南澳七月</b><span>岸声四重奏</span></div>
+          <div class="du">4:35</div>
+        </div>
+        <div class="qi">
+          <div class="idx">05</div>
+          <div class="tx"><b>返潮</b><span>海潮乐团</span></div>
+          <div class="du">3:21</div>
+        </div>
+        <div class="qi">
+          <div class="idx">06</div>
+          <div class="tx"><b>灯塔与岸</b><span>岸声四重奏</span></div>
+          <div class="du">4:02</div>
+        </div>
+        <div class="qi">
+          <div class="idx">07</div>
+          <div class="tx"><b>候船厅</b><span>岸声四重奏</span></div>
+          <div class="du">3:37</div>
+        </div>
+        <div class="qi">
+          <div class="idx">08</div>
+          <div class="tx"><b>蓝夜航线</b><span>海潮乐团</span></div>
+          <div class="du">4:58</div>
+        </div>
+        <div class="qi">
+          <div class="idx">09</div>
+          <div class="tx"><b>冬夜广播</b><span>陆听白</span></div>
+          <div class="du">3:54</div>
+        </div>
+
+      </div>
+      <div class="lfoot">专辑制作人：沈砚舟 · 封面：程未<br>收录于 2026 年 9 月 12 日发行的全长专辑</div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="fitem"><i></i>正在通过 <b>AirPlay 2</b> 输出到「书房 HomePod</div>
+  <div class="fitem"><i></i>已下载 <b>4 首</b> · 128 MB</div>
+  <div class="fright">320 kbps 试听版 · 完整版需订阅潮汐 Plus</div>
+</footer>
+
+</body>
+</html>

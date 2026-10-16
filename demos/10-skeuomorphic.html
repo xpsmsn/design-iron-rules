@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Aurora 专业音频工作站</title>
+<style>
+  :root{
+    --chassis:#15171A;
+    --panel:#23262B;
+    --panel-2:#2C3036;
+    --panel-3:#343941;
+    --recess:#1A1D21;
+    --ink:#EDEAE4;
+    --ink-2:#A8ADB5;
+    --amber:#FFB020;
+    --led:#5FE08A;
+    --rec:#FF5A4D;
+    /* 材质高光与暗部：光源固定左上 45°，全局统一 */
+    --face:linear-gradient(180deg,#2C3037 0%,#24272C 34%,#1E2126 100%);
+    --edge:inset 0 1px 0 rgba(255,255,255,.13), inset 0 -1px 0 rgba(0,0,0,.55), 0 2px 5px rgba(0,0,0,.45);
+    --well:inset 0 3px 7px rgba(0,0,0,.72), inset 0 -1px 0 rgba(255,255,255,.07);
+    --brushed:repeating-linear-gradient(90deg, rgba(255,255,255,.022) 0 1px, rgba(0,0,0,.028) 1px 2px);
+    --f:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",sans-serif;
+    --f-mono:"Cascadia Code",Consolas,"SF Mono","Courier New",monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    background:
+      radial-gradient(120% 70% at 50% -10%, #23262C 0%, #17191D 55%, #101215 100%);
+    color:var(--ink);font-family:var(--f);
+    display:flex;flex-direction:column;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* 通用金属面 */
+  .metal{background:var(--face),var(--brushed);box-shadow:var(--edge);border-radius:8px}
+  .screw{
+    position:absolute;width:9px;height:9px;border-radius:50%;
+    background:radial-gradient(circle at 34% 30%, #5C636B, #2C3138 62%, #1A1D21);
+    box-shadow:0 1px 1px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .screw::after{content:"";position:absolute;left:1.5px;right:1.5px;top:4px;height:1.2px;background:rgba(0,0,0,.55)}
+
+  /* ---------- 顶栏 ---------- */
+  .topbar{
+    height:64px;flex:none;display:flex;align-items:center;gap:22px;
+    padding:0 22px;background:var(--face),var(--brushed);
+    border-bottom:1px solid #0C0E10;
+    box-shadow:0 2px 0 rgba(255,255,255,.05) inset, 0 6px 14px rgba(0,0,0,.5);
+  }
+  .mark{display:flex;align-items:baseline;gap:9px;flex:none}
+  .mark b{font-size:19px;font-weight:700;letter-spacing:.30em;color:var(--ink)}
+  .mark i{
+    font-style:normal;font-size:9px;letter-spacing:.16em;color:var(--amber);
+    border:1px solid rgba(255,176,32,.45);border-radius:3px;padding:2px 5px;
+  }
+  .proj{
+    display:flex;flex-direction:column;gap:3px;padding-left:22px;
+    border-left:1px solid #14161A;box-shadow:1px 0 0 rgba(255,255,255,.05);
+  }
+  .proj b{font-size:14px;font-weight:600;letter-spacing:.02em}
+  .proj span{font-size:10px;color:var(--ink-2);letter-spacing:.1em}
+
+  .specs{display:flex;gap:26px;margin-left:26px}
+  .spec{text-align:center}
+  .spec b{display:block;font-family:var(--f-mono);font-size:15px;color:var(--amber);letter-spacing:.02em}
+  .spec span{display:block;font-size:9.5px;color:var(--ink-2);letter-spacing:.14em;margin-top:3px}
+
+  .transport{margin-left:auto;display:flex;align-items:center;gap:9px}
+  .tkey{
+    width:42px;height:32px;border-radius:5px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(180deg,#3F454D 0%,#2B2F35 52%,#1D2025 100%);
+    box-shadow:0 3px 5px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.20), inset 0 -2px 3px rgba(0,0,0,.45);
+  }
+  .tkey svg{stroke:#C6CBD2;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .tkey.rec{background:linear-gradient(180deg,#6E312C 0%,#4A201C 52%,#2E1310 100%);
+    box-shadow:0 3px 5px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.18), inset 0 -2px 3px rgba(0,0,0,.45)}
+  .tkey.rec svg{stroke:var(--rec)}
+  .tkey.lit{background:linear-gradient(180deg,#4A3A18 0%,#3A2C11 52%,#241A0B 100%);
+    box-shadow:0 3px 5px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.16), inset 0 -2px 3px rgba(0,0,0,.5)}
+  .tkey.lit svg{stroke:var(--amber)}
+
+  /* ---------- 主区 ---------- */
+  main{flex:1;padding:14px 22px;display:flex;flex-direction:column;gap:13px;min-height:0}
+
+  /* 主控区 */
+  .upper{height:224px;flex:none;display:flex;align-items:stretch;gap:26px;padding:20px 26px;position:relative}
+  .grouplab{
+    font-size:9.5px;letter-spacing:.24em;color:var(--ink-2);
+    position:absolute;top:9px;left:28px;
+  }
+  .monitor{display:flex;align-items:center;gap:22px}
+  .knob{width:44px;height:44px;border-radius:50%;position:relative;flex:none;
+    background:radial-gradient(circle at 34% 26%, #565D66 0%, #3A4046 42%, #262A2F 78%, #171A1E 100%);
+    box-shadow:0 5px 10px rgba(0,0,0,.55), 0 1px 1px rgba(0,0,0,.5),
+               inset 0 2px 3px rgba(255,255,255,.18), inset 0 -3px 6px rgba(0,0,0,.62)}
+  .knob::before{content:"";position:absolute;inset:6px;border-radius:50%;
+    background:repeating-conic-gradient(from 0deg, rgba(255,255,255,.06) 0deg 3deg, transparent 3deg 7deg)}
+  .knob::after{content:"";position:absolute;left:50%;top:50%;width:2.5px;height:13px;margin:-1.25px 0 0 -1.25px;
+    background:var(--amber);border-radius:2px;box-shadow:0 0 5px rgba(255,176,32,.55);
+    transform:translate(-50%,-50%) rotate(var(--a,0deg)) translateY(-9px)}
+  .knob.big{width:124px;height:124px;
+    box-shadow:0 10px 20px rgba(0,0,0,.6), 0 2px 2px rgba(0,0,0,.5),
+               inset 0 3px 5px rgba(255,255,255,.19), inset 0 -5px 10px rgba(0,0,0,.65)}
+  .knob.big::before{inset:9px}
+  .knob.big::after{width:3.5px;height:30px;margin:-1.75px 0 0 -1.75px;transform:translate(-50%,-50%) rotate(var(--a,0deg)) translateY(-21px)}
+  .dialwrap{position:relative;width:160px;height:160px;display:flex;align-items:center;justify-content:center}
+  .ring{
+    position:absolute;inset:0;border-radius:50%;
+    background:repeating-conic-gradient(from -145deg, #8A9199 0deg 1.5deg, transparent 1.5deg 9.7deg);
+    -webkit-mask:radial-gradient(circle,transparent 66%,#000 67%,#000 72%,transparent 73%);
+    mask:radial-gradient(circle,transparent 66%,#000 67%,#000 72%,transparent 73%);
+  }
+  .knoblab{display:flex;flex-direction:column;align-items:center;width:118px;flex:none}
+  .knoblab .lb{font-size:9.5px;letter-spacing:.2em;color:var(--ink-2)}
+  .knoblab .vl{font-family:var(--f-mono);font-size:14px;color:var(--amber);margin-top:7px;letter-spacing:.02em}
+  .knoblab .sm{font-size:10px;color:var(--ink-2);margin-top:5px;letter-spacing:.04em}
+
+  .smallknobs{display:flex;gap:22px;padding-left:24px;border-left:1px solid #17191D;
+    box-shadow:inset 1px 0 0 rgba(255,255,255,.05)}
+
+  .bridgemargin{margin-left:auto;width:300px;padding-left:24px;border-left:1px solid #17191D;
+    box-shadow:inset 1px 0 0 rgba(255,255,255,.05);display:flex;flex-direction:column;justify-content:center;gap:9px}
+  .bridgehead{display:flex;justify-content:space-between;font-size:10px;color:var(--ink-2);letter-spacing:.12em}
+  .bridgehead b{font-family:var(--f-mono);font-size:13px;color:var(--ink)}
+  .bridge{
+    height:16px;border-radius:3px;background:#101215;box-shadow:var(--well);
+    display:flex;gap:2px;padding:2px;
+  }
+  .bridge i{flex:1;border-radius:1px}
+  .bridge i:nth-child(-n+18){background:#5FE08A}
+  .bridge i:nth-child(n+19):nth-child(-n+22){background:#C7D94A}
+  .bridge i:nth-child(n+23):nth-child(-n+25){background:#FBBF24}
+  .bridge i:nth-child(n+26):nth-child(-n+28){background:#F87171}
+  .bridge i.on{box-shadow:0 0 7px currentColor}
+  .peakrow{display:flex;justify-content:space-between;font-size:10px;color:var(--ink-2);letter-spacing:.06em;margin-top:2px}
+  .peakrow b{font-family:var(--f-mono);color:var(--ink-2);font-weight:400}
+
+  /* 通道条 */
+  .console{flex:1;display:flex;gap:13px;min-height:0}
+  .strips{flex:1;display:grid;grid-template-columns:repeat(6,1fr);gap:11px}
+  .strip{padding:9px 11px 11px;display:flex;flex-direction:column;align-items:center;position:relative}
+  .sname{
+    width:100%;text-align:center;font-size:11px;font-weight:600;letter-spacing:.08em;
+    padding:5px 0;border-radius:4px;background:#141619;box-shadow:var(--well);color:var(--ink)
+  }
+  .schip{font-size:9px;letter-spacing:.12em;color:var(--ink-2);margin-top:4px}
+  .sknob{display:flex;flex-direction:column;align-items:center;margin-top:7px}
+  .sknob span{font-size:9px;letter-spacing:.1em;color:var(--ink-2);margin-top:6px}
+  .sknob .kv{font-family:var(--f-mono);font-size:10px;color:var(--amber);margin-top:1px}
+
+  .fader{position:relative;width:100%;height:176px;margin-top:8px;display:flex;justify-content:center}
+  .fticks{position:absolute;top:0;bottom:0;width:64px;
+    background:repeating-linear-gradient(180deg, rgba(255,255,255,.16) 0 1px, transparent 1px 10.3px)}
+  .slot{width:13px;height:100%;border-radius:4px;background:linear-gradient(90deg,#0C0E11,#1C2025 42%,#0C0E11);
+    box-shadow:var(--well)}
+  .cap{
+    position:absolute;left:50%;transform:translateX(-50%);width:46px;height:25px;border-radius:5px;
+    background:linear-gradient(180deg,#616872 0%,#3E444C 40%,#24282D 100%);
+    box-shadow:0 4px 7px rgba(0,0,0,.6), 0 1px 1px rgba(0,0,0,.5),
+               inset 0 2px 2px rgba(255,255,255,.26), inset 0 -2px 3px rgba(0,0,0,.55)}
+  .cap::after{content:"";position:absolute;left:7px;right:7px;top:11.5px;height:2px;
+    background:#D2D7DE;border-radius:1px;box-shadow:0 1px 2px rgba(0,0,0,.5)}
+  .fval{font-family:var(--f-mono);font-size:10px;color:var(--amber);margin-top:7px;letter-spacing:.02em}
+
+  .meter{width:14px;height:88px;background:#101215;border-radius:3px;box-shadow:var(--well);
+    padding:2px;display:flex;align-items:flex-end;margin-top:8px}
+  .meter i{display:block;width:100%;border-radius:1px;
+    background:linear-gradient(0deg,#4ADE80 0%,#A3E635 40%,#FBBF24 66%,#F87171 86%);
+    -webkit-mask-image:repeating-linear-gradient(0deg,#000 0 5px,transparent 5px 7px);
+    mask-image:repeating-linear-gradient(0deg,#000 0 5px,transparent 5px 7px);
+    box-shadow:0 0 7px rgba(74,222,128,.32)}
+  .row2{display:flex;gap:6px;margin-top:8px}
+  .tbtn{
+    width:28px;height:20px;border-radius:4px;font-family:var(--f);font-size:9.5px;font-weight:700;letter-spacing:.04em;
+    display:flex;align-items:center;justify-content:center;color:var(--ink-2);
+    background:linear-gradient(180deg,#3D434B 0%,#282C32 55%,#1D2025 100%);
+    box-shadow:0 2px 3px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.18), inset 0 -1px 0 rgba(0,0,0,.45)
+  }
+  .tbtn.on{color:var(--amber);
+    background:linear-gradient(180deg,#241F14 0%,#2E2A1C 55%,#16140E 100%);
+    box-shadow:inset 0 2px 4px rgba(0,0,0,.65), inset 0 -1px 0 rgba(255,255,255,.07)}
+  .send{font-size:9.5px;color:var(--ink-2);margin-top:7px;letter-spacing:.06em}
+  .send b{font-family:var(--f-mono);color:var(--ink);font-weight:400}
+
+  /* 右侧机架 */
+  .rack{width:326px;flex:none;padding:28px 18px 16px;display:flex;flex-direction:column;gap:11px;position:relative}
+  .plug{
+    background:linear-gradient(180deg,#2E333A 0%,#24282D 60%,#1D2025 100%);
+    border-radius:6px;padding:11px 13px 12px;position:relative;
+    box-shadow:0 2px 4px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.14), inset 0 -1px 0 rgba(0,0,0,.5)
+  }
+  .plug .t{display:flex;justify-content:space-between;align-items:baseline}
+  .plug .t b{font-size:12px;font-weight:600;letter-spacing:.02em}
+  .plug .t span{font-size:9px;letter-spacing:.12em;color:var(--ink-2)}
+  .plug .c{display:flex;align-items:center;gap:11px;margin-top:10px}
+  .plug .c .val{font-family:var(--f-mono);font-size:11px;color:var(--amber);width:52px;text-align:right}
+  .led{width:7px;height:7px;border-radius:50%;background:#2A2E33;box-shadow:inset 0 1px 2px rgba(0,0,0,.7)}
+  .led.on{background:var(--led);box-shadow:0 0 8px rgba(95,224,138,.7), inset 0 1px 1px rgba(255,255,255,.4)}
+
+  /* ---------- 底栏 ---------- */
+  .botbar{
+    height:62px;flex:none;display:flex;align-items:center;gap:26px;padding:0 22px;
+    background:var(--face),var(--brushed);border-top:1px solid #0C0E10;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.07);
+  }
+  .tc{display:flex;flex-direction:column;gap:3px}
+  .tc b{font-family:var(--f-mono);font-size:18px;color:var(--amber);letter-spacing:.06em}
+  .tc span{font-size:9.5px;letter-spacing:.16em;color:var(--ink-2)}
+  .dsep{width:1px;height:30px;background:#14161A;box-shadow:1px 0 0 rgba(255,255,255,.05)}
+  .mini{display:flex;flex-direction:column;gap:3px}
+  .mini b{font-family:var(--f-mono);font-size:15px;color:var(--ink)}
+  .mini span{font-size:9.5px;letter-spacing:.14em;color:var(--ink-2)}
+  .master{margin-left:auto;display:flex;align-items:center;gap:18px}
+  .master .mp{padding:7px 15px;border-radius:5px;background:#141619;box-shadow:var(--well);
+    font-family:var(--f-mono);font-size:13px;color:var(--amber);letter-spacing:.04em}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="mark"><b>AURORA</b><i>WORKSTATION</i></div>
+  <div class="proj"><b>北纬 40° · 现场版 v7</b><span>192 kHz 立体声母带工程 · 最后保存 19:04</span></div>
+
+  <div class="specs">
+    <div class="spec"><b>192 kHz</b><span>采样率</span></div>
+    <div class="spec"><b>32 bit</b><span>浮点</span></div>
+    <div class="spec"><b>128</b><span>缓冲 SAMPLES</span></div>
+    <div class="spec"><b>1.3 ms</b><span>往返延迟</span></div>
+  </div>
+
+  <div class="transport">
+    <div class="tkey"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M18 6L9 12l9 6z" fill="#C6CBD2" stroke="none"/><path d="M6 5.5v13"/></svg></div>
+    <div class="tkey"><svg width="17" height="17" viewBox="0 0 24 24"><path d="M7 5.5l11 6.5-11 6.5z" fill="#C6CBD2" stroke="none"/></svg></div>
+    <div class="tkey lit"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M6.5 6.5h11v11h-11z"/></svg></div>
+    <div class="tkey rec"><svg width="15" height="15" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5.4" fill="#FF5A4D" stroke="none"/></svg></div>
+  </div>
+</div>
+
+<main>
+  <!-- 主控区 -->
+  <section class="upper metal">
+    <div class="screw" style="left:9px;top:9px"></div>
+    <div class="screw" style="right:9px;top:9px"></div>
+    <div class="screw" style="left:9px;bottom:9px"></div>
+    <div class="screw" style="right:9px;bottom:9px"></div>
+    <div class="grouplab">监 听 控 制</div>
+
+    <div class="monitor">
+      <div class="dialwrap">
+        <div class="ring"></div>
+        <div class="knob big" style="--a:24deg"></div>
+      </div>
+      <div class="knoblab">
+        <div class="lb">MONITOR</div>
+        <div class="vl">-6.0 dB</div>
+        <div class="sm">Genelec 8341A · L/R</div>
+      </div>
+    </div>
+
+    <div class="smallknobs">
+      <div class="knoblab">
+        <div class="dialwrap" style="width:64px;height:64px">
+          <div class="knob" style="--a:-38deg"></div>
+        </div>
+        <div class="lb">INPUT</div><div class="vl">+18.0</div><div class="sm">dB 增益</div>
+      </div>
+      <div class="knoblab">
+        <div class="dialwrap" style="width:64px;height:64px">
+          <div class="knob" style="--a:62deg"></div>
+        </div>
+        <div class="lb">LOW CUT</div><div class="vl">80</div><div class="sm">Hz 高通</div>
+      </div>
+      <div class="knoblab">
+        <div class="dialwrap" style="width:64px;height:64px">
+          <div class="knob" style="--a:8deg"></div>
+        </div>
+        <div class="lb">PLATE</div><div class="vl">24</div><div class="sm">% 混响量</div>
+      </div>
+    </div>
+
+    <div class="bridgemargin">
+      <div class="bridgehead"><span>MASTER BUS</span><b>-1.2 dBTP</b></div>
+      <div class="bridge">
+        <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i>
+        <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i>
+        <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i>
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+      <div class="peakrow"><span>PEAK HOLD</span><b>-0.8 dBFS · 00:02:47</b></div>
+      <div class="peakrow"><span>TRUE PEAK</span><b>-1.2 dBTP · 过载 0 次</b></div>
+    </div>
+  </section>
+
+  <!-- 通道条 + 机架 -->
+  <div class="console">
+    <div class="strips">
+
+      <div class="strip metal">
+        <div class="sname">底 鼓</div>
+        <div class="schip">KICK · IN 1</div>
+        <div class="sknob"><div class="knob" style="--a:-30deg"></div><span>GAIN</span><div class="kv">+12.0</div></div>
+        <div class="fader">
+          <div class="fticks"></div>
+          <div class="slot"></div>
+          <div class="cap" style="top:66%"></div>
+        </div>
+        <div class="fval">+4.2 dB</div>
+        <div class="meter"><i style="height:82%"></i></div>
+        <div class="row2"><div class="tbtn">M</div><div class="tbtn on">S</div></div>
+        <div class="send">SEND <b>-12.0</b></div>
+      </div>
+
+      <div class="strip metal">
+        <div class="sname">军 鼓</div>
+        <div class="schip">SNARE · IN 2</div>
+        <div class="sknob"><div class="knob" style="--a:14deg"></div><span>GAIN</span><div class="kv">+9.5</div></div>
+        <div class="fader">
+          <div class="fticks"></div>
+          <div class="slot"></div>
+          <div class="cap" style="top:58%"></div>
+        </div>
+        <div class="fval">+1.8 dB</div>
+        <div class="meter"><i style="height:74%"></i></div>
+        <div class="row2"><div class="tbtn">M</div><div class="tbtn">S</div></div>
+        <div class="send">SEND <b>-8.5</b></div>
+      </div>
+
+      <div class="strip metal">
+        <div class="sname">贝 斯</div>
+        <div class="schip">BASS · IN 3</div>
+        <div class="sknob"><div class="knob" style="--a:-8deg"></div><span>GAIN</span><div class="kv">+15.0</div></div>
+        <div class="fader">
+          <div class="fticks"></div>
+          <div class="slot"></div>
+          <div class="cap" style="top:48%"></div>
+        </div>
+        <div class="fval">-1.4 dB</div>
+        <div class="meter"><i style="height:63%"></i></div>
+        <div class="row2"><div class="tbtn">M</div><div class="tbtn">S</div></div>
+        <div class="send">SEND <b>-15.0</b></div>
+      </div>
+
+      <div class="strip metal">
+        <div class="sname">电 钢</div>
+        <div class="schip">E.PIANO · IN 4</div>
+        <div class="sknob"><div class="knob" style="--a:42deg"></div><span>GAIN</span><div class="kv">+6.0</div></div>
+        <div class="fader">
+          <div class="fticks"></div>
+          <div class="slot"></div>
+          <div class="cap" style="top:42%"></div>
+        </div>
+        <div class="fval">-3.6 dB</div>
+        <div class="meter"><i style="height:51%"></i></div>
+        <div class="row2"><div class="tbtn on">M</div><div class="tbtn">S</div></div>
+        <div class="send">SEND <b>-16.5</b></div>
+      </div>
+
+      <div class="strip metal">
+        <div class="sname">主 唱</div>
+        <div class="schip">VOCAL · IN 5</div>
+        <div class="sknob"><div class="knob" style="--a:6deg"></div><span>GAIN</span><div class="kv">+22.5</div></div>
+        <div class="fader">
+          <div class="fticks"></div>
+          <div class="slot"></div>
+          <div class="cap" style="top:36%"></div>
+        </div>
+        <div class="fval">+2.6 dB</div>
+        <div class="meter"><i style="height:88%"></i></div>
+        <div class="row2"><div class="tbtn">M</div><div class="tbtn on">S</div></div>
+        <div class="send">SEND <b>-6.0</b></div>
+      </div>
+
+      <div class="strip metal">
+        <div class="sname">环 境</div>
+        <div class="schip">ATMOS · IN 6</div>
+        <div class="sknob"><div class="knob" style="--a:-52deg"></div><span>GAIN</span><div class="kv">+3.0</div></div>
+        <div class="fader">
+          <div class="fticks"></div>
+          <div class="slot"></div>
+          <div class="cap" style="top:74%"></div>
+        </div>
+        <div class="fval">-8.2 dB</div>
+        <div class="meter"><i style="height:44%"></i></div>
+        <div class="row2"><div class="tbtn">M</div><div class="tbtn">S</div></div>
+        <div class="send">SEND <b>-20.0</b></div>
+      </div>
+
+    </div>
+
+    <div class="rack metal">
+      <div class="screw" style="left:8px;top:8px"></div>
+      <div class="screw" style="right:8px;top:8px"></div>
+      <div class="screw" style="left:8px;bottom:8px"></div>
+      <div class="screw" style="right:8px;bottom:8px"></div>
+      <div class="grouplab">插 件 链 · 主 唱</div>
+
+      <div class="plug">
+        <div class="t"><b>Aurora Comp</b><span>INSER T 1</span></div>
+        <div class="c"><div class="led on"></div><div class="knob" style="--a:18deg;width:34px;height:34px"></div>
+          <div class="val">3.4:1</div><div class="knob" style="--a:-24deg;width:34px;height:34px"></div>
+          <div class="val">-2.0 dB</div></div>
+      </div>
+
+      <div class="plug">
+        <div class="t"><b>Lumen EQ-12</b><span>INSER T 2</span></div>
+        <div class="c"><div class="led on"></div><div class="knob" style="--a:-40deg;width:34px;height:34px"></div>
+          <div class="val">220 Hz</div><div class="knob" style="--a:34deg;width:34px;height:34px"></div>
+          <div class="val">+1.5 dB</div></div>
+      </div>
+
+      <div class="plug">
+        <div class="t"><b>Tape Saturation</b><span>INSER T 3</span></div>
+        <div class="c"><div class="led"></div><div class="knob" style="--a:6deg;width:34px;height:34px"></div>
+          <div class="val">18%</div><div class="knob" style="--a:52deg;width:34px;height:34px"></div>
+          <div class="val">15 ips</div></div>
+      </div>
+
+      <div class="plug">
+        <div class="t"><b>Plate Hall 480</b><span>INSER T 4</span></div>
+        <div class="c"><div class="led on"></div><div class="knob" style="--a:-16deg;width:34px;height:34px"></div>
+          <div class="val">1.8 s</div><div class="knob" style="--a:28deg;width:34px;height:34px"></div>
+          <div class="val">24%</div></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="botbar">
+  <div class="tc"><b>00:03:12:08</b><span>时 间 码</span></div>
+  <div class="dsep"></div>
+  <div class="mini"><b>124.00</b><span>BPM</span></div>
+  <div class="mini"><b>4 / 4</b><span>拍 号</span></div>
+  <div class="mini"><b>49</b><span>小 节</span></div>
+  <div class="dsep"></div>
+  <div class="mini"><b>26-bit float</b><span>混音格式</span></div>
+  <div class="dsep"></div>
+  <div class="master">
+    <div class="mini" style="text-align:right"><b>DAD 立体声母带</b><span>输出设备 · Thunderbolt 3 接口</span></div>
+    <div class="mp">-1.2 dBTP</div>
+  </div>
+</div>
+
+</body>
+</html>

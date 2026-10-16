@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>混凝土 CONCRETE — 设计工作室作品集</title>
+<style>
+  /* 粗野主义：全局零圆角 + 统一 4px 边框 + 统一 8px 硬阴影 */
+  :root{
+    --paper:#F2EFE6;
+    --black:#000000;
+    --red:#FF0000;
+    --yellow:#FFFF00;
+    --blue:#0000FF;
+    --bw:4px;
+    --shadow:8px 8px 0 var(--black);
+    --f-sans:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",Helvetica,Arial,sans-serif;
+    --f-mono:"Cascadia Code",Consolas,"SF Mono","Courier New","Microsoft YaHei",monospace;
+    --pad:60px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;border-radius:0}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    background:var(--paper);color:var(--black);
+    font-family:var(--f-sans);
+    display:flex;flex-direction:column;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- 页眉 ---------- */
+  header{
+    display:flex;justify-content:space-between;align-items:stretch;
+    padding:var(--pad) var(--pad) 0;
+  }
+  .logo{display:flex;flex-direction:column;gap:8px}
+  .logo .name{
+    font-size:38px;font-weight:900;letter-spacing:-.02em;line-height:1;
+  }
+  .logo .name em{
+    font-style:normal;
+    background:var(--yellow);padding:0 10px;
+    border:var(--bw) solid var(--black);
+    box-shadow:var(--shadow);
+    display:inline-block;
+  }
+  .logo .en{
+    font-family:var(--f-mono);font-size:12px;font-weight:700;letter-spacing:.2em;
+  }
+  nav{display:flex;gap:12px;align-items:flex-start}
+  nav a{
+    font-size:15px;font-weight:900;letter-spacing:.04em;color:var(--black);
+    text-decoration:none;background:#fff;
+    border:var(--bw) solid var(--black);
+    box-shadow:var(--shadow);
+    padding:12px 22px;
+    transition:transform .08s linear,box-shadow .08s linear;
+  }
+  nav a.on{background:var(--blue);color:#fff}
+  nav a:active{transform:translate(8px,8px);box-shadow:0 0 0 var(--black)}
+
+  /* ---------- 主视觉 ---------- */
+  main{flex:1;padding:0 var(--pad);display:flex;flex-direction:column}
+
+  .hero{padding-top:22px;display:flex;flex-direction:column;gap:14px}
+  .hero-top{display:flex;justify-content:space-between;align-items:flex-end;gap:40px}
+  h1{
+    font-size:72px;font-weight:900;line-height:.92;letter-spacing:-.045em;
+    max-width:940px;
+  }
+  h1 .mark{background:var(--red);color:#000;padding:0 14px;display:inline-block}
+  .stamp{
+    flex:none;width:130px;height:130px;
+    background:var(--yellow);
+    border:var(--bw) solid var(--black);
+    box-shadow:var(--shadow);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:5px;transform:rotate(-3deg);
+    margin-bottom:8px;
+  }
+  .stamp .yr{font-size:27px;font-weight:900;letter-spacing:-.02em}
+  .stamp .cn{font-size:12px;font-weight:700;letter-spacing:.14em}
+  .stamp .sub{font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:.1em}
+
+  .lede-row{display:flex;gap:26px;align-items:stretch}
+  .lede{
+    flex:1;background:#fff;border:var(--bw) solid var(--black);
+    box-shadow:var(--shadow);padding:18px 24px;
+    font-size:16px;line-height:1.75;font-weight:500;
+  }
+  .lede b{font-weight:900;background:var(--yellow);padding:0 5px}
+  .cta-box{
+    flex:none;width:280px;
+    background:var(--blue);color:#fff;
+    border:var(--bw) solid var(--black);
+    box-shadow:var(--shadow);
+    padding:18px 22px;display:flex;flex-direction:column;justify-content:space-between;
+  }
+  .cta-box .k{font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:.18em}
+  .cta-box .t{font-size:21px;font-weight:900;line-height:1.25;letter-spacing:-.01em;margin-top:8px}
+  .cta-box button{
+    margin-top:14px;font-family:var(--f-sans);font-size:15px;font-weight:900;letter-spacing:.04em;
+    background:var(--yellow);color:var(--black);
+    border:var(--bw) solid var(--black);
+    box-shadow:6px 6px 0 var(--black);
+    padding:11px 0;cursor:pointer;
+    transition:transform .08s linear,box-shadow .08s linear;
+  }
+  .cta-box button:active{transform:translate(6px,6px);box-shadow:0 0 0 var(--black)}
+
+  /* ---------- 项目索引 ---------- */
+  .index{margin-top:20px}
+  .index-bar{
+    display:flex;justify-content:space-between;align-items:center;
+    border-bottom:var(--bw) solid var(--black);
+    padding-bottom:8px;margin-bottom:0;
+  }
+  .index-bar h2{font-size:23px;font-weight:900;letter-spacing:-.01em}
+  .index-bar .meta{font-family:var(--f-mono);font-size:12px;font-weight:700;letter-spacing:.1em}
+
+  .row{
+    display:grid;grid-template-columns:86px 296px 1fr 140px 104px;
+    gap:20px;align-items:center;
+    padding:10px 0;border-bottom:var(--bw) solid var(--black);
+  }
+  .row .no{
+    font-family:var(--f-mono);font-size:13px;font-weight:700;
+    background:var(--black);color:#fff;padding:4px 0;text-align:center;letter-spacing:.08em;
+  }
+  .row .nm{font-size:21px;font-weight:900;letter-spacing:-.01em}
+  .row .cl{font-size:13.5px;font-weight:700;color:#3A3A3A;letter-spacing:.02em}
+  .row .yr{font-family:var(--f-mono);font-size:14px;font-weight:700;letter-spacing:.06em}
+  .tag{
+    font-size:12.5px;font-weight:900;text-align:center;
+    border:var(--bw) solid var(--black);padding:5px 0;
+  }
+  .tag.done{background:var(--yellow)}
+  .tag.run{background:var(--red);color:#000}
+  .tag.plan{background:#fff;color:#000}
+
+  /* ---------- 页脚 ---------- */
+  footer{
+    margin:0 var(--pad);padding:10px 0 14px;
+    display:flex;justify-content:space-between;align-items:flex-end;
+  }
+  .foot-l{display:flex;align-items:flex-end;gap:16px}
+  .foot-box{
+    background:var(--black);color:#fff;border:var(--bw) solid var(--black);
+    box-shadow:var(--shadow);padding:12px 16px;
+    font-size:13px;font-weight:700;letter-spacing:.04em;line-height:1.65;
+  }
+  .foot-box b{color:var(--yellow);font-weight:900}
+  .foot-r{text-align:right}
+  .foot-r .t{font-size:17px;font-weight:900;letter-spacing:.02em}
+  .foot-r .a{font-size:13px;font-weight:700;margin-top:6px;color:#3A3A3A}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="name">混凝土 <em>CONCRETE</em></div>
+    <div class="en">设计工作室 · SHANGHAI · EST. 2016</div>
+  </div>
+  <nav>
+    <a href="#">作品</a>
+    <a href="#" class="on">客户</a>
+    <a href="#">奖项</a>
+    <a href="#">联系</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-top">
+      <h1>把复杂的东西<br>做成<span class="mark">方的</span>。</h1>
+      <div class="stamp">
+        <div class="yr">2016</div>
+        <div class="cn">成立至今</div>
+        <div class="sub">11 项作品</div>
+      </div>
+    </div>
+
+    <div class="lede-row">
+      <div class="lede">
+        我们只接四类活：品牌视觉、空间导视、出版物、展览搭建。
+        十一年里做过 <b>37 个品牌</b>、印了 <b>62 期</b>刊物，
+        在上海和成都各有一个 40 人的工位。所有交付文件源文件一并给客户，
+        不收使用费，不设期限。
+      </div>
+      <div class="cta-box">
+        <div>
+          <div class="k">2027 年度档期</div>
+          <div class="t">还剩 2 个<br>项目名额</div>
+        </div>
+        <button>发送项目需求书 →</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="index">
+    <div class="index-bar">
+      <h2>近期作品</h2>
+      <div class="meta">2024 — 2026 · 共 11 项</div>
+    </div>
+
+    <div class="row">
+      <div class="no">01</div>
+      <div class="nm">雨屋 连锁书店 VI</div>
+      <div class="cl">品牌视觉 · 门店 27 家 · 上海 / 杭州</div>
+      <div class="yr">2026</div>
+      <div class="tag done">已交付</div>
+    </div>
+    <div class="row">
+      <div class="no">02</div>
+      <div class="nm">浇筑 建筑年鉴</div>
+      <div class="cl">出版物 · 320 页 · 印量 3,000</div>
+      <div class="yr">2025</div>
+      <div class="tag done">已交付</div>
+    </div>
+    <div class="row">
+      <div class="no">03</div>
+      <div class="nm">国际咖啡展 展陈</div>
+      <div class="cl">展览搭建 · 2,400㎡ · 上海世博展览馆</div>
+      <div class="yr">2026</div>
+      <div class="tag run">施工中</div>
+    </div>
+    <div class="row">
+      <div class="no">04</div>
+      <div class="nm">顽石 户外装备</div>
+      <div class="cl">品牌视觉 · 进行中 · 预计 2027 年 3 月</div>
+      <div class="yr">2026</div>
+      <div class="tag plan">接单中</div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="foot-l">
+    <div class="foot-box">
+      上海市杨浦区宁国路 88 号 3F<br>
+      成都市锦江区东大街下东大街段 <b>216 号 2F</b>
+    </div>
+  </div>
+  <div class="foot-r">
+    <div class="t">hello@concrete.studio</div>
+    <div class="a">工作日 10:00 – 19:00 · 021-5500 4187</div>
+  </div>
+</footer>
+
+</body>
+</html>

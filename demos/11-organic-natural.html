@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>青禾 有机农产品商城</title>
+<style>
+  :root{
+    --paper:#FAF7F2;
+    --ink:#3E3A34;
+    --ink-2:#6B6459;
+    --sage:#87A96B;
+    --sage-deep:#3E5C2E;
+    --terra:#C97B5A;
+    --sand:#E8DCC8;
+    --f-serif:"Songti SC","SimSun","Source Han Serif SC","Noto Serif SC",Georgia,serif;
+    --f-sans:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",sans-serif;
+    /* 有机不规则圆角：形状语言一致，取值不同 */
+    --leaf-a:62% 38% 55% 45% / 48% 56% 44% 52%;
+    --leaf-b:44% 56% 38% 62% / 58% 42% 58% 42%;
+    --leaf-c:38% 62% 58% 42% / 44% 62% 38% 56%;
+    --pad:64px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    background:
+      repeating-linear-gradient(90deg, rgba(62,58,52,.028) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(0deg, rgba(62,58,52,.022) 0 1px, transparent 1px 4px),
+      var(--paper);
+    color:var(--ink);font-family:var(--f-sans);
+    -webkit-font-smoothing:antialiased;display:flex;flex-direction:column;
+  }
+
+  /* ---------- 页眉 ---------- */
+  header{display:flex;justify-content:space-between;align-items:center;padding:28px var(--pad) 0}
+  .brand{display:flex;align-items:center;gap:13px}
+  .brand .leaf{
+    width:44px;height:44px;background:var(--sage);
+    border-radius:var(--leaf-a);display:flex;align-items:center;justify-content:center;
+  }
+  .brand b{font-family:var(--f-serif);font-size:26px;font-weight:600;letter-spacing:.1em}
+  .brand span{display:block;font-size:10.5px;color:var(--ink-2);letter-spacing:.26em;margin-top:5px}
+  nav{display:flex;gap:30px;align-items:center}
+  nav a{
+    font-size:14px;color:var(--ink-2);text-decoration:none;letter-spacing:.06em;
+    padding-bottom:5px;border-bottom:2px solid transparent;
+  }
+  nav a.on{color:var(--ink);border-bottom-color:var(--sage-deep);font-weight:600}
+  .cart{
+    font-size:13px;color:var(--ink);letter-spacing:.04em;padding:9px 18px;
+    background:var(--sand);border-radius:14px;
+  }
+  .cart b{font-weight:700}
+
+  main{flex:1;padding:0 var(--pad);display:flex;flex-direction:column}
+
+  /* ---------- 主视觉 ---------- */
+  .hero{display:flex;gap:52px;align-items:center;padding-top:18px}
+  .hero-l{flex:1}
+  .kicker{
+    display:inline-block;font-size:11.5px;letter-spacing:.2em;color:var(--sage-deep);
+    background:rgba(135,169,107,.20);padding:7px 16px;border-radius:13px;
+  }
+  h1{
+    font-family:var(--f-serif);font-size:38px;font-weight:600;line-height:1.4;
+    letter-spacing:.02em;margin-top:14px;
+  }
+  h1 em{font-style:normal;color:var(--sage-deep)}
+  .hero-l p{font-size:14px;line-height:1.95;color:var(--ink-2);max-width:640px;margin-top:12px}
+  .cta-row{display:flex;gap:14px;align-items:center;margin-top:22px}
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;border:none;cursor:pointer;
+    font-family:var(--f-sans);font-size:14.5px;font-weight:600;letter-spacing:.04em;padding:14px 26px;
+  }
+  .btn-main{background:var(--sage-deep);color:#FFFFFF;border-radius:14px}
+  .btn-ghost{background:transparent;color:var(--ink);border:1.5px solid var(--sand);border-radius:14px}
+
+  .art{width:432px;flex:none;height:262px;position:relative}
+  .art .b1{
+    position:absolute;inset:0;background:var(--sand);border-radius:var(--leaf-a);
+  }
+  .art .b2{
+    position:absolute;width:236px;height:206px;right:18px;top:26px;
+    background:rgba(135,169,107,.34);border-radius:var(--leaf-b);
+  }
+  .art .b3{
+    position:absolute;width:128px;height:112px;left:34px;bottom:16px;
+    background:rgba(201,123,90,.26);border-radius:var(--leaf-c);
+  }
+  .art .note{
+    position:absolute;left:30px;top:30px;background:var(--paper);
+    border-radius:18px 26px 20px 30px;padding:16px 20px 17px;
+  }
+  .art .note b{font-family:var(--f-serif);font-size:30px;font-weight:600;letter-spacing:-.01em}
+  .art .note b em{font-style:normal;font-size:14px;color:var(--ink-2);margin-left:5px}
+  .art .note span{display:block;font-size:11.5px;color:var(--ink-2);margin-top:6px;letter-spacing:.06em}
+  .art .sprig{position:absolute;right:44px;bottom:26px}
+
+  /* ---------- 本周直采 ---------- */
+  .sec-h{display:flex;justify-content:space-between;align-items:baseline;margin:24px 0 14px}
+  .sec-h h2{font-family:var(--f-serif);font-size:21px;font-weight:600;letter-spacing:.08em}
+  .sec-h span{font-size:12.5px;color:var(--ink-2);letter-spacing:.04em}
+
+  .goods{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .good{
+    background:var(--paper);border-radius:32px 46px 34px 52px;
+    padding:16px 18px 18px;display:flex;flex-direction:column;
+    box-shadow:0 10px 22px rgba(62,58,52,.07), 0 2px 4px rgba(62,58,52,.05);
+  }
+  .good .thumb{
+    height:96px;position:relative;overflow:hidden;
+    border-radius:24px 34px 22px 38px;background:var(--sand);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .good .thumb svg{position:absolute;bottom:4px;left:50%;transform:translateX(-50%)}
+  .good .badge{
+    position:absolute;top:10px;left:10px;font-size:10.5px;font-weight:600;letter-spacing:.06em;
+    background:rgba(250,247,242,.92);color:var(--ink);padding:5px 11px;border-radius:11px;
+  }
+  .good h3{font-family:var(--f-serif);font-size:18px;font-weight:600;margin-top:12px;letter-spacing:.03em}
+  .good .meta{font-size:11.5px;color:var(--ink-2);margin-top:6px;letter-spacing:.03em;line-height:1.65}
+  .good .price{
+    font-family:var(--f-serif);font-size:23px;font-weight:600;margin-top:10px;letter-spacing:.01em;
+    display:flex;align-items:baseline;justify-content:space-between;
+  }
+  .good .price em{font-style:normal;font-size:12px;color:var(--ink-2);font-family:var(--f-sans)}
+  .good .trace{
+    margin-top:11px;font-size:12px;color:var(--ink);letter-spacing:.04em;
+    border-top:1px solid var(--sand);padding-top:10px;display:flex;align-items:center;gap:6px;
+  }
+
+  /* ---------- 溯源条 ---------- */
+  .tracebar{
+    margin-top:18px;display:flex;align-items:center;gap:40px;
+    background:rgba(232,220,200,.5);border-radius:26px 34px 28px 38px;padding:16px 28px;
+  }
+  .tracebar .it{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--ink)}
+  .tracebar .it i{width:8px;height:8px;border-radius:50%;background:var(--sage-deep);display:block;flex:none}
+  .tracebar .btn{margin-left:auto;padding:11px 22px;font-size:13.5px}
+
+  footer{
+    margin-top:auto;padding:14px 0 18px;display:flex;justify-content:space-between;align-items:flex-end;
+  }
+  footer p{font-size:11.5px;color:var(--ink-2);line-height:1.85;letter-spacing:.02em}
+  footer .r{font-family:var(--f-serif);font-size:13px;color:var(--ink-2);letter-spacing:.1em;text-align:right;line-height:1.9}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="leaf">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FAF7F2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 19c0-8 5-13 16-14 0 11-5 15-12 15H4z"/><path d="M4 19c3-4 6-6.5 10-8.5"/>
+      </svg>
+    </div>
+    <div>
+      <b>青禾</b>
+      <span>产 地 直 发</span>
+    </div>
+  </div>
+  <nav>
+    <a href="#" class="on">当季直采</a>
+    <a href="#">合作农场</a>
+    <a href="#">怎么溯源</a>
+    <a href="#">企业团购</a>
+  </nav>
+  <div class="cart">菜箱 · <b>2</b> 样待发</div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-l">
+      <div class="kicker">第 42 周 · 10 月 13 日 至 10 月 19 日</div>
+      <h1>这一周的菜，<br>昨晚十一点才<em>离地</em>。</h1>
+      <p>
+        青禾和 68 家小型农场直接签单，不经过一级批发商。
+        采收后 12 小时内进入预冷，次日清晨随干线车发出——
+        你收到的每一箱，箱体贴着的那张溯源码就是它的履历。
+      </p>
+      <div class="cta-row">
+        <button class="btn btn-main">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5h2.2l2.3 11.2h9.6"/><circle cx="9.5" cy="20" r="1.4" fill="#FFFFFF"/><circle cx="17" cy="20" r="1.4" fill="#FFFFFF"/><path d="M8 6.5 10 4h7l-2.2 2.5"/></svg>
+          预订明日菜箱
+        </button>
+        <button class="btn btn-ghost">看看它们从哪来</button>
+      </div>
+    </div>
+
+    <div class="art">
+      <div class="b1"></div>
+      <div class="b2"></div>
+      <div class="b3"></div>
+      <div class="note">
+        <b>￥ 116.3<em>本周菜箱</em></b>
+        <span>4 样 · 重 6.4 kg · 顺丰冷链包邮</span>
+      </div>
+      <svg class="sprig" width="150" height="128" viewBox="0 0 150 128" fill="none">
+        <path d="M118 124C112 92 96 62 58 34" stroke="#3E5C2E" stroke-width="2" stroke-linecap="round"/>
+        <path d="M104 100c14-4 22-16 21-31-15 1-24 13-21 31z" fill="#87A96B"/>
+        <path d="M84 66c-14-2-23-13-24-28 15-1 25 10 24 28z" fill="#9DBC7F"/>
+        <path d="M58 38c2-15 13-25 28-25-1 15-11 25-28 25z" fill="#87A96B"/>
+        <circle cx="122" cy="36" r="15" fill="#C97B5A"/>
+        <circle cx="104" cy="52" r="11" fill="#D9926F"/>
+      </svg>
+    </div>
+  </section>
+
+  <div class="sec-h">
+    <h2>本 周 直 采</h2>
+    <span>共 4 样 · 每周一 20:00 截单 · 次日达</span>
+  </div>
+
+  <section class="goods">
+    <div class="good">
+      <div class="thumb">
+        <span class="badge">沙壤 · 自然熟</span>
+        <svg width="150" height="106" viewBox="0 0 150 106" fill="none">
+          <path d="M74 34c-4-13-15-21-28-21 5 13 15 21 28 21z" fill="#6E8C4E"/>
+          <path d="M74 34c1-11 8-18 19-19-1 11-7 18-19 19z" fill="#87A96B"/>
+          <circle cx="63" cy="70" r="31" fill="#E8A34A"/>
+          <circle cx="102" cy="76" r="23" fill="#D98F38"/>
+          <circle cx="78" cy="88" r="16" fill="#EFAE5C"/>
+          <path d="M52 58c5-5 13-7 20-5" stroke="#C4842C" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h3>阳朔 沃柑</h3>
+      <div class="meta">广西 阳朔 · 坡地老树<br>农场主 黄丽娟 · 12 月 4 日采收</div>
+      <div class="price">￥39.8<em>/ 5 斤装</em></div>
+      <div class="trace">查看这箱的溯源码 →</div>
+    </div>
+
+    <div class="good">
+      <div class="thumb">
+        <span class="badge">不打蜡 · 常温</span>
+        <svg width="150" height="106" viewBox="0 0 150 106" fill="none">
+          <path d="M60 38c-5-10-14-14-24-13 4 10 13 15 24 13z" fill="#6E8C4E"/>
+          <path d="M60 38c0-10 6-16 15-17-1 10-6 16-15 17z" fill="#87A96B"/>
+          <path d="M60 38v8" stroke="#5A7A3E" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="58" cy="72" r="30" fill="#C4553A"/>
+          <circle cx="104" cy="76" r="24" fill="#D96A4C"/>
+          <path d="M46 62c6-6 15-8 23-5" stroke="#A83F2A" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h3>元谋 老树番茄</h3>
+      <div class="meta">云南 元谋 · 干热河谷<br>农场主 张顺福 · 10 月 14 日采收</div>
+      <div class="price">￥26.5<em>/ 2 kg</em></div>
+      <div class="trace">查看这箱的溯源码 →</div>
+    </div>
+
+    <div class="good">
+      <div class="thumb">
+        <span class="badge">沙壤 · 耐储</span>
+        <svg width="150" height="106" viewBox="0 0 150 106" fill="none">
+          <path d="M76 30c-3-10-9-16-19-19 2 10 8 17 19 19z" fill="#6E8C4E"/>
+          <path d="M76 30c4-9 11-14 21-16-2 10-9 15-21 16z" fill="#87A96B"/>
+          <path d="M76 32c17 14 27 28 27 43 0 17-12 29-27 29s-27-12-27-29c0-15 10-29 27-43z" fill="#C08A6A"/>
+          <path d="M76 32v70" stroke="#9A6B4E" stroke-width="2"/>
+          <path d="M60 46c-5 8-7 18-6 28" stroke="#9A6B4E" stroke-width="1.6" opacity=".7"/>
+          <path d="M92 46c5 8 7 18 6 28" stroke="#9A6B4E" stroke-width="1.6" opacity=".7"/>
+        </svg>
+      </div>
+      <h3>建水 紫皮洋葱</h3>
+      <div class="meta">云南 建水 · 高原红壤<br>农场主 王秀兰 · 10 月 12 日采收</div>
+      <div class="price">￥18.0<em>/ 3 斤装</em></div>
+      <div class="trace">查看这箱的溯源码 →</div>
+    </div>
+
+    <div class="good">
+      <div class="thumb">
+        <span class="badge">章姬 · 冷链</span>
+        <svg width="150" height="106" viewBox="0 0 150 106" fill="none">
+          <path d="M40 60c8-9 18-12 27-9 9-3 19 0 27 9 4 5 6 11 6 17 0 11-15 19-33 19s-33-8-33-19c0-6 2-12 6-17z" fill="#B8484F"/>
+          <path d="M67 46c-6-10-16-15-27-14 3 10 12 16 27 14z" fill="#6E8C4E"/>
+          <path d="M67 46c0-11 6-18 16-20-1 11-6 18-16 20z" fill="#87A96B"/>
+          <path d="M67 46v8" stroke="#5A7A3E" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="52" cy="72" r="2.2" fill="#F0D9B5"/><circle cx="74" cy="70" r="2.2" fill="#F0D9B5"/>
+          <circle cx="95" cy="76" r="2.2" fill="#F0D9B5"/><circle cx="63" cy="88" r="2.2" fill="#F0D9B5"/>
+          <circle cx="85" cy="89" r="2.2" fill="#F0D9B5"/>
+        </svg>
+      </div>
+      <h3>崇礼 草莓</h3>
+      <div class="meta">河北 崇礼 · 高寒错季<br>农场主 赵国栋 · 10 月 15 日采收</div>
+      <div class="price">￥32.0<em>/ 400 g</em></div>
+      <div class="trace">查看这箱的溯源码 →</div>
+    </div>
+  </section>
+
+  <div class="tracebar">
+    <div class="it"><i></i>产地当日直采，不催熟</div>
+    <div class="it"><i></i>采后 12 小时内进预冷</div>
+    <div class="it"><i></i>顺丰冷链，48 小时到家</div>
+    <div class="it"><i></i>坏果拍照即赔，当日处理</div>
+    <button class="btn btn-ghost">看看合作农场名单</button>
+  </div>
+
+  <footer>
+    <p>杭州市余杭区径山镇禹溪路 27 号 · 每日 07:00 – 21:00<br>企业团购请洽 0571-8864-2210，周一至周五 9:00 – 18:00</p>
+    <div class="r">本 周 截 单 时 间<br>10 月 19 日 周一 20:00</div>
+  </footer>
+</main>
+
+</body>
+</html>

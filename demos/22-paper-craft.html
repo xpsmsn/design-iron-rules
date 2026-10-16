@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>纸间 · 手作日记社区</title>
+<style>
+  :root{
+    --paper:#FBF7EF;        /* 米 */
+    --wood:#D9C4A3;         /* 浅木 */
+    --moss:#6B8E6B;         /* 墨绿 */
+    --moss-d:#3F6B45;       /* 墨绿 · 深阶（承载文字与按钮） */
+    --brick:#C96A5B;        /* 砖红 · 仅 24px 以上大字 */
+    --brick-d:#A9503F;      /* 砖红 · 深阶，承载小字 */
+    --ink:#3A342C;          /* 正文 */
+    --ink-2:#6E6355;        /* 次级文字 */
+    --line:#E4DACA;
+    --f-sans:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",sans-serif;
+    --f-kai:"Kaiti SC","KaiTi","STKaiti","Songti SC",serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    background:var(--paper);color:var(--ink);
+    font-family:var(--f-sans);
+    display:flex;flex-direction:column;
+  }
+  /* 纸纹：5%，只在纸面背景层；信息区由不透明卡片覆盖，不压正文 */
+  body::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background-image:
+      radial-gradient(#8a7a63 .8px,transparent .9px),
+      repeating-linear-gradient(94deg,rgba(138,122,99,.05) 0 1px,transparent 1px 7px);
+    background-size:6px 6px,auto;opacity:.05;
+  }
+  .pad{padding:0 56px}
+  .grain{display:block}
+
+  /* ---------- 页眉 ---------- */
+  header{padding-top:38px;display:flex;justify-content:space-between;align-items:flex-end}
+  .brand{position:relative}
+  .tape{
+    position:absolute;left:26px;top:-9px;width:150px;height:26px;
+    background:rgba(217,196,163,.62);
+    border-left:1px dashed rgba(58,52,44,.18);border-right:1px dashed rgba(58,52,44,.18);
+    transform:rotate(-3deg);
+  }
+  .brand .zh{font-family:var(--f-kai);font-size:46px;letter-spacing:.1em;line-height:1.1}
+  .brand .sub{font-size:12px;color:var(--ink-2);letter-spacing:.24em;margin-top:9px}
+  nav{display:flex;gap:30px;padding-bottom:8px}
+  nav a{font-size:14px;color:var(--ink-2);text-decoration:none;letter-spacing:.08em}
+  nav a.on{color:var(--moss-d);font-weight:700}
+  .acct{display:flex;align-items:center;gap:14px;padding-bottom:8px}
+  .acct .s{font-size:13px;color:var(--ink-2)}
+  .btn{
+    font-family:var(--f-sans);font-size:14px;letter-spacing:.08em;
+    background:var(--moss-d);color:#FBF7EF;padding:10px 18px;border:0;
+  }
+  .btn.ghost{background:transparent;color:var(--moss-d);border:1px solid var(--moss);padding:9px 16px}
+
+  /* ---------- 本月主题（阴影卡，不叠加撕边与纸纹） ---------- */
+  main{flex:1;padding-top:24px}
+  .theme{
+    display:grid;grid-template-columns:1fr 330px;gap:40px;align-items:center;
+    background:#FFFDF8;box-shadow:0 3px 8px rgba(0,0,0,.08);
+    border-left:5px solid var(--moss);padding:24px 32px;
+  }
+  .theme .t-eyebrow{font-size:12px;color:var(--brick-d);letter-spacing:.22em;font-weight:700}
+  .theme h1{
+    font-family:var(--f-kai);font-size:34px;font-weight:400;letter-spacing:.04em;
+    margin-top:10px;line-height:1.35;
+  }
+  .theme p{font-size:14px;line-height:1.9;color:var(--ink-2);margin-top:10px;max-width:720px}
+  .theme-cta{display:flex;flex-direction:column;gap:10px;align-items:stretch}
+  .theme-cta .btn{text-align:center;padding:12px 18px}
+  .theme-meta{
+    display:flex;gap:18px;font-size:12px;color:var(--ink-2);
+    border-top:1px solid var(--line);padding-top:10px;margin-top:12px;
+  }
+
+  /* ---------- 精选 / 速览 ---------- */
+  .cols{display:grid;grid-template-columns:1fr 430px;gap:44px;margin-top:26px}
+  .sec-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+  .sec-h h2{font-size:15px;letter-spacing:.2em;color:var(--ink);font-weight:700}
+  .sec-h a{font-size:12px;color:var(--moss-d);text-decoration:none;letter-spacing:.08em}
+
+  /* 拼贴：错落三卡，卡片 A 用阴影 / B 用撕边 / C 素卡 —— 三效果不同元素不叠加 */
+  .cards{display:flex;gap:20px;align-items:flex-start}
+  .card{width:232px;background:#FFFDF8;border:1px solid var(--line);padding:16px 16px 18px}
+  .card .img{
+    height:134px;position:relative;margin-bottom:14px;overflow:hidden;
+    background:#E9D6B9;
+  }
+  /* 卡 A：胶带 + 三只柿子 + 手缝虚线 */
+  .card.a .img{background:linear-gradient(160deg,#EFDEC4,#E3C9A4)}
+  .card.a .img .tape{
+    position:absolute;left:-8px;top:12px;width:104px;height:22px;
+    background:rgba(251,247,239,.62);border-left:1px dashed rgba(58,52,44,.16);border-right:1px dashed rgba(58,52,44,.16);
+    transform:rotate(-7deg);
+  }
+  .card.a .img .stitch{
+    position:absolute;left:14px;right:14px;bottom:14px;height:0;
+    border-bottom:1px dashed rgba(107,142,107,.75);
+  }
+  .persimmon{position:absolute;width:42px;height:40px;border-radius:50% 50% 46% 46%;
+    background:radial-gradient(38% 32% at 34% 28%,#F0A24A,#C9642A 78%,#A64F1E)}
+  .persimmon::after{content:"";position:absolute;left:50%;top:-6px;width:20px;height:9px;margin-left:-10px;
+    background:#6B8E6B;clip-path:polygon(50% 0,100% 42%,78% 100%,22% 100%,0 42%)}
+  /* 卡 B：撕边纸上的票根（描线 + 齿孔 + 打孔虚线） */
+  .card.b{clip-path:polygon(0 0,100% 0,100% calc(100% - 5px),92% 100%,83% calc(100% - 3px),74% calc(100% - 7px),65% calc(100% - 2px),56% 100%,47% calc(100% - 5px),38% calc(100% - 8px),29% 100%,20% calc(100% - 4px),11% calc(100% - 6px),0 calc(100% - 2px));
+    padding-bottom:30px}
+  .card.b .img{background:#CFD9C6;display:flex;align-items:center;justify-content:center}
+  /* 卡 C：31 天连续打卡点阵 */
+  .card.c .img{background:#E7D5CC;display:flex;align-items:center;justify-content:center}
+  .g31{display:grid;grid-template-columns:repeat(7,15px);gap:7px}
+  .g31 i{width:15px;height:15px;border-radius:50%;background:var(--moss);display:block}
+  .g31 i.off{background:rgba(58,52,44,.13)}
+  .card .tt{font-family:var(--f-kai);font-size:24px;line-height:1.4;letter-spacing:.02em}
+  .card .au{font-size:13px;color:var(--ink-2);margin-top:8px;letter-spacing:.04em}
+  .card .nm{font-size:11px;color:var(--ink-2);margin-top:10px;letter-spacing:.1em}
+  .card .nm em{font-style:normal;color:var(--brick-d);font-weight:700}
+
+  /* 本周话题 */
+  .topics{margin-top:22px}
+  .topic-row{display:flex;gap:12px;flex-wrap:wrap}
+  .topic{
+    font-size:13px;letter-spacing:.04em;color:var(--ink);
+    border:1px solid var(--line);background:#FFFDF8;padding:9px 14px;
+  }
+  .topic em{font-style:normal;color:var(--ink-2);font-size:11px;margin-left:7px}
+  .qa{
+    margin-top:16px;background:#FFFDF8;border:1px solid var(--line);
+    border-left:4px solid var(--wood);padding:12px 18px;
+  }
+  .qa .q{font-size:13px;line-height:1.75;letter-spacing:.02em}
+  .qa .a{font-size:13px;line-height:1.75;color:var(--ink-2);margin-top:6px;letter-spacing:.02em}
+  .qa .a b{color:var(--moss-d);font-weight:700}
+
+  /* 速览列表 */
+  .feed{background:#FFFDF8;border:1px solid var(--line)}
+  .feed .it{display:grid;grid-template-columns:78px 1fr 92px;gap:10px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line);font-size:13px}
+  .feed .it:last-child{border-bottom:0}
+  .feed .who{color:var(--moss-d);font-weight:700;letter-spacing:.04em}
+  .feed .ti{color:var(--ink);letter-spacing:.02em}
+  .feed .mt{color:var(--ink-2);font-size:11px;text-align:right;letter-spacing:.06em}
+
+  /* 活动 */
+  .acts{margin-top:20px}
+  .act{display:grid;grid-template-columns:76px 1fr;gap:16px;align-items:baseline;
+    padding:11px 0;border-bottom:1px solid var(--line)}
+  .act .d{font-family:var(--f-kai);font-size:24px;color:var(--brick);line-height:1.1}
+  .act .d span{display:block;font-family:var(--f-sans);font-size:11px;color:var(--ink-2);margin-top:4px}
+  .act .n{font-size:14px;letter-spacing:.02em}
+  .act .m{font-size:12px;color:var(--ink-2);margin-top:4px}
+
+  /* ---------- 页脚 ---------- */
+  footer{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 56px;border-top:1px solid var(--line);
+  }
+  footer p{font-size:12px;color:var(--ink-2);letter-spacing:.06em;line-height:1.8}
+  footer .r{display:flex;align-items:center;gap:22px}
+</style>
+</head>
+<body>
+
+<header class="pad">
+  <div class="brand">
+    <div class="tape"></div>
+    <div class="zh">纸间</div>
+    <div class="sub">手 作 日 记 社 区 · 每 周 三 更 新</div>
+  </div>
+  <div style="display:flex;align-items:flex-end;gap:34px">
+    <nav>
+      <a href="#" class="on">本周精选</a>
+      <a href="#">手账速览</a>
+      <a href="#">线下活动</a>
+      <a href="#">互助问答</a>
+      <a href="#">市集日历</a>
+    </nav>
+    <div class="acct">
+      <span class="s">登录</span>
+      <button class="btn">注册创作者</button>
+    </div>
+  </div>
+</header>
+
+<main class="pad">
+  <section class="theme">
+    <div>
+      <div class="t-eyebrow">十 月 社 题</div>
+      <h1>把秋天贴进本子里</h1>
+      <p>
+        本期不设评判，只设一个动作：至少贴进一样从外面带回来的东西——
+        一片叶子、一张车票、一张超市小票都可以。截稿后我们会挑 20 本做成合辑，
+        印 150 册，寄给每一位被选中的作者。
+      </p>
+      <div class="theme-meta">
+        <span>投稿截止 10 月 25 日 23:59</span>
+        <span>已收到 328 篇</span>
+        <span>入选合辑 20 本 · 印 150 册</span>
+      </div>
+    </div>
+    <div class="theme-cta">
+      <button class="btn">上传我的手账 →</button>
+      <button class="btn ghost">查看合辑装帧规格</button>
+    </div>
+  </section>
+
+  <section class="cols">
+    <div>
+      <div class="sec-h">
+        <h2>编 辑 部 精 选</h2>
+        <a href="#">全部 1,372 篇 →</a>
+      </div>
+      <div class="cards">
+        <div class="card a">
+          <div class="img">
+            <span class="tape"></span>
+            <span class="stitch"></span>
+            <i class="persimmon" style="left:30px;top:44px"></i>
+            <i class="persimmon" style="left:92px;top:62px"></i>
+            <i class="persimmon" style="left:150px;top:40px"></i>
+          </div>
+          <div class="tt">阳台上的三只柿子</div>
+          <div class="au">沈小满 · 杭州</div>
+          <div class="nm">贴纸 <em>47</em> 张 · 内页 12 页</div>
+        </div>
+
+        <div class="card b" style="background:#FBF7EF;border-color:#D9C4A3">
+          <div class="img">
+            <svg viewBox="0 0 190 116" style="width:186px;height:112px">
+              <rect x="14" y="14" width="162" height="88" fill="#FFFDF8" stroke="#C9B491" stroke-width="1.4"/>
+              <line x1="14" y1="52" x2="176" y2="52" stroke="#C9B491" stroke-width="1.2" stroke-dasharray="3 4"/>
+              <g fill="#FBF7EF" stroke="#C9B491" stroke-width="1.2">
+                <circle cx="44" cy="52" r="3"/><circle cx="88" cy="52" r="3"/><circle cx="132" cy="52" r="3"/>
+              </g>
+              <text x="24" y="38" font-size="13" fill="#3A342C" font-family="Kaiti SC, serif">针 线 笺</text>
+              <text x="24" y="76" font-size="11" fill="#6E6355" font-family="Microsoft YaHei, sans-serif">上海 · 1987.04</text>
+              <text x="24" y="94" font-size="11" fill="#6E6355" font-family="Microsoft YaHei, sans-serif">第 12 页 · 共 40 页</text>
+              <circle cx="160" cy="84" r="9" fill="none" stroke="#C96A5B" stroke-width="1.6"/>
+              <text x="152" y="88" font-size="10" fill="#A9503F" font-family="Microsoft YaHei, sans-serif">旧</text>
+            </svg>
+          </div>
+          <div class="tt">外婆的针线笺</div>
+          <div class="au">郑允 · 成都</div>
+          <div class="nm">票根 <em>9</em> 张 · 复刻 1987 版</div>
+        </div>
+
+        <div class="card c" style="border-color:#D9C4A3">
+          <div class="img">
+            <div class="g31">
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+              <i></i><i></i><i class="off"></i><i class="off"></i><i class="off"></i><i class="off"></i><i class="off"></i>
+            </div>
+          </div>
+          <div class="tt">夜班公交沿线</div>
+          <div class="au">周未 · 沈阳</div>
+          <div class="nm">连续打卡 <em>31</em> 天 · 不断更</div>
+        </div>
+      </div>
+
+      <div class="topics">
+        <div class="sec-h" style="margin-bottom:12px">
+          <h2>本 周 话 题</h2>
+          <a href="#">进入话题页 →</a>
+        </div>
+        <div class="topic-row">
+          <span class="topic">#胶带踩雷<em>186 篇</em></span>
+          <span class="topic">#手账排版<em>94 篇</em></span>
+          <span class="topic">#票根收纳<em>61 篇</em></span>
+          <span class="topic">#钢笔洇纸<em>47 篇</em></span>
+          <span class="topic">#拼贴构图<em>38 篇</em></span>
+        </div>
+        <div class="qa">
+          <div class="q">问：牛皮纸和米白纸叠在一起总觉得脏，是纸的问题吗？</div>
+          <div class="a">答：是明度差不够。把两者的明度差拉到 <b>12% 以上</b>，叠在一起立刻干净；如果只有 6%，再厚的胶带也压不住。</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="sec-h">
+        <h2>本 周 手 账 速 览</h2>
+        <a href="#">实时刷新 →</a>
+      </div>
+      <div class="feed">
+        <div class="it"><span class="who">林一一</span><span class="ti">铜版纸试色第 14 次，这次成了</span><span class="mt">2 小时前 · 6 版</span></div>
+        <div class="it"><span class="who">阿吉布铺</span><span class="ti">秋分这天买了三斤栗子</span><span class="mt">5 小时前 · 贴纸 12</span></div>
+        <div class="it"><span class="who">郑允</span><span class="ti">把 1987 年的缝纫机卡片补完了</span><span class="mt">昨天 · 票根 9</span></div>
+        <div class="it"><span class="who">苏木</span><span class="ti">手账胶带我踩雷合集（第 4 版）</span><span class="mt">昨天 · 19 张</span></div>
+        <div class="it"><span class="who">周未</span><span class="ti">第 31 天：末班车上有人画画</span><span class="mt">前天 · 打卡 31</span></div>
+      </div>
+
+      <div class="acts">
+        <div class="sec-h" style="margin-bottom:2px"><h2>线 下 与 线 上</h2></div>
+        <div class="act">
+          <div class="d">10.18<span>周日 14:00</span></div>
+          <div>
+            <div class="n">拼贴夜 · 第 6 期（剩 9 席）</div>
+            <div class="m">杭州 桥西河下街 18 号 2F · 自带一本空白本即可</div>
+          </div>
+        </div>
+        <div class="act">
+          <div class="d">10.24<span>周六 20:00</span></div>
+          <div>
+            <div class="n">直播课：手账胶带怎么选不伤纸</div>
+            <div class="m">线上 60 分钟 · 报名后发回放链接</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>
+    杭州市拱墅区河下街 18 号 2F · 社区守则：作品授权默认非独占，可随时撤回<br>
+    编辑部 zhijian@paper-room.cn · 累计注册创作者 8,246 人
+  </p>
+  <div class="r">
+    <span style="font-size:13px;color:#3F6B45;letter-spacing:.06em">本月合辑截稿 10 月 25 日</span>
+    <button class="btn">报名拼贴夜</button>
+  </div>
+</footer>
+
+</body>
+</html>

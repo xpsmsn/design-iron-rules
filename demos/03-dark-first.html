@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>夜航 Studio — 音乐人主页</title>
+<style>
+  :root{
+    --bg:#0F1115;        /* 最深，大面积 */
+    --surface:#171A21;   /* 抬升层：卡片 */
+    --surface-2:#1F232C; /* 再抬升：弹层 */
+    --line:#2A2F3A;      /* 边框 */
+    --t1:#E6E8EC;        /* 一级文字（非纯白） */
+    --t2:#A0A6B2;        /* 二级文字 */
+    --t3:#6B7280;        /* 仅用于图形/分隔，不用于正文（暗底仅 3.91:1） */
+    --glow:#4FE3C4;      /* 强调：暗底上提亮的青 */
+    --amber:#F5B14C;     /* 次强调：预售 / 提醒 */
+    --sans:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",Helvetica,Arial,sans-serif;
+    --mono:"Cascadia Code",Consolas,"SF Mono","Courier New",monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    background:var(--bg);color:var(--t1);
+    font-family:var(--sans);font-size:15px;
+    display:flex;flex-direction:column;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* 暗色用抬升表达层级，不用阴影 */
+  .card{background:var(--surface);border:1px solid var(--line)}
+
+  /* ---------- 顶栏 ---------- */
+  header{
+    height:62px;flex:none;display:flex;align-items:center;gap:44px;
+    padding:0 56px;border-bottom:1px solid var(--line);
+  }
+  .logo{display:flex;align-items:baseline;gap:11px}
+  .logo .zh{font-size:19px;font-weight:700;letter-spacing:.2em}
+  .logo .en{font-size:10px;letter-spacing:.34em;color:var(--t2)}
+  nav{display:flex;gap:30px}
+  nav a{font-size:13px;color:var(--t2);text-decoration:none;letter-spacing:.1em;padding:4px 0}
+  nav a.on{color:var(--t1);box-shadow:inset 0 -2px 0 var(--glow)}
+  .live{
+    margin-left:auto;display:flex;align-items:center;gap:9px;
+    font-size:12px;color:var(--t2);letter-spacing:.08em;
+    background:var(--surface);border:1px solid var(--line);
+    padding:7px 14px;
+  }
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--glow)}
+
+  main{flex:1;padding:0 56px;display:flex;flex-direction:column;min-height:0}
+
+  /* ---------- 艺人 ---------- */
+  .artist{
+    display:grid;grid-template-columns:1fr 452px;gap:56px;
+    padding-top:26px;align-items:start;
+  }
+  .stage{font-size:11px;letter-spacing:.36em;color:var(--t2)}
+  .artist h1{
+    font-size:72px;font-weight:700;line-height:1.02;letter-spacing:.06em;
+    margin-top:10px;
+  }
+  .artist h1 em{font-style:normal;color:var(--glow)}
+  .artist .role{
+    font-size:13px;letter-spacing:.22em;color:var(--t2);margin-top:12px;
+  }
+  .bio{
+    font-size:15px;line-height:1.78;color:var(--t2);
+    max-width:520px;margin-top:14px;
+  }
+  .bio b{color:var(--t1);font-weight:400}
+  .stat{display:flex;gap:38px;margin-top:17px}
+  .stat div span{display:block;font-size:11px;color:var(--t2);letter-spacing:.14em}
+  .stat div strong{
+    display:block;font-size:19px;font-weight:400;margin-top:6px;
+    font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  }
+
+  /* ---------- 新发行 ---------- */
+  .release{padding:18px 22px 17px}
+  .release .kick{
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:11px;letter-spacing:.22em;color:var(--t2);
+  }
+  .kick .tag{
+    color:var(--glow);border:1px solid var(--glow);
+    padding:3px 9px;letter-spacing:.16em;
+  }
+  .art{
+    margin-top:13px;height:112px;border:1px solid var(--line);  /* 图片加内描边，避免与底色融在一起 */
+    background:var(--surface-2);
+  }
+  .art svg{display:block;width:100%;height:100%}
+  .release h2{font-size:22px;font-weight:700;letter-spacing:.1em;margin-top:13px}
+  .release .sub{font-size:12px;color:var(--t2);letter-spacing:.1em;margin-top:6px}
+  .release .cta{display:flex;gap:10px;margin-top:13px}
+  .release .cta span{
+    font-size:13px;padding:9px 16px;letter-spacing:.1em;border:1px solid var(--line);
+    color:var(--t2);
+  }
+  .release .cta .on{
+    background:var(--glow);color:var(--bg);border-color:var(--glow);font-weight:700;
+  }
+
+  /* ---------- 曲目 ---------- */
+  .section-head{
+    display:flex;justify-content:space-between;align-items:baseline;
+    margin-top:20px;padding-bottom:9px;border-bottom:1px solid var(--line);
+  }
+  .section-head h3{font-size:12px;font-weight:400;letter-spacing:.28em;color:var(--t2)}
+  .section-head .meta{font-size:12px;color:var(--t2);font-variant-numeric:tabular-nums}
+
+  .track{
+    display:grid;grid-template-columns:26px 1fr 132px 56px;gap:20px;
+    align-items:center;padding:9px 0;border-bottom:1px solid var(--line);
+  }
+  .track .no{font-size:12px;color:var(--t2);font-variant-numeric:tabular-nums}
+  .track.playing .no{color:var(--glow)}
+  .track .nm{font-size:15px;letter-spacing:.04em}
+  .track.playing .nm{color:var(--glow)}
+  .track .nm i{font-style:normal;font-size:12px;color:var(--t2);margin-left:10px;letter-spacing:.06em}
+  .wave{position:relative}
+  .wave svg{display:block;width:100%;height:24px}
+  .wave .base{color:var(--line)}
+  .wave .fill{position:absolute;inset:0;color:var(--glow)}
+  .track .dur{font-size:13px;color:var(--t2);text-align:right;font-variant-numeric:tabular-nums}
+
+  /* ---------- 现场 ---------- */
+  .shows{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:13px}
+  .show{padding:13px 16px}
+  .show .date{font-size:12px;color:var(--t2);letter-spacing:.14em;font-variant-numeric:tabular-nums}
+  .show .date b{color:var(--t1);font-weight:400;font-size:13px;margin-left:9px;letter-spacing:.06em}
+  .show .venue{font-size:16px;font-weight:700;margin-top:8px;letter-spacing:.03em}
+  .show .city{font-size:12px;color:var(--t2);margin-top:5px;letter-spacing:.06em}
+  .show .state{
+    display:inline-block;margin-top:10px;font-size:11px;letter-spacing:.14em;
+    padding:4px 9px;border:1px solid var(--line);color:var(--t2);
+  }
+  .show .state.presale{color:var(--amber);border-color:var(--amber)}
+  /* 禁用态用降低不透明度，不把颜色降到看不清（#6B7280 在暗底仅 3.91:1，不用于文字） */
+  .show .state.sold{color:var(--t2);opacity:.5}
+
+  footer{
+    flex:none;height:46px;display:flex;align-items:center;gap:28px;
+    padding:0 56px;border-top:1px solid var(--line);
+    font-size:11px;color:var(--t2);letter-spacing:.1em;
+  }
+  footer .sp{margin-left:auto;color:var(--glow);font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+
+<!-- 波形符号：定义一次，多处复用 -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="wf" viewBox="0 0 200 24">
+    <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      d="M2 12V9M7 12V5M12 12V16M17 12V3M22 12V18M27 12V8M32 12V14M37 12V6M42 12V17M47 12V10
+         M52 12V2M57 12V19M62 12V7M67 12V15M72 12V4M77 12V16M82 12V11M87 12V6M92 12V18M97 12V9
+         M102 12V13M107 12V5M112 12V20M117 12V8M122 12V15M127 12V3M132 12V17M137 12V10M142 12V6
+         M147 12V19M152 12V9M157 12V14M162 12V4M167 12V18M172 12V7M177 12V16M182 12V10M187 12V3
+         M192 12V15M197 12V8"/>
+  </symbol>
+</svg>
+
+<header>
+  <div class="logo"><span class="zh">夜航</span><span class="en">NIGHT&nbsp;VOYAGE&nbsp;STUDIO</span></div>
+  <nav>
+    <a href="#" class="on">作品</a>
+    <a href="#">现场</a>
+    <a href="#">器材间</a>
+    <a href="#">联络</a>
+  </nav>
+  <div class="live"><span class="dot"></span>今晚 20:00 东郊记忆 2 号棚 直播混音</div>
+</header>
+
+<main>
+  <section class="artist">
+    <div>
+      <div class="stage">成都 · 电子 / 后摇 / 现场设备</div>
+      <h1>夜航 <em>YEHANG</em></h1>
+      <div class="role">第 2 张 EP《长夜信号》 · 2026.08.21 全网发行</div>
+      <p class="bio">
+        2014 年在成都东郊记忆的一间排练房里录下第一段采样。
+        此后十二年只做一件事：把<b>城市夜里的底噪</b>——变电箱、货车胎噪、老式空调外机——
+        拆成可以循环播放的节拍。至今独立发行 4 张专辑、19 首单曲。
+      </p>
+      <div class="stat">
+        <div><span>发行曲目</span><strong>19</strong></div>
+        <div><span>现场演出</span><strong>126 场</strong></div>
+        <div><span>母带规格</span><strong>48 kHz / 24 bit</strong></div>
+      </div>
+    </div>
+
+    <div class="card release">
+      <div class="kick">
+        <span>新 碟 · NO. 04</span>
+        <span class="tag">已 上 线</span>
+      </div>
+      <div class="art">
+        <svg viewBox="0 0 406 110" aria-label="专辑封面：长夜信号">
+          <rect width="406" height="110" fill="#1F232C"/>
+          <circle cx="203" cy="92" r="46" fill="none" stroke="#4FE3C4" stroke-width="1" stroke-opacity=".45"/>
+          <circle cx="203" cy="92" r="70" fill="none" stroke="#4FE3C4" stroke-width="1" stroke-opacity=".2"/>
+          <path fill="none" stroke="#3A4353" stroke-width="6" stroke-linecap="butt"
+            d="M5 110V72M16 110V54M27 110V88M38 110V64M49 110V96M60 110V46M71 110V80M82 110V60
+               M93 110V92M104 110V56M115 110V84M126 110V48M137 110V74M148 110V98M159 110V62
+               M170 110V86M181 110V54M192 110V78M203 110V100M214 110V66M225 110V90M236 110V50
+               M247 110V76M258 110V94M269 110V58M280 110V82M291 110V46M302 110V70M313 110V92
+               M324 110V64M335 110V86M346 110V52M357 110V98M368 110V68M379 110V88M390 110V58M401 110V78"/>
+          <g fill="#4FE3C4">
+            <rect x="202" y="70" width="6" height="22"/>
+            <rect x="58" y="46" width="6" height="18"/>
+          </g>
+          <g fill="#F5B14C">
+            <rect x="289" y="46" width="6" height="16"/>
+            <rect x="147" y="82" width="6" height="12"/>
+          </g>
+          <line x1="0" y1="100" x2="406" y2="100" stroke="#4FE3C4" stroke-width="1" stroke-opacity=".55"/>
+        </svg>
+      </div>
+      <h2>长夜信号</h2>
+      <div class="sub">5 首 · 38 分 12 秒 · 数字 / 黑胶双版本</div>
+      <div class="cta">
+        <span class="on">试听全长</span>
+        <span>收藏黑胶</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h3>正 片 · TRACKLIST</h3>
+      <div class="meta">5 首 · 38:12 · 采样录制于成都东郊 2025.11 — 2026.06</div>
+    </div>
+
+    <div class="track playing">
+      <div class="no">01</div>
+      <div class="nm">长夜信号 <i>Signal After Dark</i></div>
+      <div class="wave"><svg class="base" viewBox="0 0 200 24" preserveAspectRatio="none"><use href="#wf"/></svg><svg class="fill" style="clip-path:inset(0 0 0 0)" viewBox="0 0 200 24" preserveAspectRatio="none"><use href="#wf"/></svg></div>
+      <div class="dur">06:42</div>
+    </div>
+    <div class="track playing">
+      <div class="no">02</div>
+      <div class="nm">冷光 <i>Cold Light</i></div>
+      <div class="wave"><svg class="base" viewBox="0 0 190 24" preserveAspectRatio="none"><use href="#wf"/></svg><svg class="fill" style="clip-path:inset(0 46% 0 0)" viewBox="0 0 190 24" preserveAspectRatio="none"><use href="#wf"/></svg></div>
+      <div class="dur">04:18</div>
+    </div>
+    <div class="track">
+      <div class="no">03</div>
+      <div class="nm">十七公里 <i>Seventeen Kilometres</i></div>
+      <div class="wave"><svg class="base" viewBox="0 0 200 24" preserveAspectRatio="none"><use href="#wf"/></svg></div>
+      <div class="dur">07:03</div>
+    </div>
+    <div class="track">
+      <div class="no">04</div>
+      <div class="nm">磁带 A 面 <i>Tape Side A</i></div>
+      <div class="wave"><svg class="base" viewBox="0 0 184 24" preserveAspectRatio="none"><use href="#wf"/></svg></div>
+      <div class="dur">05:26</div>
+    </div>
+    <div class="track">
+      <div class="no">05</div>
+      <div class="nm">天亮之前 <i>Before Daylight</i></div>
+      <div class="wave"><svg class="base" viewBox="0 0 200 24" preserveAspectRatio="none"><use href="#wf"/></svg></div>
+      <div class="dur">14:43</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h3>即 将 演 出</h3>
+      <div class="meta">点击卡片查看座位图</div>
+    </div>
+    <div class="shows">
+      <div class="card show">
+        <div class="date"><b>10.23</b>周五 20:00</div>
+        <div class="venue">小酒馆 · 芳沃街店</div>
+        <div class="city">成都 芳沃街 6 号 · 站前广场</div>
+        <span class="state sold">已售罄 · 候补 61 人</span>
+      </div>
+      <div class="card show">
+        <div class="date"><b>10.30</b>周五 20:30</div>
+        <div class="venue">Nuts Live House</div>
+        <div class="city">重庆 解放碑 民族路 118 号</div>
+        <span class="state presale">预售中 · 剩 42 张</span>
+      </div>
+      <div class="card show">
+        <div class="date"><b>11.06</b>周五 20:00</div>
+        <div class="venue">VOX · 武昌店</div>
+        <div class="city">武汉 洪山区 珞狮路 76 号</div>
+        <span class="state presale">预售中 · 剩 118 张</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>夜航 Studio · 成都市成华区建设北路三段 88 号 2 单元 403</span>
+  <span>联络 yehang@nightvoyage.cn</span>
+  <span class="sp">本月播放 128,406 次</span>
+</footer>
+
+</body>
+</html>

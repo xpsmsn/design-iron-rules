@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>小象巴士 少儿英语启蒙</title>
+<style>
+  :root{
+    --bg:#FDEFE0;
+    --ink:#3D2B23;          /* 糖果底上文字一律用深色 */
+    --ink-2:#5C463B;
+    --coral:#FF9E80;
+    --mint:#A8E6CF;
+    --lav:#C9BCF2;
+    --butter:#FFD97D;
+    --sky:#9FD4F5;
+    --brand:#C2410C;
+    /* 黏土三要素：偏下方软阴影 + 顶部柔光 + 内边缘亮边，全局统一 */
+    --clay-s:0 8px 14px rgba(124,74,46,.20), 0 2px 4px rgba(124,74,46,.10), inset 0 2px 0 rgba(255,255,255,.72);
+    --clay-l:0 16px 28px rgba(124,74,46,.24), 0 3px 6px rgba(124,74,46,.12), inset 0 2px 0 rgba(255,255,255,.75);
+    --clay-in:inset 0 -8px 14px rgba(124,74,46,.18), inset 0 8px 14px rgba(255,255,255,.78);
+    --f:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",sans-serif;
+    --pad:56px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    background:var(--bg);color:var(--ink);
+    font-family:var(--f);-webkit-font-smoothing:antialiased;
+    display:flex;flex-direction:column;
+  }
+
+  /* ---------- 页眉 ---------- */
+  header{display:flex;justify-content:space-between;align-items:center;padding:30px var(--pad) 0}
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand .logo{
+    width:52px;height:52px;border-radius:50%;background:var(--coral);
+    box-shadow:var(--clay-s);display:flex;align-items:center;justify-content:center;
+  }
+  .brand b{font-size:24px;font-weight:700;letter-spacing:.02em}
+  .brand span{display:block;font-size:11px;color:var(--ink-2);letter-spacing:.2em;margin-top:4px}
+  nav{display:flex;gap:12px;align-items:center}
+  nav a{
+    font-size:14px;color:var(--ink);text-decoration:none;letter-spacing:.04em;
+    padding:11px 20px;border-radius:999px;box-shadow:var(--clay-s);
+  }
+  nav a.on{box-shadow:var(--clay-in);font-weight:700}
+  nav a.ghost{box-shadow:none;padding-left:6px;padding-right:6px;color:var(--ink-2)}
+
+  main{flex:1;padding:0 var(--pad);display:flex;flex-direction:column}
+
+  /* ---------- 主视觉 ---------- */
+  .hero{display:flex;gap:40px;align-items:flex-start;padding-top:20px}
+  .hero-l{flex:1}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:9px;font-size:12px;font-weight:600;
+    letter-spacing:.1em;padding:7px 16px;border-radius:999px;
+    background:var(--mint);box-shadow:var(--clay-s);
+  }
+  h1{
+    font-size:42px;font-weight:800;line-height:1.24;letter-spacing:-.01em;
+    margin-top:14px;
+  }
+  h1 em{font-style:normal;background:var(--butter);padding:1px 12px;border-radius:16px;box-shadow:var(--clay-s)}
+  .hero-l p{
+    font-size:14px;line-height:1.9;color:var(--ink-2);
+    max-width:540px;margin-top:12px;
+  }
+  .bottom-row{display:flex;align-items:center;gap:24px;margin-top:16px}
+  .facts{display:flex;gap:12px}
+  .fact{
+    background:var(--bg);border-radius:18px;box-shadow:var(--clay-in);
+    padding:10px 17px 11px;
+  }
+  .fact b{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}
+  .fact span{display:block;font-size:11px;color:var(--ink-2);letter-spacing:.06em;margin-top:2px}
+  .cta-row{display:flex;gap:14px;align-items:center}
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;border:none;cursor:pointer;
+    font-family:var(--f);font-size:14px;font-weight:700;letter-spacing:.03em;
+    padding:14px 26px;border-radius:999px;white-space:nowrap;
+  }
+  .btn-main{background:var(--brand);color:#FFFFFF;box-shadow:0 10px 20px rgba(140,54,14,.30), inset 0 2px 0 rgba(255,255,255,.28)}
+  .btn-sub{background:var(--coral);color:var(--ink);box-shadow:var(--clay-s)}
+
+  /* 单词卡 */
+  .card-word{
+    width:372px;flex:none;background:var(--butter);border-radius:40px;
+    box-shadow:var(--clay-l);padding:24px 30px 20px;position:relative;
+  }
+  .card-word .tag{
+    position:absolute;top:-15px;left:28px;font-size:11px;font-weight:700;letter-spacing:.1em;
+    background:var(--sky);padding:7px 16px;border-radius:999px;box-shadow:var(--clay-s);
+  }
+  .eleph{
+    width:76px;height:76px;border-radius:50%;background:var(--bg);
+    box-shadow:var(--clay-in);display:flex;align-items:center;justify-content:center;
+  }
+  .card-word .en{font-size:33px;font-weight:800;letter-spacing:-.01em;margin-top:18px}
+  .card-word .ipa{font-size:13px;color:var(--ink-2);margin-top:6px;letter-spacing:.06em}
+  .card-word .cn{font-size:18px;font-weight:700;margin-top:11px}
+  .card-word .cn span{font-size:12px;font-weight:400;color:var(--ink-2);margin-left:9px}
+  .card-word .foot{display:flex;align-items:center;justify-content:space-between;margin-top:18px}
+  .card-word .foot small{font-size:12px;color:var(--ink-2);letter-spacing:.04em}
+  .replay{
+    display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;
+    background:var(--bg);border-radius:999px;padding:10px 17px;box-shadow:var(--clay-s);
+  }
+
+  /* ---------- 课程包 ---------- */
+  .sec-h{display:flex;justify-content:space-between;align-items:baseline;margin:22px 0 14px}
+  .sec-h h2{font-size:19px;font-weight:800;letter-spacing:.02em}
+  .sec-h span{font-size:13px;color:var(--ink-2);letter-spacing:.04em}
+  .courses{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .course{border-radius:32px;box-shadow:var(--clay-l);padding:22px 26px 20px}
+  .course .top{display:flex;align-items:flex-start;justify-content:space-between}
+  .ico{
+    width:54px;height:54px;border-radius:50%;background:var(--bg);
+    box-shadow:var(--clay-in);display:flex;align-items:center;justify-content:center;flex:none;
+  }
+  .age{
+    font-size:12px;font-weight:700;letter-spacing:.06em;background:var(--bg);
+    padding:6px 14px;border-radius:999px;box-shadow:var(--clay-s);
+  }
+  .course h3{font-size:20px;font-weight:800;margin-top:16px}
+  .course .desc{font-size:12.5px;color:var(--ink-2);line-height:1.75;margin-top:8px;height:42px}
+  .course .meta{display:flex;gap:16px;margin-top:13px;font-size:12px;color:var(--ink-2)}
+  .course .meta b{color:var(--ink);font-weight:700}
+  .price{
+    margin-top:15px;padding-top:14px;border-top:2px dashed rgba(61,43,35,.16);
+    display:flex;align-items:flex-end;justify-content:space-between;
+  }
+  .price b{font-size:27px;font-weight:800;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+  .price b em{font-style:normal;font-size:14px;font-weight:700;margin-right:3px}
+  .price small{font-size:10.5px;color:var(--ink-2);display:block;text-align:right;line-height:1.55}
+
+  /* ---------- 底部 ---------- */
+  .strip{
+    margin-top:18px;display:flex;align-items:center;gap:24px;
+    background:var(--bg);border-radius:24px;box-shadow:var(--clay-in);padding:12px 24px;
+  }
+  .strip .it{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink)}
+  .strip .it i{width:7px;height:7px;border-radius:50%;background:var(--ink);opacity:.55;display:block}
+  .strip .btn{margin-left:auto;padding:12px 22px;font-size:13px}
+
+  footer{
+    margin-top:auto;padding:12px 0 14px;display:flex;justify-content:space-between;align-items:flex-end;
+  }
+  footer p{font-size:11.5px;color:var(--ink-2);line-height:1.8;letter-spacing:.02em}
+  footer .r{font-size:11.5px;color:var(--ink-2);text-align:right;line-height:1.8}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo">
+      <svg width="30" height="30" viewBox="0 0 48 48" fill="none" stroke="#3D2B23" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 27c0-9.4 6.3-16 14-16s14 6.6 14 16c0 2.3-1.9 4-4.2 4h-3.3"/>
+        <path d="M23.5 31v2.6a4.6 4.6 0 0 1-9.2 0v-2.4"/>
+        <path d="M10 27c-3.8 1.6-5.4 5.4-4.4 10 .7 3.1 3.6 5 6.6 4.4"/>
+        <circle cx="19" cy="24.5" r="1.7" fill="#3D2B23" stroke="none"/>
+      </svg>
+    </div>
+    <div>
+      <b>小象巴士</b>
+      <span>少 儿 英 语 启 蒙</span>
+    </div>
+  </div>
+  <nav>
+    <a href="#" class="on">课程体系</a>
+    <a href="#">试听预约</a>
+    <a href="#">学习报告</a>
+    <a href="#" class="ghost">6 家校区</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-l">
+      <div class="eyebrow">4 – 8 岁 · 深圳 · 广州 6 家校区</div>
+      <h1>先让孩子<em>爱听</em>，<br>再教他开口说。</h1>
+      <p>
+        小象巴士的课堂从一首歌开始，不讲语法、不做翻译。每节课 45 分钟，
+        一位外教带着 6 个孩子唱、玩、抢答——一节课里的开口次数，
+        比认读单字的数量更重要。
+      </p>
+      <div class="bottom-row">
+        <div class="facts">
+          <div class="fact"><b>2,184</b><span>在读学员</span></div>
+          <div class="fact"><b>6 人</b><span>每班上限</span></div>
+          <div class="fact"><b>96.4%</b><span>年度续报率</span></div>
+        </div>
+        <div class="cta-row">
+          <button class="btn btn-main">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"><path d="M8 5.5l10 6.5-10 6.5z"/></svg>
+            预约 45 分钟试听
+          </button>
+          <button class="btn btn-sub">查看本周课表</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-word">
+      <div class="tag">今 日 单 词 卡</div>
+      <div class="eleph">
+        <svg width="52" height="52" viewBox="0 0 48 48" fill="none" stroke="#3D2B23" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 27c0-9.4 6.3-16 14-16s14 6.6 14 16c0 2.3-1.9 4-4.2 4h-3.3"/>
+          <path d="M23.5 31v2.6a4.6 4.6 0 0 1-9.2 0v-2.4"/>
+          <path d="M10 27c-3.8 1.6-5.4 5.4-4.4 10 .7 3.1 3.6 5 6.6 4.4"/>
+          <circle cx="19" cy="24.5" r="1.7" fill="#3D2B23" stroke="none"/>
+        </svg>
+      </div>
+      <div class="en">Elephant</div>
+      <div class="ipa">/ˈelɪfənt/ · 英 [ˈelɪfənt]</div>
+      <div class="cn">大象<span>陆地上最大的哺乳动物</span></div>
+      <div class="foot">
+        <small>今日第 2 个 · 共 8 个</small>
+        <div class="replay">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3D2B23" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h5"/><path d="M20 14.5v-5h-5"/><path d="M19.4 9.5A8 8 0 0 0 5.3 7.3L4 9.5"/><path d="M4.6 14.5a8 8 0 0 0 14.1 2.2L20 14.5"/></svg>
+          再听一遍
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sec-h">
+    <h2>四个班型，按年龄和基础分班</h2>
+    <span>秋季班 9 月 1 日开课 · 随到随学</span>
+  </div>
+
+  <section class="courses">
+    <div class="course" style="background:var(--mint)">
+      <div class="top">
+        <div class="ico">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#3D2B23" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h6.5A2.5 2.5 0 0 1 13 8v11a2 2 0 0 0-2-2H4z"/><path d="M20 5.5h-6.5A2.5 2.5 0 0 0 11 8v11a2 2 0 0 1 2-2h7z"/></svg>
+        </div>
+        <div class="age">4 – 6 岁</div>
+      </div>
+      <h3>启蒙拼读 L1</h3>
+      <div class="desc">从 26 个字母音与 8 个高频词族入手，课堂以唱跳和手指谣为主，不要求识字量。</div>
+      <div class="meta"><span><b>24</b> 课时</span><span><b>每周 2</b> 次</span><span>45 分钟/节</span></div>
+      <div class="price">
+        <div><b><em>¥</em>1,280</b></div>
+        <small>含教材 1 套<br>可外借 60 天</small>
+      </div>
+    </div>
+
+    <div class="course" style="background:var(--coral)">
+      <div class="top">
+        <div class="ico">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#3D2B23" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="9" r="2.4"/><circle cx="12.4" cy="6.6" r="2.4"/><circle cx="17.6" cy="9.4" r="2.4"/><circle cx="9.4" cy="14.6" r="2.4"/><circle cx="15.6" cy="15.4" r="2.4"/><path d="M12.4 18.6c1.6 0 2.6-1 2.6-2.2 0-1.2-1-2.2-2.6-2.2s-2.6 1-2.6 2.2c0 1.2 1 2.2 2.6 2.2z"/></svg>
+        </div>
+        <div class="age">5 – 7 岁</div>
+      </div>
+      <h3>动物世界 L2</h3>
+      <div class="desc">以非洲草原、南美雨林两条线索展开 60 个动物主题词，每单元配一支两分钟的动画短片。</div>
+      <div class="meta"><span><b>32</b> 课时</span><span><b>每周 2</b> 次</span><span>45 分钟/节</span></div>
+      <div class="price">
+        <div><b><em>¥</em>1,680</b></div>
+        <small>含教材 1 套<br>每班配外教</small>
+      </div>
+    </div>
+
+    <div class="course" style="background:var(--lav)">
+      <div class="top">
+        <div class="ico">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#3D2B23" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><path d="M17 14v7M13.5 17.5h7"/></svg>
+        </div>
+        <div class="age">6 – 8 岁</div>
+      </div>
+      <h3>自然拼读 L3</h3>
+      <div class="desc">把字母组合拆成 42 条拼读规则，能独立读出陌生单词。每周三加一节分级读物课。</div>
+      <div class="meta"><span><b>36</b> 课时</span><span><b>每周 3</b> 次</span><span>45 分钟/节</span></div>
+      <div class="price">
+        <div><b><em>¥</em>2,160</b></div>
+        <small>含教材 2 套<br>含 1 次测评</small>
+      </div>
+    </div>
+  </section>
+
+  <div class="strip">
+    <div class="it"><i></i>每班 6 人，外教带唱</div>
+    <div class="it"><i></i>每周二、四 19:00 在线直播</div>
+    <div class="it"><i></i>课后 24 小时内推送录音</div>
+    <div class="it"><i></i>缺课可回放 30 天</div>
+    <button class="btn btn-sub">下载本学期课程表</button>
+  </div>
+
+  <footer>
+    <p>深圳市南山区科苑南路 2666 号 3 层 · 广州市天河区天河北路 233 号 12 楼<br>咨询热线 400-886-0617 · 周二至周日 10:00 – 20:00</p>
+    <div class="r">学 习 报 告 可 免 费 试 读<br>每两周推送一次，含跟读时长与开口次数统计</div>
+  </footer>
+</main>
+
+</body>
+</html>

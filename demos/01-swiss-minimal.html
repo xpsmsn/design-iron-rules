@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>青野建筑事务所</title>
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --ink-1:#111111;
+    --ink-2:#4A4A4A;
+    --ink-3:#767676;
+    --rule:#E3E3E3;
+    --accent:#1A4B8C;
+    --f-sans:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",Helvetica,Arial,sans-serif;
+    --pad:72px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1440px;height:900px;overflow:hidden;
+    background:var(--bg);color:var(--ink-1);
+    font-family:var(--f-sans);
+    -webkit-font-smoothing:antialiased;
+    display:flex;flex-direction:column;
+  }
+
+  /* ---------- 页眉 ---------- */
+  header{
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding:40px var(--pad) 0;
+  }
+  .logo{font-size:20px;font-weight:500;letter-spacing:.14em}
+  nav{display:flex;gap:40px}
+  nav a{
+    font-size:13px;color:var(--ink-2);text-decoration:none;
+    letter-spacing:.08em;padding-bottom:3px;
+  }
+  nav a:hover{color:var(--ink-1)}
+  nav a.on{color:var(--ink-1);box-shadow:inset 0 -1px 0 var(--accent)}
+
+  /* ---------- 主体 ---------- */
+  main{flex:1;padding:0 var(--pad);display:flex;flex-direction:column}
+
+  .hero{
+    display:grid;grid-template-columns:7fr 5fr;gap:64px;
+    padding-top:84px;align-items:start;
+  }
+  .eyebrow{
+    font-size:12px;color:var(--ink-3);letter-spacing:.2em;
+    display:flex;align-items:center;gap:14px;
+  }
+  .eyebrow b{color:var(--accent);font-weight:500;letter-spacing:.12em}
+  h1{
+    font-size:68px;font-weight:400;line-height:1.08;
+    letter-spacing:-.03em;margin-top:22px;
+  }
+  h1 .thin{color:var(--ink-3)}
+  .lede{
+    font-size:16px;line-height:1.75;color:var(--ink-2);
+    max-width:430px;margin-top:30px;
+  }
+  .facts{margin-top:38px;display:flex;gap:56px}
+  .fact dt{font-size:12px;color:var(--ink-3);letter-spacing:.12em}
+  .fact dd{font-size:15px;margin-top:7px;font-variant-numeric:tabular-nums}
+  .fact dd em{font-style:normal;color:var(--ink-3);font-size:13px}
+
+  /* 立面图 */
+  .drawing{margin-top:6px}
+  .drawing svg{display:block;width:100%;height:296px}
+
+  /* ---------- 项目索引 ---------- */
+  .index{padding-top:64px}
+  .index-head{
+    display:flex;justify-content:space-between;align-items:baseline;
+    border-top:1px solid var(--rule);padding-top:14px;margin-bottom:6px;
+  }
+  .index-head h2{font-size:13px;font-weight:500;letter-spacing:.16em;color:var(--ink-2)}
+  .index-head span{font-size:12px;color:var(--ink-3);letter-spacing:.1em}
+  .row{
+    display:grid;grid-template-columns:64px 1fr 200px 150px 96px;
+    align-items:baseline;gap:24px;
+    padding:15px 0;border-bottom:1px solid var(--rule);
+  }
+  .row .no{font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .row .name{font-size:19px;font-weight:500}
+  .row .loc{font-size:14px;color:var(--ink-2)}
+  .row .yr{font-size:14px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+  .row .st{font-size:12px;color:var(--ink-3);text-align:right;letter-spacing:.08em}
+  .row .st.done{color:var(--ink-2)}
+
+  /* ---------- 页脚 ---------- */
+  footer{
+    padding:22px var(--pad);display:flex;justify-content:space-between;align-items:center;
+    border-top:1px solid var(--rule);
+  }
+  footer p{font-size:12px;color:var(--ink-3);letter-spacing:.06em}
+  footer .cta{font-size:13px;color:var(--ink-1);letter-spacing:.06em}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">青野建筑事务所</div>
+  <nav>
+    <a href="#">事务所</a>
+    <a href="#" class="on">项目</a>
+    <a href="#">出版</a>
+    <a href="#">联络</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <div class="eyebrow"><b>2024</b> 建成 · 江苏苏州</div>
+      <h1>折线<span class="thin">美术馆</span></h1>
+      <p class="lede">
+        沿旧厂房北侧原有的承重墙，折出一段 34 米长的折线。
+        墙体同时是结构、动线与光线的发生器——
+        展厅的光只从顶部这三条窄缝里进来，全天不直射展品。
+      </p>
+      <dl class="facts">
+        <div class="fact"><dt>建筑面积</dt><dd>4,200 <em>m²</em></dd></div>
+        <div class="fact"><dt>结构</dt><dd>清水混凝土</dd></div>
+        <div class="fact"><dt>主持建筑师</dt><dd>沈青野</dd></div>
+        <div class="fact"><dt>施工周期</dt><dd>19 <em>个月</em></dd></div>
+      </dl>
+    </div>
+
+    <div class="drawing">
+      <svg viewBox="0 0 520 296" fill="none" aria-label="美术馆北立面图">
+        <g stroke="#E3E3E3" stroke-width="1">
+          <line x1="0" y1="40" x2="520" y2="40"/>
+          <line x1="0" y1="150" x2="520" y2="150"/>
+          <line x1="0" y1="230" x2="520" y2="230"/>
+        </g>
+        <!-- 折线主体 -->
+        <g stroke="#111111" stroke-width="1.4">
+          <path d="M40 230 L40 96 L186 96 L186 40 L332 40 L332 96 L478 96 L478 230"/>
+        </g>
+        <!-- 顶部采光缝 -->
+        <g stroke="#1A4B8C" stroke-width="2">
+          <line x1="202" y1="30" x2="316" y2="30"/>
+        </g>
+        <!-- 开口 -->
+        <g stroke="#767676" stroke-width="1">
+          <line x1="40" y1="150" x2="478" y2="150"/>
+          <rect x="96" y="150" width="42" height="80"/>
+          <rect x="170" y="150" width="42" height="80"/>
+          <rect x="244" y="150" width="42" height="80"/>
+          <rect x="318" y="150" width="42" height="80"/>
+          <rect x="392" y="150" width="42" height="80"/>
+        </g>
+        <!-- 人 -->
+        <g fill="#767676">
+          <circle cx="152" cy="216" r="3.4"/>
+          <rect x="150" y="221" width="4" height="9"/>
+        </g>
+        <g fill="#767676" font-family="Helvetica,Arial" font-size="9" stroke="none">
+          <text x="40" y="252" fill="#767676">+4.200 北立面 1:200</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <section class="index">
+    <div class="index-head">
+      <h2>项目索引</h2>
+      <span>2019 — 2025 · 共 17 项</span>
+    </div>
+    <div class="row">
+      <div class="no">01</div><div class="name">折线美术馆</div>
+      <div class="loc">江苏 苏州</div><div class="yr">2024</div><div class="st done">已建成</div>
+    </div>
+    <div class="row">
+      <div class="no">02</div><div class="name">白盒剧场改造</div>
+      <div class="loc">浙江 杭州</div><div class="yr">2023</div><div class="st done">已建成</div>
+    </div>
+    <div class="row">
+      <div class="no">03</div><div class="name">云溪度假酒店</div>
+      <div class="loc">浙江 莫干山</div><div class="yr">2022</div><div class="st done">已建成</div>
+    </div>
+    <div class="row">
+      <div class="no">04</div><div class="name">竹里民宿</div>
+      <div class="loc">江苏 宜兴</div><div class="yr">2025</div><div class="st">在建</div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>上海市杨浦区宁国路 88 号 3F · 每周二至周六 10:00–18:00</p>
+  <div class="cta">预约参观 →</div>
+</footer>
+
+</body>
+</html>

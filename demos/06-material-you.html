@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>知芽 · 中学生错题本</title>
+<style>
+  /* ============================================================
+     2.2 Material You
+     token 全部取自 Material 3 baseline 色调角色（种子色 #6750A4）
+     关键约束：语义色（错题红）不参与动态取色，固定品牌底线色 #B3261E
+     ============================================================ */
+  :root{
+    /* —— 动态色：跟随系统壁纸「晚樱」取色 —— */
+    --primary:#6750A4;              /* tone 40  主色 6.12:1 / 白字 6.44:1 */
+    --on-primary:#FFFFFF;
+    --primary-container:#EADDFF;    /* tone 90 */
+    --on-primary-container:#21005D; /* 13.32:1 */
+    --secondary-container:#E8DEF8;
+    --on-secondary-container:#1D192B;
+    --tertiary-container:#FFD8E4;
+    --on-tertiary-container:#31111D;
+
+    /* —— 品牌底线色：语义色不参与动态取色 —— */
+    --error:#B3261E;                /* 6.21:1 on surface */
+    --on-error-container:#410E0B;
+    --error-container:#F9DEDC;      /* 5.14:1 for error text */
+
+    /* —— 表面容器阶梯：层级靠明度差，不靠阴影 —— */
+    --surface:#FEF7FF;              /* tone 98  */
+    --surface-low:#F7F2FA;          /* tone 96  页面底 */
+    --surface-highest:#E6E0E9;      /* tone 90  填充输入 / 分隔 */
+
+    /* —— 中性 —— */
+    --on-surface:#1D1B20;           /* tone 10  16.23:1 */
+    --on-surface-variant:#49454F;   /* tone 30  8.13:1 */
+    --outline:#6B6573;              /* 组件轮廓 5.35:1 / 4.89:1 */
+    --outline-variant:#CAC4D0;      /* 装饰性分割 */
+
+    --radius-card:24px;             /* 卡片 16–28px */
+    --radius-btn:9999px;            /* 按钮全圆 */
+    --sans:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",Helvetica,Arial,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    position:relative;
+    width:1440px;height:900px;overflow:hidden;
+    background:var(--surface-low);color:var(--on-surface);
+    font-family:var(--sans);font-size:14px;
+    display:flex;flex-direction:column;
+    -webkit-font-smoothing:antialiased;
+  }
+  .ico{width:24px;height:24px;fill:currentColor;flex:none;display:block}
+
+  /* ---------- 顶部应用栏 ---------- */
+  .appbar{
+    flex:none;height:64px;display:flex;align-items:center;gap:16px;padding:0 20px;
+    background:var(--surface);
+  }
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand .mk{
+    width:34px;height:34px;border-radius:11px;background:var(--primary-container);
+    display:flex;align-items:center;justify-content:center;flex:none;
+  }
+  .brand .mk svg{width:20px;height:20px;fill:var(--on-primary-container)}
+  .brand b{font-size:17px;font-weight:700;letter-spacing:.06em}
+  .brand span{font-size:12px;color:var(--on-surface-variant);letter-spacing:.04em;padding-top:2px}
+  /* M3 搜索栏：填充式 + 全圆角，不用描边 */
+  .search{
+    margin-left:10px;width:300px;height:40px;border-radius:var(--radius-btn);
+    background:var(--surface-highest);display:flex;align-items:center;gap:10px;padding:0 16px;
+  }
+  .search svg{width:20px;height:20px;fill:var(--on-surface-variant);flex:none}
+  .search input{border:0;outline:0;background:transparent;font-family:var(--sans);font-size:14px;color:var(--on-surface);width:100%}
+  .search input::placeholder{color:var(--on-surface-variant)}
+  .appbar-r{margin-left:auto;display:flex;align-items:center;gap:12px}
+  .tonebtn{
+    height:36px;padding:0 18px;border-radius:var(--radius-btn);
+    background:var(--secondary-container);color:var(--on-secondary-container);
+    font-family:var(--sans);font-size:14px;font-weight:600;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .tonebtn svg{width:18px;height:18px;fill:currentColor}
+  .av{width:34px;height:34px;border-radius:50%;background:var(--primary);color:var(--on-primary);
+      font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+  /* ---------- 导航轨 ---------- */
+  .body{flex:1;display:grid;grid-template-columns:92px 1fr 344px;min-height:0}
+  .rail{background:var(--surface);display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px}
+  .rail a{
+    width:76px;height:60px;border-radius:16px;text-decoration:none;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+    color:var(--on-surface-variant);font-size:12px;
+  }
+  .rail a.on{background:var(--primary-container);color:var(--primary)}
+  .rail a.on svg{fill:var(--on-primary-container)}
+  .rail a span{font-weight:600;letter-spacing:.02em}
+
+  /* ---------- 主区 ---------- */
+  main{padding:20px 24px 0;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+  .mhead{display:flex;align-items:flex-end;gap:16px;flex:none}
+  .mhead h1{font-size:24px;font-weight:700;letter-spacing:.02em}
+  .mhead p{font-size:13px;color:var(--on-surface-variant);margin-top:6px;letter-spacing:.02em}
+  .btn-pri{
+    margin-left:auto;height:44px;padding:0 26px;border:0;border-radius:var(--radius-btn);
+    background:var(--primary);color:var(--on-primary);font-family:var(--sans);
+    font-size:15px;font-weight:600;letter-spacing:.04em;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .btn-pri svg{width:18px;height:18px;fill:currentColor}
+
+  /* 进度卡：primary-container + 色调描边，无阴影 */
+  .hero{
+    margin-top:18px;flex:none;border-radius:var(--radius-card);
+    background:var(--primary-container);color:var(--on-primary-container);
+    padding:18px 22px;display:grid;grid-template-columns:270px 1fr;gap:26px;align-items:center;
+    border:1px solid rgba(103,80,164,.28);
+  }
+  .hero .k{font-size:13px;letter-spacing:.03em}
+  .hero .n{font-size:40px;font-weight:700;line-height:1.1;margin-top:4px;letter-spacing:-.01em}
+  .hero .n i{font-size:19px;font-weight:600;font-style:normal;color:#4A3786}
+  .bars{display:flex;flex-direction:column;gap:9px}
+  .brow{display:flex;align-items:center;gap:10px;font-size:12px}
+  .brow .lab{width:52px;flex:none;color:#3A2E6B}
+  .brow .tr{flex:1;height:8px;border-radius:var(--radius-btn);background:#C6B4E2}
+  .brow .tr i{display:block;height:8px;border-radius:var(--radius-btn);background:var(--primary)}
+  .brow .tr i.er{background:var(--error)}
+  .brow .tr i.ok{background:#4A5C9B}
+  .brow .num{width:80px;text-align:right;flex:none;font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+
+  /* 筛选 chip：选中态用 secondary-container + 对勾 */
+  .chips{display:flex;gap:8px;margin-top:16px;flex:none}
+  .chip{
+    height:34px;padding:0 14px;border-radius:var(--radius-btn);
+    background:var(--surface);border:1px solid var(--outline);color:var(--on-surface-variant);
+    font-family:var(--sans);font-size:13px;font-weight:600;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .chip svg{width:16px;height:16px;fill:currentColor}
+  .chip.on{background:var(--secondary-container);border-color:transparent;color:var(--on-secondary-container)}
+  .chip .n{font-variant-numeric:tabular-nums;color:#5B5169;font-weight:500}
+  .grid-hint{margin-left:auto;font-size:12px;color:var(--on-surface-variant);align-self:center;letter-spacing:.02em}
+
+  /* 错题卡：容器色 + 细描边，圆角 24px */
+  .grid{
+    flex:1;margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);
+    grid-template-rows:1fr 1fr;gap:14px;padding-bottom:92px;min-height:0;
+  }
+  .qcard{
+    background:var(--surface);border:1px solid var(--outline-variant);
+    border-radius:var(--radius-card);padding:14px 16px 13px;
+    display:flex;flex-direction:column;min-height:0;overflow:hidden;
+  }
+  .qtop{display:flex;align-items:center;gap:8px}
+  .tag{font-size:11px;font-weight:700;padding:3px 9px;border-radius:var(--radius-btn);letter-spacing:.04em}
+  .tag.math{background:var(--primary-container);color:var(--on-primary-container)}
+  .tag.phy{background:var(--tertiary-container);color:var(--on-tertiary-container)}
+  .tag.eng{background:var(--secondary-container);color:var(--on-secondary-container)}
+  .qtime{margin-left:auto;font-size:11px;color:var(--on-surface-variant);font-variant-numeric:tabular-nums}
+  .qcard h3{font-size:15px;font-weight:700;margin-top:10px;line-height:1.45;letter-spacing:.01em}
+  .qcard .desc{
+    font-size:12px;line-height:1.65;color:var(--on-surface-variant);margin-top:6px;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  .why{
+    margin-top:10px;background:var(--surface-highest);border-radius:12px;padding:7px 10px;
+    font-size:11px;line-height:1.5;color:var(--on-surface-variant);
+    display:flex;align-items:flex-start;gap:6px;
+  }
+  .why svg{width:14px;height:14px;fill:var(--error);flex:none;margin-top:1px}
+  .why b{color:var(--error);font-weight:700}
+  .qfoot{margin-top:auto;padding-top:11px;display:flex;align-items:center;gap:9px}
+  .qfoot .lab{font-size:11px;color:var(--on-surface-variant);flex:none}
+  .qfoot .tr{width:62px;height:6px;border-radius:var(--radius-btn);background:var(--surface-highest);flex:none;overflow:hidden}
+  .qfoot .tr i{display:block;height:6px;border-radius:var(--radius-btn);background:var(--primary)}
+  .qfoot .tr i.er{background:var(--error)}
+  .qfoot .pct{font-size:11px;font-weight:700;font-variant-numeric:tabular-nums}
+  .state{
+    margin-left:auto;font-size:11px;font-weight:700;padding:3px 9px;
+    border-radius:var(--radius-btn);letter-spacing:.03em;
+  }
+  .state.er{background:var(--error-container);color:var(--on-error-container)}
+  .state.wn{background:var(--tertiary-container);color:var(--on-tertiary-container)}
+  .state.og{background:var(--primary-container);color:var(--on-primary-container)}
+
+  /* 扩展 FAB：次要动作，用 primary-container 与主按钮区分 */
+  .fab{
+    position:absolute;right:368px;bottom:24px;height:52px;padding:0 20px;
+    border-radius:18px;background:var(--primary-container);color:var(--on-primary-container);
+    display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;
+    border:1px solid rgba(103,80,164,.3);letter-spacing:.03em;
+  }
+  .fab svg{width:20px;height:20px;fill:currentColor}
+
+  /* ---------- 右栏 ---------- */
+  aside{background:var(--surface);border-left:1px solid var(--outline-variant);padding:20px 20px 0;display:flex;flex-direction:column;overflow:hidden}
+  .card-h{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+  .card-h h2{font-size:15px;font-weight:700;letter-spacing:.02em}
+  .card-h .x{margin-left:auto;font-size:12px;font-weight:600;color:var(--primary)}
+  .card-h .x svg{width:14px;height:14px;fill:currentColor;vertical-align:-1px;margin-left:3px}
+
+  .qlist{display:flex;flex-direction:column;gap:6px}
+  .qi{display:flex;align-items:center;gap:10px;background:var(--surface-low);border-radius:14px;padding:9px 11px}
+  .qi .t{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;flex:none;color:var(--primary)}
+  .qi .nm{font-size:13px;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .qi .c{font-size:11px;color:var(--on-surface-variant);flex:none}
+  .qi .dot{width:7px;height:7px;border-radius:50%;flex:none}
+  .qnote{font-size:12px;color:var(--on-surface-variant);margin-top:9px;line-height:1.6}
+
+  /* 动态取色面板 */
+  .theme{margin-top:20px;padding-top:18px;border-top:1px solid var(--outline-variant)}
+  .seed{display:flex;align-items:center;gap:12px;background:var(--surface-low);border-radius:16px;padding:11px 12px}
+  .seed .wall{
+    width:46px;height:46px;border-radius:12px;flex:none;overflow:hidden;position:relative;
+    background:linear-gradient(140deg,#FFD8E4 0%,#E8DEF8 52%,#D0BCFF 100%);
+    border:1px solid var(--outline-variant);
+  }
+  .seed .wall i{position:absolute;left:9px;top:12px;width:13px;height:13px;border-radius:50%;background:#B3261E}
+  .seed .wall b{position:absolute;left:20px;top:24px;width:18px;height:9px;border-radius:5px;background:#FFFFFF;opacity:.9}
+  .seed .txt{min-width:0}
+  .seed .txt b{display:block;font-size:13px;font-weight:700;letter-spacing:.02em}
+  .seed .txt span{display:block;font-size:11px;color:var(--on-surface-variant);margin-top:3px}
+  .tones{display:flex;gap:7px;margin-top:12px}
+  .tones div{flex:1;height:32px;border-radius:10px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:3px}
+  .tones span{font-size:9px;font-weight:700;letter-spacing:.02em}
+  .sw{margin-top:16px;display:flex;align-items:center;gap:11px}
+  .sw .tx{flex:1;min-width:0}
+  .sw .tx b{display:block;font-size:13px;font-weight:600}
+  .sw .tx span{display:block;font-size:11px;color:var(--on-surface-variant);margin-top:3px;line-height:1.5}
+  .tgl{width:48px;height:26px;border-radius:var(--radius-btn);background:var(--primary);position:relative;flex:none}
+  .tgl i{position:absolute;left:20px;top:3px;width:20px;height:20px;border-radius:50%;background:var(--surface);display:block}
+  .locked{
+    margin-top:14px;display:flex;align-items:center;gap:11px;
+    background:var(--error-container);border-radius:16px;padding:11px 12px;
+  }
+  .locked svg{width:20px;height:20px;fill:var(--error);flex:none}
+  .locked .tx b{display:block;font-size:13px;font-weight:700;color:var(--on-error-container)}
+  .locked .tx span{display:block;font-size:11px;color:#5C1A14;margin-top:3px;line-height:1.5}
+</style>
+</head>
+<body>
+
+<svg style="display:none">
+  <symbol id="i-search" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5Zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14Z"/></symbol>
+  <symbol id="i-today" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9Z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2Zm0 18H6V4h1v8l2.5-1.5L12 12V4h6v16Z"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="M17.65 6.35A7.96 7.96 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35Z"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M5 9.2h3V19H5V9.2ZM10.6 5h2.8v14h-2.8V5Zm5.6 8H19v6h-2.8v-6Z"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-3.33 0-8 1.67-8 5v3h16v-3c0-3.33-4.67-5-8-5Z"/></symbol>
+  <symbol id="i-sprout" viewBox="0 0 24 24"><path d="M12 2c-.34 3.4-2.9 5.6-6.2 6.2C5.2 8.5 5 9 5 9.6c0 2.7 2.2 4.9 4.9 4.9h.6v4.7a1.5 1.5 0 0 0 3 0v-4.7h.6c2.7 0 4.9-2.2 4.9-4.9 0-.6-.2-1.1-.8-1.4C14.9 7.6 12.34 5.4 12 2Z"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.14v13.72c0 .79.87 1.27 1.54.85l10.7-6.86a1 1 0 0 0 0-1.7L9.54 4.29A1 1 0 0 0 8 5.14Z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2Z"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><path d="M18 8h-1V6A5 5 0 0 0 7 6v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2Zm-6 9a2 2 0 0 1-1-3.73V6a3 3 0 1 1 6 0v7.27A2 2 0 0 1 12 17Z"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.96 13.09L15.05 16 12 12.94 8.95 16 7.04 14.09 10.06 11 7.04 7.09 8.95 6.18 12 9.12l3.05-2.94 1.91 1.91L13.94 11l3.02 4.09Z"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M9.29 6.71a1 1 0 0 0 0 1.41L12.17 11H4a1 1 0 1 0 0 2h8.17l-2.88 2.88a1 1 0 1 0 1.42 1.41l4.58-4.58a1 1 0 0 0 0-1.42l-4.58-4.58a1 1 0 0 0-1.42 0Z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17Z"/></symbol>
+</svg>
+
+<header class="appbar">
+  <div class="brand">
+    <span class="mk"><svg><use href="#i-sprout"/></svg></span>
+    <b>知芽</b><span>错题本</span>
+  </div>
+  <div class="search">
+    <svg><use href="#i-search"/></svg>
+    <input type="text" placeholder="搜索题目、知识点或标签" aria-label="搜索错题">
+  </div>
+  <div class="appbar-r">
+    <span class="tonebtn"><svg><use href="#i-sprout"/></svg>动态取色 · 晚樱</span>
+    <span class="av">林</span>
+  </div>
+</header>
+
+<div class="body">
+  <nav class="rail">
+    <a href="#"><svg class="ico"><use href="#i-today"/></svg><span>今日</span></a>
+    <a href="#"><svg class="ico"><use href="#i-book"/></svg><span>题库</span></a>
+    <a href="#" class="on"><svg class="ico"><use href="#i-repeat"/></svg><span>复习</span></a>
+    <a href="#"><svg class="ico"><use href="#i-chart"/></svg><span>统计</span></a>
+    <a href="#"><svg class="ico"><use href="#i-user"/></svg><span>我的</span></a>
+  </nav>
+
+  <main>
+    <div class="mhead">
+      <div>
+        <h1>今日复习</h1>
+        <p>2026 年 10 月 16 日 · 初二（3）班 · 本周新增 36 道，待复习 12 道</p>
+      </div>
+      <button class="btn-pri"><svg><use href="#i-play"/></svg>开始今日复习</button>
+    </div>
+
+    <section class="hero">
+      <div>
+        <div class="k">今日到期 7 道 · 已复习 2 道</div>
+        <div class="n">5<i> / 7 道待完成</i></div>
+      </div>
+      <div class="bars">
+        <div class="brow"><span class="lab">已掌握</span><span class="tr"><i class="ok" style="width:39%"></i></span><span class="num">14 道 39%</span></div>
+        <div class="brow"><span class="lab">巩固中</span><span class="tr"><i style="width:36%"></i></span><span class="num">13 道 36%</span></div>
+        <div class="brow"><span class="lab">未掌握</span><span class="tr"><i class="er" style="width:25%"></i></span><span class="num">9 道 25%</span></div>
+      </div>
+    </section>
+
+    <div class="chips">
+      <span class="chip on"><svg><use href="#i-check"/></svg>全部<span class="n">36</span></span>
+      <span class="chip">数学<span class="n">19</span></span>
+      <span class="chip">物理<span class="n">11</span></span>
+      <span class="chip">英语<span class="n">6</span></span>
+      <span class="grid-hint">复习间隔 1 / 3 / 7 / 15 / 30 天 · 按错因自动排期</span>
+    </div>
+
+    <div class="grid">
+      <article class="qcard">
+        <div class="qtop"><span class="tag math">数学</span><span class="qtime">今天 19:30 · 第 3 次</span></div>
+        <h3>二次函数在闭区间上的最值</h3>
+        <p class="desc">f(x)=x²−4x+3 在 [0,3] 上求最大值与最小值，没先判断对称轴 x=2 是否落在区间内，直接套顶点公式。</p>
+        <div class="why"><svg><use href="#i-warn"/></svg><span>错因：<b>概念不清</b> · 已练 2 次，正确率 40%</span></div>
+        <div class="qfoot">
+          <span class="lab">掌握度</span><span class="tr"><i class="er" style="width:35%"></i></span><span class="pct">35%</span>
+          <span class="state er">需重做</span>
+        </div>
+      </article>
+
+      <article class="qcard">
+        <div class="qtop"><span class="tag math">数学</span><span class="qtime">今天 20:00 · 第 1 次</span></div>
+        <h3>根式方程的增根与检验</h3>
+        <p class="desc">解 √(x−1)=2−x，平方后未回代检验，把 x=3 当成解，实际代入原方程两边不等。</p>
+        <div class="why"><svg><use href="#i-warn"/></svg><span>错因：<b>检验步骤缺失</b> · 已练 4 次，正确率 45%</span></div>
+        <div class="qfoot">
+          <span class="lab">掌握度</span><span class="tr"><i style="width:45%"></i></span><span class="pct">45%</span>
+          <span class="state wn">待巩固</span>
+        </div>
+      </article>
+
+      <article class="qcard">
+        <div class="qtop"><span class="tag math">数学</span><span class="qtime">今天 20:30 · 第 4 次</span></div>
+        <h3>相似三角形的三种判定</h3>
+        <p class="desc">已知两边及其中一边的夹角时误用 AA，题目给的是对顶角，应当用 SAS 判定。</p>
+        <div class="why"><svg><use href="#i-warn"/></svg><span>错因：<b>审题偏差</b> · 已练 3 次，正确率 60%</span></div>
+        <div class="qfoot">
+          <span class="lab">掌握度</span><span class="tr"><i style="width:60%"></i></span><span class="pct">60%</span>
+          <span class="state og">巩固中</span>
+        </div>
+      </article>
+
+      <article class="qcard">
+        <div class="qtop"><span class="tag phy">物理</span><span class="qtime">今天 21:00 · 第 2 次</span></div>
+        <h3>串联电路的电流分配</h3>
+        <p class="desc">两只 6Ω 电阻串联接在 6V 电源上，误按并联算电流，把总电阻算成 12Ω。</p>
+        <div class="why"><svg><use href="#i-warn"/></svg><span>错因：<b>思路断层</b> · 已练 2 次，正确率 30%</span></div>
+        <div class="qfoot">
+          <span class="lab">掌握度</span><span class="tr"><i class="er" style="width:30%"></i></span><span class="pct">30%</span>
+          <span class="state er">需重做</span>
+        </div>
+      </article>
+
+      <article class="qcard">
+        <div class="qtop"><span class="tag phy">物理</span><span class="qtime">今天 21:30 · 第 3 次</span></div>
+        <h3>浮力与容器底压强</h3>
+        <p class="desc">正方体完全浸没水中，底压强变化量算成了总压强，漏掉容器原有水柱。</p>
+        <div class="why"><svg><use href="#i-warn"/></svg><span>错因：<b>计算失误</b> · 已练 3 次，正确率 72%</span></div>
+        <div class="qfoot">
+          <span class="lab">掌握度</span><span class="tr"><i style="width:72%"></i></span><span class="pct">72%</span>
+          <span class="state og">巩固中</span>
+        </div>
+      </article>
+
+      <article class="qcard">
+        <div class="qtop"><span class="tag eng">英语</span><span class="qtime">明天 10:00 · 第 2 次</span></div>
+        <h3>宾语从句的语序与时态</h3>
+        <p class="desc">I don't know where does he live，疑问词后仍用陈述语序，主句为一般现在时从句时态却写成过去。</p>
+        <div class="why"><svg><use href="#i-warn"/></svg><span>错因：<b>语法规则模糊</b> · 已练 2 次，正确率 55%</span></div>
+        <div class="qfoot">
+          <span class="lab">掌握度</span><span class="tr"><i style="width:55%"></i></span><span class="pct">55%</span>
+          <span class="state wn">待巩固</span>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <aside>
+    <div class="card-h">
+      <h2>今日复习队列</h2>
+      <span class="x">全部 7 道<svg><use href="#i-arrow"/></svg></span>
+    </div>
+    <div class="qlist">
+      <div class="qi"><span class="dot" style="background:#6750A4"></span><span class="t">19:30</span><span class="nm">二次函数闭区间最值</span><span class="c">数学</span></div>
+      <div class="qi"><span class="dot" style="background:#6750A4"></span><span class="t">20:00</span><span class="nm">根式方程增根检验</span><span class="c">数学</span></div>
+      <div class="qi"><span class="dot" style="background:#6750A4"></span><span class="t">20:30</span><span class="nm">相似三角形判定</span><span class="c">数学</span></div>
+      <div class="qi"><span class="dot" style="background:#7D5260"></span><span class="t">21:00</span><span class="nm">串联电路电流分配</span><span class="c">物理</span></div>
+      <div class="qi"><span class="dot" style="background:#7D5260"></span><span class="t">21:30</span><span class="nm">浮力与容器底压强</span><span class="c">物理</span></div>
+    </div>
+    <p class="qnote">已完成 2 道：整数运算顺序（19:00）、密度与单位换算（19:15）。剩余 5 道预计 34 分钟完成。</p>
+
+    <div class="theme">
+      <div class="card-h">
+        <h2>外观 · 动态取色</h2>
+        <span class="x" style="color:#49454F">跟随系统<svg><use href="#i-arrow"/></svg></span>
+      </div>
+
+      <div class="seed">
+        <span class="wall"><i></i><b></b></span>
+        <span class="txt">
+          <b>种子色来源：相册壁纸「晚樱」</b>
+          <span>系统于 2026-09-28 抽取，按同色相派生整套容器色阶</span>
+        </span>
+      </div>
+
+      <div class="tones">
+        <div style="background:#21005D"><span style="color:#EADDFF">10</span></div>
+        <div style="background:#4F378B"><span style="color:#EADDFF">30</span></div>
+        <div style="background:#6750A4"><span style="color:#EADDFF">40</span></div>
+        <div style="background:#7F67BE"><span style="color:#FFFFFF">50</span></div>
+        <div style="background:#EADDFF"><span style="color:#21005D">90</span></div>
+      </div>
+
+      <div class="sw">
+        <span class="tx">
+          <b>跟随系统取色</b>
+          <span>关闭后回落到品牌紫 #6750A4</span>
+        </span>
+        <span class="tgl"><i></i></span>
+      </div>
+
+      <div class="locked">
+        <svg><use href="#i-lock"/></svg>
+        <span class="tx">
+          <b>错题 · 警示：固定品牌红 #B3261E</b>
+          <span>语义色不参与动态取色，避免错误提示随壁纸变色而失去严肃性</span>
+        </span>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div class="fab"><svg><use href="#i-plus"/></svg>录一道错题</div>
+
+</body>
+</html>
