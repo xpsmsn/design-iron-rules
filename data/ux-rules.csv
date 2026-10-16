@@ -1,7 +1,7 @@
 rule_id,category,issue,platform,do,dont,good_example,bad_example,severity
 NAV-01,导航,固定导航遮挡首屏内容,Web/小程序,给内容预留与导航等高的顶部内边距,让导航直接覆盖首屏区块,body { padding-top: 64px },nav fixed + 首屏无 padding,High
 NAV-02,导航,当前位置无视觉指示,All,在导航项上加颜色加下划线或字重变化,所有导航项样式完全相同,aria-current="page" + 下划线,仅靠颜色略浅表示选中,High
-NAV-03,导航,层级过深,All,层级控制在3层以内,用筛选和标签替代嵌套,四层以上的下拉嵌套,3层以内 + 面包屑,无限下钻,Medium
+NAV-03,导航,层级过深,All,层级控制在3层以内,用筛选和标签替代嵌套,3层以内 + 面包屑,四层以上的下拉嵌套（无限下钻）,Medium
 NAV-04,导航,返回路径断裂,小程序,保持导航栈完整,破坏系统返回手势或按钮,使用系统导航栈,拦截返回事件不回上一页,High
 NAV-05,导航,状态未反映在URL中,Web,用查询参数或hash反映状态便于分享,所有状态共用一个URL,?tab=settings&page=2,单一静态URL,Medium
 LAY-01,布局,z-index失控,Web,定义固定层级表(10/20/30/50),随意使用极大值,z-index: var(--z-modal),z-index: 99999,High

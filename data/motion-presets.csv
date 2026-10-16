@@ -1,23 +1,23 @@
 preset_id,category,intensity,trigger,duration,easing,do,dont,reduced_motion_fallback
-press-feedback,状态反馈,subtle,按下,80ms,cubic-bezier(0.4,0,1,1),给出即时视觉变化(缩放0.97或位移1px),不要让反馈延迟超过100ms否则像卡死,替换为纯色变化
-hover-lift,状态反馈,standard,悬停,150-250ms,cubic-bezier(0,0,0.2,1),阴影加深加1-2px上浮,不要在悬停时动画 width/height/margin(触发重排),移除位移仅保留底色变化
-focus-ring,状态反馈,subtle,键盘聚焦,0ms,cubic-bezier(0,0,1,1),立即显示2px描边加2px偏移,不要用 outline:none 移除而不替代,保留(焦点指示是必需的无障碍能力)
-toggle-switch,状态反馈,standard,开关切换,200ms,cubic-bezier(0,0,0.2,1),滑块位移加轨道底色双通道表达状态,不要只靠位移表达状态(色觉障碍不可见),改为直接切换轨道颜色
-modal-enter,入场出场,standard,弹层打开,200-300ms,cubic-bezier(0,0,0.2,1),位移不超过16px同时淡入,不要做3D翻转或粒子爆炸进场,纯淡入
-modal-exit,入场出场,standard,弹层关闭,150-200ms,cubic-bezier(0.4,0,1,1),出场比入场快30%,不要让退出动画阻塞下一次操作,立即隐藏
-dropdown-open,入场出场,standard,下拉展开,150-200ms,cubic-bezier(0,0,0.2,1),配合内容高度与轻微淡入,不要同时动画宽高(计算开销大),直接显示
-stagger-list,入场出场,standard,列表首次出现,250-400ms,cubic-bezier(0,0,0.2,1),逐项延迟0.02-0.06s最多8项,不要超过8项否则末项显得滞后;长列表不要用,一次性全部显示
-page-transition,页面转场,standard,页面切换,250-400ms,cubic-bezier(0.4,0,0.2,1),前进右侧进后退左侧进保持空间逻辑,不要每次转场都做全屏花哨动画,直接切换
-sheet-bottom,页面转场,standard,移动端底部弹出,250-300ms,cubic-bezier(0,0,0.2,1),从底部升起且不占满全屏,不要在移动端使用居中弹窗占满全屏,直接显示
-scroll-reveal,滚动揭示,subtle,滚动进入视口,300-400ms,cubic-bezier(0,0,0.2,1),位移8-16px配合淡入,不要位移过大否则不像淡入而是滑动;SEO内容不要默认隐藏,直接可见
+press-feedback,状态反馈,subtle,按下,80ms,"cubic-bezier(0.4,0,1,1)",给出即时视觉变化(缩放0.97或位移1px),不要让反馈延迟超过100ms否则像卡死,替换为纯色变化
+hover-lift,状态反馈,standard,悬停,150-250ms,"cubic-bezier(0,0,0.2,1)",阴影加深加1-2px上浮,不要在悬停时动画 width/height/margin(触发重排),移除位移仅保留底色变化
+focus-ring,状态反馈,subtle,键盘聚焦,0ms,"cubic-bezier(0,0,1,1)",立即显示2px描边加2px偏移,不要用 outline:none 移除而不替代,保留(焦点指示是必需的无障碍能力)
+toggle-switch,状态反馈,standard,开关切换,200ms,"cubic-bezier(0,0,0.2,1)",滑块位移加轨道底色双通道表达状态,不要只靠位移表达状态(色觉障碍不可见),改为直接切换轨道颜色
+modal-enter,入场出场,standard,弹层打开,200-300ms,"cubic-bezier(0,0,0.2,1)",位移不超过16px同时淡入,不要做3D翻转或粒子爆炸进场,纯淡入
+modal-exit,入场出场,standard,弹层关闭,150-200ms,"cubic-bezier(0.4,0,1,1)",出场比入场快30%,不要让退出动画阻塞下一次操作,立即隐藏
+dropdown-open,入场出场,standard,下拉展开,150-200ms,"cubic-bezier(0,0,0.2,1)",配合内容高度与轻微淡入,不要同时动画宽高(计算开销大),直接显示
+stagger-list,入场出场,standard,列表首次出现,250-400ms,"cubic-bezier(0,0,0.2,1)",逐项延迟0.02-0.06s最多8项,不要超过8项否则末项显得滞后;长列表不要用,一次性全部显示
+page-transition,页面转场,standard,页面切换,250-400ms,"cubic-bezier(0.4,0,0.2,1)",前进右侧进后退左侧进保持空间逻辑,不要每次转场都做全屏花哨动画,直接切换
+sheet-bottom,页面转场,standard,移动端底部弹出,250-300ms,"cubic-bezier(0,0,0.2,1)",从底部升起且不占满全屏,不要在移动端使用居中弹窗占满全屏,直接显示
+scroll-reveal,滚动揭示,subtle,滚动进入视口,300-400ms,"cubic-bezier(0,0,0.2,1)",位移8-16px配合淡入,不要位移过大否则不像淡入而是滑动;SEO内容不要默认隐藏,直接可见
 scroll-pin,滚动揭示,complex,叙事滚动,跟随滚动,none (scrub驱动),使用 scrub:true 或0.5-1.5的平滑值,不要一屏钉住超过1-2个区块(与原生滚动冲突);低端设备慎用,取消钉住全部静态展开
-magnetic-hover,悬停,complex,指针移动,300-500ms,cubic-bezier(0.34,1.56,0.64,1),单屏最多1-2个焦点元素使用,不要全屏元素都用磁吸效果(变噪声);离开时必须回弹,取消磁吸
+magnetic-hover,悬停,complex,指针移动,300-500ms,"cubic-bezier(0.34,1.56,0.64,1)",单屏最多1-2个焦点元素使用,不要全屏元素都用磁吸效果(变噪声);离开时必须回弹,取消磁吸
 cursor-trail,悬动,complex,指针移动,跟随指针,none,单屏最多1处,不要跟随式元素超过3个(性能与注意力双重问题),取消
 skeleton-load,加载,standard,数据加载,时长取决于响应,linear,骨架屏形状必须与真实内容结构一致,不要用骨架屏占位与真实内容不同的高度(加载后跳版),显示简单文字"加载中"
 spinner,加载,standard,操作进行中,循环800-1200ms,linear,只在明确未知进度时使用,不要用它遮住已经加载好的内容;不要做全屏遮罩,显示静态"处理中"文字
 progress-bar,加载,subtle,已知进度,跟随进度,linear,有确定进度时优先用进度条,不要用不确定进度的旋转图标假装有进度,显示文字百分比
-toast-in,反馈,subute,操作成功,200ms,cubic-bezier(0,0,0.2,1),底部或顶部滑入并显示4-10s,不要承载必须阅读的信息(会自动消失),直接出现
-ripple,微交互,subtle,触摸,400-600ms,cubic-bezier(0,0,0.2,1),仅在触屏上作为触摸反馈补充,不要用涟漪掩盖首次点击位置不确定的问题,取消
-button-press-scale,微交互,subute,按钮按下,80-120ms,cubic-bezier(0.4,0,1,1),缩放0.97-0.98,不要缩放超过0.95(会显得廉价且误触),替换为底色加深
+toast-in,反馈,subute,操作成功,200ms,"cubic-bezier(0,0,0.2,1)",底部或顶部滑入并显示4-10s,不要承载必须阅读的信息(会自动消失),直接出现
+ripple,微交互,subtle,触摸,400-600ms,"cubic-bezier(0,0,0.2,1)",仅在触屏上作为触摸反馈补充,不要用涟漪掩盖首次点击位置不确定的问题,取消
+button-press-scale,微交互,subute,按钮按下,80-120ms,"cubic-bezier(0.4,0,1,1)",缩放0.97-0.98,不要缩放超过0.95(会显得廉价且误触),替换为底色加深
 pull-to-refresh,微交互,complex,下拉手势,跟随手势,none,仅在需要刷新时启用,不要默认全站启用(误触刷新让用户丢失位置),取消
 ambient-drift,氛围,subtle,常驻,周期≥15s,none,背景色团缓慢漂移幅度小,不承载信息;不能无停止条件,取消

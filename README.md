@@ -2,7 +2,7 @@
 
 > 应用界面设计铁律 · 8 族 25 式风格的选型、token 落值与走查体系
 
-给 AI 装一套**可执行**的设计约束：不让它现编色值、不让它凭感觉定时长、不让它在发散阶段拿评分表卡你。
+给 AI 装一套**可执行**的设计约束：不让它现编色值、不让它在中文界面用西文字体兜底、不让它凭感觉定时长、不让它在发散阶段拿评分表卡你。
 
 ---
 
@@ -13,6 +13,7 @@
 | 翻车点 | 后果 | 本 skill 的做法 |
 |---|---|---|
 | **现编色值** | `#4F46E5` 配白字看着挺好，实际对比度可能不达标 | 14 套实测配色，`on-*` 配对 56 组全部通过校验 |
+| **中文界面字体兜底** | 西文字体不含汉字，靠浏览器 fallback 兜底 → 字重不匀、中英基线错位 | 27 组字体搭配，每组**显式声明中文 CJK 字体栈** |
 | **凭感觉选风格** | 用户说"科技感"，AI 猜成赛博朋克，结果商品图全被霓虹污染 | 按**渲染逻辑**分 8 族，决策树选型 + 禁用场景硬拦截 |
 | **手算对比度 / 定时长** | WCAG 相对亮度公式极易算错，十几组配色必漏 | `contrast.js` 纯 Node 实现，支持批量校验 |
 
@@ -92,6 +93,9 @@ Copy-Item -Recurse design-iron-rules "$env:USERPROFILE\.minimax\skills\design-ir
 |---|---|---|
 | `style-attributes.csv` | **25 式**风格 · 禁用场景 / 性能成本 / 无障碍风险 | `catalog.js style "科技"` |
 | `palette-presets.csv` | **14 套**配色 · 56 组 `on-*` 配对实测达标 | `catalog.js palette "校园"` |
+| `typography-pairs.csv` | **27 组**字体搭配 · 含中文 CJK 字体栈与禁用场景 | `catalog.js typography "新中式"` |
+| `chart-types.csv` | **20 类**图表选型 · 何时用 / 何时别用 / 无障碍兜底 | `catalog.js chart "占比"` |
+| `icon-guidance.csv` | **20 组**图标系统 · 图标库 / 线宽 / 尺寸 / 无障碍 | `catalog.js icon "新中式"` |
 | `motion-presets.csv` | **22 条**动效预设 · 强度分级与禁忌 | `catalog.js motion "悬停"` |
 | `ux-rules.csv` | **55 条** UX 规则 · 严重度排序 + 正反例 | `catalog.js ux "焦点"` |
 
@@ -111,9 +115,12 @@ node scripts/contrast.js --batch pairs.txt               # 批量，每行 前�
 # 数据检索
 node scripts/catalog.js style "科技"
 node scripts/catalog.js palette "校园"
+node scripts/catalog.js typography "新中式"
+node scripts/catalog.js chart "占比"
+node scripts/catalog.js icon "新中式"
 node scripts/catalog.js motion "悬停"
 node scripts/catalog.js ux "焦点"
-node scripts/catalog.js verify                           # 校验全部 56 组配色配对
+node scripts/catalog.js verify                           # 校验 56 组配色配对 + 全部目录结构完整性
 ```
 
 批量模式未达标会返回非零退出码，可直接接 CI。
@@ -181,12 +188,12 @@ node scripts/shoot.js          # 用系统 Edge 全量重出图，零依赖
 design-iron-rules/
 ├── SKILL.md                      # 主入口
 ├── gallery.html                  # 25 式风格画廊（浏览器直接打开）
-├── data/                         # 4 份数据目录（可被脚本检索）
+├── data/                         # 7 份数据目录（可被脚本检索）
 ├── demos/                        # 25 式设计 demo 源码，单文件自包含 HTML
 ├── assets/previews/              # demo 截图，1440×900 @2x
 ├── scripts/
 │   ├── contrast.js               # 对比度校验（单条 / 批量）
-│   ├── catalog.js                # 风格/配色/动效/UX 规则检索
+│   ├── catalog.js                # 风格/配色/字体/图表/图标/动效/UX 检索
 │   └── shoot.js                  # 批量渲染 demo 截图（调用系统 Edge）
 └── references/                   # 21 个按需加载的参考文件（20 份文档 + design-tokens.css）
     ├── iron-rules-core.md        # L0 铁律 10 条 + L1 定律数值表
