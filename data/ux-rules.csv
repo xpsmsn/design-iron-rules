@@ -1,0 +1,56 @@
+rule_id,category,issue,platform,do,dont,good_example,bad_example,severity
+NAV-01,导航,固定导航遮挡首屏内容,Web/小程序,给内容预留与导航等高的顶部内边距,让导航直接覆盖首屏区块,body { padding-top: 64px },nav fixed + 首屏无 padding,High
+NAV-02,导航,当前位置无视觉指示,All,在导航项上加颜色加下划线或字重变化,所有导航项样式完全相同,aria-current="page" + 下划线,仅靠颜色略浅表示选中,High
+NAV-03,导航,层级过深,All,层级控制在3层以内,用筛选和标签替代嵌套,四层以上的下拉嵌套,3层以内 + 面包屑,无限下钻,Medium
+NAV-04,导航,返回路径断裂,小程序,保持导航栈完整,破坏系统返回手势或按钮,使用系统导航栈,拦截返回事件不回上一页,High
+NAV-05,导航,状态未反映在URL中,Web,用查询参数或hash反映状态便于分享,所有状态共用一个URL,?tab=settings&page=2,单一静态URL,Medium
+LAY-01,布局,z-index失控,Web,定义固定层级表(10/20/30/50),随意使用极大值,z-index: var(--z-modal),z-index: 99999,High
+LAY-02,布局,内容跳动(CLS),All,为图片与异步内容预留尺寸,用容器稳定住异步区域,img { aspect-ratio: 4/3 },加载后撑开布局,High
+LAY-03,布局,移动端100vh被地址栏截断,Mobile,使用dvh或预留安全区,直接用100vh做全屏布局,min-height: 100dvh,height: 100vh,Medium
+LAY-04,布局,固定定位元素重叠,All,规划固定元素的层级与间距,堆叠多个fixed元素无规划,底栏 fixed + 列表 padding-bottom,底部按钮遮住列表最后一项,Medium
+LAY-05,布局,overflow裁切重要内容,All,测试所有内容是否放得下,盲目使用overflow hidden,overflow: auto,overflow: hidden 截断内容,Medium
+LAY-06,布局,正文行宽过长,All,内容区限宽680-760px,文字横跨整个视口,max-width: 720px,正文撑满1920px宽屏,Medium
+LAY-07,布局,新层叠上下文导致z-index失效,Web,理解什么会创建新的层叠上下文,期望z-index跨上下文生效,避免在父级创建隔离层叠,父级 z-index 隔离导致子级9999无效,Medium
+FORM-01,表单,仅用placeholder充当标签,All,使用独立可见的label,输入后字段含义消失,label for=email + input id=email,placeholder=Email only,High
+FORM-02,表单,错误提示不定位到字段,All,字段下方内联报错并用aria-describedby关联,只在顶部堆一条总错误,aria-describedby=email-error,红色边框但不说明哪个字段,High
+FORM-03,表单,提交后无反馈,All,按钮进入loading禁用直到返回明确结果,点击后界面无变化,按钮 loading + 禁用直到响应,点击无响应,High
+FORM-04,表单,提交失败清空已填内容,All,保留所有已填字段,校验失败重置表单,保留输入值 + 定位到首个错误,重置为空表单,High
+FORM-05,表单,禁用粘贴,All,允许粘贴与自动填充(密码类除外且需说明),全局设置 autocomplete=off,autocomplete=email,禁止粘贴,Medium
+FORM-06,表单,移动端键盘类型不对,Mobile,使用inputmode指定键盘,数字字段弹出文本键盘,inputmode="numeric",type=text 收数字,Medium
+FORM-07,表单,未标注必填项,All,用文字星号加required属性,只靠颜色区分必填,* 必填 + required,靠猜测,Medium
+FORM-08,表单,中文输入法组合态触发校验,All,监听compositionstart/end后再校验,拼音输入过程中就报错,compositionend 后再校验,输入拼音时持续飘红,High
+INT-01,交互,破坏性操作无保护,All,二次确认写明具体后果或提供撤销,点击即删除无确认,"将永久删除12条记录 不可恢复",确定吗? + 立即删除,High
+INT-02,交互,可点击元素无hover与active反馈,Web,补齐hover与active两态,只有默认态,hover:bg + active:scale,[无任何反馈的按钮],Medium
+INT-03,交互,焦点不可见,All,所有可交互元素有可见焦点环,outline:none无替代,:focus-visible { outline: 2px solid },outline: none,High
+INT-04,交互,异步期间可重复点击,All,提交后立即禁用直到返回,处理中仍可点击,disabled + loading,双击提交两次,High
+INT-05,交互,错误静默失败,All,在出错处显示明确错误与重试,失败无任何提示,内联错误 + 重试按钮,静默失败,High
+INT-06,交互,禁用态无原因,All,禁用时说明为什么,只把按钮变灰,tooltip 说明禁用原因,变灰且无解释,Medium
+INT-07,交互,Tab顺序与视觉顺序不一致,Web,保持视觉顺序即Tab顺序,用tabindex手动打乱,按DOM自然顺序,tabindex=999 跳到页脚,High
+A11Y-01,无障碍,颜色作为唯一信息载体,All,颜色之外补图标或文字,只用红绿区分状态,红字 + 感叹号图标,纯红色文字,High
+A11Y-02,无障碍,图标按钮无可访问名称,All,补aria-label,图标按钮无标签,aria-label=关闭菜单,button 内只有svg,High
+A11Y-03,无障碍,标题层级跳级,Web,h1到h6连续使用,跳级或用标题做样式,h1→h2→h3,h1→h4,Medium
+A11Y-04,无障碍,错误信息不被播报,All,用role=alert或aria-live,只有视觉红框,role="alert" + 文字,只有红边框,High
+A11Y-05,无障碍,忽略prefers-reduced-motion,All,提供动效降级,不做降级,@media reduce 块,无降级,High
+A11Y-06,无障碍,导航重页面无跳转链接,Web,提供跳到主内容链接,需Tab数十次才能到内容,skip link,无skip link,Medium
+PERF-01,性能,首屏图片未优化,All,用合适尺寸与WebP并做懒加载,加载原图全量,srcset + loading=lazy,4000px图用于400px显示,High
+PERF-02,性能,动效导致重排,Web,只用transform与opacity做动画,动画width/height/top/left,transform: translateY(),top: 10px 动画,Medium
+PERF-03,性能,字体阻塞渲染,Web,用font-display: swap,字体加载期间文字不可见,font-display: swap,FOIT文字闪烁,Medium
+PERF-04,性能,长任务阻塞交互,Web,拆分任务保证主线程长任务<50ms,单任务计算数秒,分帧处理,主线程冻结,High
+PERF-05,性能,模糊与阴影叠加过多,All,同屏backdrop-filter与大面积阴影≤3处,全屏多层模糊,单层玻璃,20层backdrop-filter,High
+RESP-01,响应式,仅按桌面设计再压缩,All,移动优先并逐档验证,桌面优先再缩小,四档视口均验证,只测375px,High
+RESP-02,响应式,移动端正文过小,Mobile,正文≥15px(表单≥16px防iOS缩放),正文用12px,font-size: 16px,font-size: 12px,High
+RESP-03,响应式,移动端热区沿用桌面小尺寸,Mobile,移动端热区放大到44px以上,移动端用24px热区,44-48px,移动端密集小按钮,High
+RESP-04,响应式,缺少viewport元信息,Web,设置width=device-width initial-scale=1,无viewport meta,meta name=viewport content=width=device-width,无该标签,High
+TBL-01,表格,超过20行无排序,All,表头可排序,静态表格无排序,th 带排序指示器,60行不可排序,High
+TBL-02,表格,数字未右对齐,All,右对齐并使用tabular-nums,数字左对齐或比例字体,text-align: right + tabular-nums,默认左对齐,Medium
+TBL-03,表格,空值显示为空白,All,显示破折号占位,留空导致误读为0,—,空单元格,Medium
+TBL-04,表格,表格只靠颜色标记状态,All,改用左侧色条或图标,整行染色,3px左色条 + 图标,整行红绿背景,High
+TBL-05,表格,表头滚动后不可见,Web,固定表头,长列表滚动失去列含义,position: sticky,表头随滚动消失,Medium
+CHT-01,图表,只靠颜色区分数据系列,All,配线型标记点或直接标注,仅靠色相区分,线型+标记点+数据标签,只有颜色,High
+CHT-02,图表,无坐标轴单位,All,标注单位与量纲,只有数字没有单位,y轴: 数量(件),无单位,Medium
+CHT-03,图表,图表类型与数据关系不符,All,时间序列用折线不用饼图,饼图表示时间趋势,折线图,时间序列饼图,Medium
+CHT-04,图表,图表无文字摘要,All,配文字摘要或数据表,只给图片,摘要+可展开数据表,仅图片,High
+FEED-01,反馈,Toast承载必须阅读的信息,All,可撤销提示用Toast,必须阅读的信息用Toast,Toast仅承载可撤销操作,Toast放错误详情,Medium
+FEED-02,反馈,成功无确认,All,给出明确的下一步,操作静默完成,"已提交,审核约需2个工作日",无任何反馈,Medium
+FEED-03,反馈,加载遮住已加载内容,All,局部骨架屏,整屏遮罩,骨架屏仅覆盖加载区,全屏遮罩,Medium
+FEED-04,反馈,超过1秒的操作无进度,All,提供进度或可离开,无限等待无反馈,进度条+取消入口,转圈直到返回,High

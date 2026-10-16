@@ -1,0 +1,10 @@
+# 统一以 LF 存储，避免各人 core.autocrlf 设置不同导致 skill 跨平台解析异常
+* text=auto eol=lf
+
+# 脚本强制 LF
+*.js text eol=lf
+
+# 文档与数据保持 UTF-8
+*.md text eol=lf
+*.csv text eol=lf
+*.css text eol=lf
