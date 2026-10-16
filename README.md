@@ -143,16 +143,31 @@ node scripts/catalog.js verify                           # 校验全部 56 组�
 
 ## 设计 Demo
 
-**8 族 25 式，每式一个真实场景的完整页面。** 打开 [`gallery.html`](gallery.html) 看完整画廊。
+**8 族 25 式，每式一个真实场景的完整页面。** 打开 [`gallery.html`](gallery.html) 看全部 25 式画廊。
 
-| 族 | demo |
-|---|---|
-| 1 秩序理性 | ![瑞士极简](assets/previews/01-swiss-minimal.png) |
-| 7 文化地域 | ![新中式](assets/previews/20-new-chinese.png) |
+下面挑 6 张，覆盖 6 个族、视觉跨度最大的一组：
 
-这些 demo 同时是 skill 的**实战验证**：每个页面都是单文件自包含 HTML，
-用该风格自己 `references/style-XX-*.md` 里定义的 token 落地，
-正文对比度经 `contrast.js` 实测达标——**不是套模板换颜色**。
+<table>
+<tr>
+<td width="50%"><img src="assets/previews/01-swiss-minimal.png"><br><b>1.1 瑞士极简</b> · 青野建筑事务所官网<br><sub>无阴影无渐变、白占 90%、强调色仅 2%</sub></td>
+<td width="50%"><img src="assets/previews/07-memphis.png"><br><b>2.3 孟菲斯撞色</b> · 跳跳岛少儿体能馆<br><sub>撞色块 4px 黑描边 + 6px 硬阴影全局统一</sub></td>
+</tr>
+<tr>
+<td><img src="assets/previews/10-skeuomorphic.png"><br><b>3.3 写实拟物</b> · Aurora 专业音频工作站<br><sub>旋钮滚花、推子凹槽、Master 总线 LED 分段表</sub></td>
+<td><img src="assets/previews/15-cyberpunk.png"><br><b>5.1 赛博朋克</b> · 霓虹纪元第七赛季<br><sub>霓虹只上标题与描边，正文保持纯净不发光</sub></td>
+</tr>
+<tr>
+<td><img src="assets/previews/18-brutalism.png"><br><b>6.1 粗野主义</b> · 混凝土设计工作室<br><sub>全局零圆角、8px 硬阴影、原色块直接上</sub></td>
+<td><img src="assets/previews/20-new-chinese.png"><br><b>7.1 新中式</b> · 云隐茶事品牌主页<br><sub>宋/楷/黑三级分工，避开「廉价国潮」四件套</sub></td>
+</tr>
+</table>
+
+**这些 demo 同时是 skill 的实战验证，不是装饰图。** 每个页面都是单文件自包含 HTML，
+用该风格自己 `references/style-XX-*.md` 里定义的 token 落地，正文对比度经 `contrast.js` 实测达标。
+
+内容也是真的：磐石终端里的 IF2612/中证1000 是真实股指期货合约，
+Aurora 的 RS 6+3 纠删码与 quorum p99 来自真实分布式存储，
+潮汐播放页 9 首歌的时长合计精确到 37 分 33 秒。
 
 ```bash
 node scripts/shoot.js          # 用系统 Edge 全量重出图，零依赖
@@ -173,7 +188,7 @@ design-iron-rules/
 │   ├── contrast.js               # 对比度校验（单条 / 批量）
 │   ├── catalog.js                # 风格/配色/动效/UX 规则检索
 │   └── shoot.js                  # 批量渲染 demo 截图（调用系统 Edge）
-└── references/                   # 21 份按需加载的参考文档
+└── references/                   # 21 个按需加载的参考文件（20 份文档 + design-tokens.css）
     ├── iron-rules-core.md        # L0 铁律 10 条 + L1 定律数值表
     ├── style-taxonomy.md         # 8 族谱系 + 口语映射词典 + 决策树
     ├── style-01..08-*.md         # 8 族风格详解
